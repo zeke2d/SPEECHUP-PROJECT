@@ -1,0 +1,40 @@
+const mongoose = require("mongoose")
+
+mongoose.connect("mongodb://localhost:27017/ThesisV1")
+.then(() => {
+    console.log("MONGODB CONNECTED")
+})
+.catch(() => {
+    console.log("MONGODB FAILED TO CONNECT")
+})
+
+//create a schema for the documents
+const therapistUsersSchema = new mongoose.Schema({
+    username : {
+        type : String,
+        required : true
+    },
+    password : {
+        type : String,
+        required : true
+    }
+})
+
+//define the collection and specify the schema for the collection
+const therapistUsersCollection = new mongoose.model("therapist_users", therapistUsersSchema) //name of the collection, schema of the collection
+
+const patientUsersSchema = new mongoose.Schema({
+    username: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+  });
+  
+  // Define the patient_users collection
+  const patientUsersCollection = new mongoose.model("patient_users", patientUsersSchema);
+  
+module.exports = {therapistUsersCollection, patientUsersCollection};

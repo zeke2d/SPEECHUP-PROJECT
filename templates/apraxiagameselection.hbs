@@ -1,0 +1,45 @@
+<h2>APRAXIA UNIT</h2>
+<br>
+<h3>Select a Game below</h3>
+
+<style>
+.button-group {
+  display: flex; /* Arrange buttons horizontally */
+  gap: 10px;    /* Add some space between buttons */
+}
+
+.button-group button {
+  padding: 10px 20px; /* Adjust padding as needed */
+  font-size: 16px;     /* Adjust font size as needed */
+  border: none;       /* Remove default button border */
+  border-radius: 5px;   /* Add rounded corners */
+  background-color: #df1645; /* Example blue background color */
+  color: white;        /* White text color */
+  cursor: pointer;      /* Make cursor a pointer on hover */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.button-group button:hover {
+  background-color: #ff003c; /* Darker blue on hover */
+}
+
+/* Optional: Style for the selected course display */
+#selectedCourse {
+  margin-top: 20px;
+  font-weight: bold;
+}
+</style>
+
+<div id="selectedCourse"></div>
+
+<div class="button-group">
+  <button onclick="startGame('Animal Sounds')">Animal Sounds</button>
+  <button onclick="startGame('Book Reading')">Book Reading</button>
+</div>
+
+<script>
+function startGame(gameName) {
+  alert("You selected: " + gameName);
+}
+</script>
+

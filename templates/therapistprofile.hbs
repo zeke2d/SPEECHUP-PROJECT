@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapist Profile</title>
+
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-picture img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+        }
+
+        .profile-details {
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #d9534f;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 5px;
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img id="profileImage" src="/uploads/default-profile.png" alt="Profile Picture">
+                <form id="uploadForm" action="/upload-profile" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+            <h2 id="username">{{firstName}} {{lastName}}</h2>
+        </div>
+        
+        <div class="profile-details">
+            <p><strong>First Name:</strong> {{firstName}}</p>
+            <p><strong>Last Name:</strong> {{lastName}}</p>
+            <p><strong>Username:</strong> {{username}}</p>
+            <p><strong>Email:</strong> {{email}}</p>
+        </div>
+
+    </div>
+    
+</body>
+</html>

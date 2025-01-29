@@ -3,108 +3,206 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Title -->
-    <title>Patient Sign-Up Form</title>
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="/assets/images/logo/favicon.png">
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <title>Patient | Sign Up</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Reset -->
+   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #eef3fa;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1024px;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .left-section {
+            flex: 1;
+            background-color: #d1d8e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .left-section h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .right-section {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .right-section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .right-section p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .checkbox-container input {
+            margin-right: 380px; 
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .actions a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .actions a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .signup-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .social-login img {
+            width: 32px;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+
+        .speechup-logo {
+            width: 200px; 
+            height: auto;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .back-btn:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
 
-<body style="background:#00FFFF">
+<body>
+    <button class="back-btn" onclick="goBack()">&#8592;</button>
 
-    <!-- Preloader -->
-    <div class="preloader">
-        <div class="loader"></div>
+    <div class="container">
+        <div class="left-section">
+            <h1>SPEECH UP</h1>
+        </div>
+        <div class="right-section">
+            <h2>Welcome to Speech Up!</h2>
+            <p>Please sign up to create your account and start the adventure</p>
+            <form id="patientsignupForm" action="/patientsignup" method="post">
+                <input type="text" name="firstName" placeholder="First Name" required>
+                <input type="text" name="lastName" placeholder="Last Name" required>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <p class="checkbox-container">
+                    <label for="rememberMe">Remember Me</label>
+                    <input type="checkbox" name="rememberMe" id="rememberMe">
+                </p>
+                
+                <button type="submit" class="signup-btn">Sign Up</button>
+            </form>
+            <div class="social-login">
+                <p>or</p>
+                <img src="/assets/images/icons/google-logo.png">
+                <img src="/assets/images/icons/facebook-logo.png">
+                <img src="/assets/images/icons/twitterX-logo.png">
+            </div>
+            <br>
+        <p class="login-link center-text">Already have an account? <a href="/patientlogin">Click here!</a></p>
+        </div>
     </div>
 
-    <!-- Sidebar Overlay -->
-    <div class="side-overlay"></div>
-
-    <!-- Sign-Up Form -->
-    <section class="auth d-flex">
-        <div class="auth-left bg-main-50 flex-center p-24">
-            <img src="/assets/images/thumbs/auth-img2.png" alt="Sign-Up Image">
-        </div>
-        <div class="auth-right py-40 px-24 flex-center flex-column">
-            <div class="auth-right__inner mx-auto w-100">
-                <a href="/" class="auth-right__logo">
-                    <img src="/assets/images/logo/logo.png" alt="Logo">
-                </a>
-                <h2 class="mb-8">Sign Up</h2>
-                <p class="text-gray-600 text-15 mb-32">Please sign up to your account and start the adventure</p>
-
-                <!-- Dynamic form -->
-                <form id="patientsignupForm" action="/patientsignup" method="post">
-                    <div class="mb-24">
-                        <label for="username" class="form-label mb-8 h6">Username</label>
-                        <div class="position-relative">
-                            <input type="text" name="username" class="form-control py-11 ps-40" id="username" placeholder="Type your username" required>
-                            <span class="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
-                                <i class="ph ph-user"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="mb-24">
-                        <label for="password" class="form-label mb-8 h6">Password</label>
-                        <div class="position-relative">
-                            <input type="password" name="password" class="form-control py-11 ps-40" id="password" placeholder="Enter Password" required>
-                            <span class="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
-                                <i class="ph ph-lock"></i>
-                            </span>
-                        </div>
-                        <span class="text-gray-900 text-15 mt-4">Must be at least 8 characters</span>
-                    </div>
-
-                    <div class="mb-32 flex-between flex-wrap gap-8">
-                        <div class="form-check mb-0 flex-shrink-0">
-                            <input class="form-check-input flex-shrink-0 rounded-4" type="checkbox" value="" id="remember">
-                            <label class="form-check-label text-15 flex-grow-1" for="remember">Remember Me</label>
-                        </div>
-                        <a href="/forgot-password" class="text-main-600 hover-text-decoration-underline text-15 fw-medium">Forgot Password?</a>
-                    </div>
-
-                    <button type="submit" class="btn btn-main rounded-pill w-100">Sign Up</button>
-                    <p class="mt-32 text-gray-600 text-center">Already have an account?
-                        <a href="/templates/patientlogin.hbs" class="text-main-600 hover-text-decoration-underline">Log In</a>
-                    </p>
-                </form>
-
-                <div class="divider my-32 position-relative text-center">
-                    <span class="divider__text text-gray-600 text-13 fw-medium px-26 bg-white">or</span>
-                </div>
-
-                <ul class="flex-align gap-10 flex-wrap justify-content-center">
-                    <li>
-                        <a href="https://www.facebook.com" class="w-38 h-38 flex-center rounded-6 text-facebook-600 bg-facebook-50 hover-bg-facebook-600 hover-text-white text-lg">
-                            <i class="ph-fill ph-facebook-logo"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.twitter.com" class="w-38 h-38 flex-center rounded-6 text-twitter-600 bg-twitter-50 hover-bg-twitter-600 hover-text-white text-lg">
-                            <i class="ph-fill ph-twitter-logo"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.google.com" class="w-38 h-38 flex-center rounded-6 text-google-600 bg-google-50 hover-bg-google-600 hover-text-white text-lg">
-                            <i class="ph ph-google-logo"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Scripts -->
-    <script src="/assets/js/jquery-3.7.1.min.js"></script>
-    <script src="/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/js/phosphor-icon.js"></script>
-    <script src="/assets/js/main.js"></script>
+    <script>
+        function goBack() {
+            window.location.href = "/"; 
+        }
+    </script>
 </body>
 
 </html>

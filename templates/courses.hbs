@@ -1,0 +1,47 @@
+<div id="contentPage">
+    <h2>COURSES</h2>
+    <br>
+    <h3>Select a Course below</h3>
+
+    <style>
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #df1645;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-group button:hover {
+            background-color: #ff003c;
+        }
+    </style>
+
+    <div class="button-group">
+        <button onclick="loadPage('apraxiagameselection')">APRAXIA</button>
+        <button onclick="loadPage('dysarthriagameselection')">DYSARTHRIA</button>
+        <button onclick="loadPage('aphasiagameselection')">APHASIA</button>
+    </div>
+</div>
+
+<script>
+function loadPage(pageName) {
+    fetch(`/${pageName}`)  // Request the page dynamically
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("contentPage").innerHTML = data; // Replace content
+    })
+    .catch(error => {
+        console.error("Error loading page:", error);
+        document.getElementById("contentPage").innerHTML = "<h3>Error loading page.</h3>";
+    });
+}
+</script>

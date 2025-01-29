@@ -10,6 +10,16 @@ mongoose.connect("mongodb://localhost:27017/ThesisV1")
 
 //create a schema for the documents
 const therapistUsersSchema = new mongoose.Schema({
+
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+
     username : {
         type : String,
         required : true
@@ -24,6 +34,15 @@ const therapistUsersSchema = new mongoose.Schema({
 const therapistUsersCollection = new mongoose.model("therapist_users", therapistUsersSchema) //name of the collection, schema of the collection
 
 const patientUsersSchema = new mongoose.Schema({
+  
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
     username: {
       type: String,
       required: true,

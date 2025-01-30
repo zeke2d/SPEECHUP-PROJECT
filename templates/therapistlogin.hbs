@@ -170,9 +170,15 @@
         <div class="left-section">
             <img src="/assets/images/speechup-logo.png" alt="SpeechUp Logo" class="speechup-logo">
         </div>
+
         <div class="right-section">
             <h2>Welcome back Therapist!</h2>
             <p>Please log in to your account and continue your journey</p>
+
+            {{#if error}}
+               <p style="color: red; text-align: center;">{{error}}</p>
+            {{/if}}
+            
             <form id="therapistloginForm" action="/therapistlogin" method="post">
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="password" placeholder="Password" required>

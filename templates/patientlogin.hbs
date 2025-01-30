@@ -169,9 +169,15 @@
         <div class="left-section">
             <h1>SPEECH UP</h1>
         </div>
+        
         <div class="right-section">
             <h2>Welcome back Patient!</h2>
             <p>Please log in to your account and continue your journey</p>
+
+            {{#if error}}
+               <p style="color: red; text-align: center;">{{error}}</p>
+            {{/if}}
+
             <form id="patientloginForm" action="/patientlogin" method="post">
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="password" placeholder="Password" required>

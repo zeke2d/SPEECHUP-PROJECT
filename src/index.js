@@ -126,14 +126,13 @@ app.post("/therapistlogin", async (req, res) => {
             req.session.user = { firstName: check.firstName };
             res.redirect("therapisthome")
 
-    }else{
-        res.send("Password is incorrect!")
-
+        } else {
+            return res.render("therapistlogin", { error: "Invalid username or password." });
+        }
+    } catch (error) {
+        return res.render("therapistlogin", { error: "An error occurred. Please try again." });
     }
-    }catch {
-        res.send("There seems to be no account connected to the username")
-    }
-})
+});
 
 app.post("/therapistsignup", async (req, res) => {
     var newUser = {
@@ -158,14 +157,13 @@ app.post("/patientlogin", async (req, res) => {
             req.session.user = { firstName: check.firstName };
             res.redirect("patienthome")
 
-    }else{
-        res.send("Password is incorrect!")
-
+        } else {
+            return res.render("patientlogin", { error: "Invalid username or password." });
+        }
+    } catch (error) {
+        return res.render("patientlogin", { error: "An error occurred. Please try again." });
     }
-    }catch {
-        res.send("There seems to be no account connected to the username")
-    }
-})
+});
 
 app.post("/patientsignup", async (req, res) => {
     var newUser = {

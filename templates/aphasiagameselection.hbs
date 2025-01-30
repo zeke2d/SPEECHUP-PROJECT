@@ -1,52 +1,107 @@
-<h2>APHASIA UNIT</h2>
-<br>
-<h3>Select a Game below</h3>
-
 <style>
-.button-group {
-  display: flex; /* Arrange buttons horizontally */
-  gap: 10px;    /* Add some space between buttons */
-}
+  #apraxiaPage { /* Target the main container for styling */
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center horizontally */
+        min-height: 100%; /* Ensure it takes up full height if needed */
+        width: 100%; /* Or a specific width */
+        padding: 20px; /* Add some padding around the content */
+    }
 
-.button-group button {
-  padding: 10px 20px; /* Adjust padding as needed */
-  font-size: 16px;     /* Adjust font size as needed */
-  border: none;       /* Remove default button border */
-  border-radius: 5px;   /* Add rounded corners */
-  background-color: #df1645; /* Example blue background color */
-  color: white;        /* White text color */
-  cursor: pointer;      /* Make cursor a pointer on hover */
-  transition: background-color 0.3s ease; /* Smooth background transition */
-}
+    .back-btn {
+        display: flex;
+        align-items: center;
+        background-color: #f8f9fa;
+        color: #333;
+        border: none;
+        padding: 8px 8px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-weight: bold;
+        margin-bottom: 20px; /* Space below the back button */
+    }
 
-.button-group button:hover {
-  background-color: #ff003c; /* Darker blue on hover */
-}
+    .back-btn:hover {
+        background-color: #e0e0e0;
+        transform: translateX(-3px);
+    }
 
-/* Optional: Style for the selected course display */
-#selectedCourse {
-  margin-top: 20px;
-  font-weight: bold;
-}
+    .back-btn::before {
+        content: "⮐";
+        margin-right: 8px;
+        font-size: 18px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h3 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .button-group {
+        display: flex;
+        flex-direction: column; /* Stack buttons vertically */
+        align-items: center;
+        gap: 20px;
+        width: 100%; /* Or a specific width, or max-width */
+    }
+
+    .button-group button {
+        width: 150px; /* Fixed width for circle */
+        height: 150px; /* Fixed height for circle */
+        border-radius: 50%; /* Make it a circle */
+        background-color: #df1645; /* Explicitly set background color with !important */
+        color: white;
+        border: none; /* Remove any borders with !important */
+        padding: 0; /* Remove default padding */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer; /* Ensure cursor is a pointer */
+        transition: background-color 0.3s ease; /* Keep the transition */
+        text-align: center;
+        box-sizing: border-box; /* Include padding and border in width/height */
+        font-size: 18px;
+        line-height: 1.2;
+        font-family: Arial, sans-serif; /* Or your preferred font */
+        font-weight: bold;
+    }
+
+    .button-group button:hover {
+        background-color: #ff003c;
+    }
+
+    .button-group button span { /* Style the text inside the circle */
+        display: block; /* Make the text a block element */
+        text-align: center; /* Center the text horizontally */
+        font-size: 16px; /* Adjust font size as needed */
+        white-space: pre-wrap; /* Allow text to wrap within the circle */
+        font-family: Arial, sans-serif; /* Or your preferred font */
+        color: white;
+    }
 </style>
 
-<div id="selectedCourse"></div>
+<!-- Back Button -->
+<button onclick="loadPage('courses')" class="back-btn">Back to Courses</button>
+
+<h2>APHASIA UNIT</h2>
+<br>
+<h3>Select a Game below:</h3>
 
 <div class="button-group">
-  <button onclick="selectCourse('Matching Games')">Matching Games</button>
-  <button onclick="selectCourse('Tongue Twisters')">Tongue Twisters</button>
+  <button onclick="selectCourse('Matching Games')">Matching<br>Games</button>
+  <button onclick="selectCourse('Tongue Twisters')">Tongue<br>Twisters</button>
 </div>
 
 <script>
-function selectCourse(courseName) {
-  // Here you can add the logic for what happens when a course is selected.
-  // For example, you could display more information about the course,
-  // redirect to a different page, or update a database.
 
-  alert("You selected: " + courseName); // A simple alert for demonstration
-  // Or, for a more interactive experience:
-  // document.getElementById("selectedCourse").innerText = "Selected Course: " + courseName;
-
+function startGame(gameName) {
+    alert("You selected: " + gameName);
 }
 </script>
-

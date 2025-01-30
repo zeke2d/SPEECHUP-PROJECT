@@ -1,23 +1,43 @@
 <div id="contentPage">
-    <h2>COURSES</h2>
-    <br>
-    <h3>Select a Course below</h3>
 
     <style>
+         #contentPage { /* Target the specific container */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            min-height: 100%; /* Ensure it takes up full height if needed */
+            width: 100%; /* Or a specific width */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px; /* Adjust as needed */
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 20px; /* Adjust as needed */
+        }
+
         .button-group {
             display: flex;
-            gap: 10px;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 15px; /* Space between buttons */
+            width: 80%; /* Or a specific width, or max-width */
+            max-width: 500px; /* Example max width */
         }
 
         .button-group button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 15px; /* Increased padding */
+            font-size: 18px; /* Increased font size */
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             background-color: #df1645;
             color: white;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            text-align: center; /* Center text in button */
+            font-weight: bold; /* Make the text bold */
         }
 
         .button-group button:hover {
@@ -25,11 +45,16 @@
         }
     </style>
 
+    <h2>COURSES</h2>
+    <br>
+    <h3>To start your Speech Therapy Session please select a disorder below:</h3>
+
     <div class="button-group">
         <button onclick="loadPage('apraxiagameselection')">APRAXIA</button>
         <button onclick="loadPage('dysarthriagameselection')">DYSARTHRIA</button>
         <button onclick="loadPage('aphasiagameselection')">APHASIA</button>
     </div>
+
 </div>
 
 <script>
@@ -37,11 +62,12 @@ function loadPage(pageName) {
     fetch(`/${pageName}`)  // Request the page dynamically
     .then(response => response.text())
     .then(data => {
-        document.getElementById("contentPage").innerHTML = data; // Replace content
+        document.getElementById("dynamicContent").innerHTML = data; // Replace content
     })
     .catch(error => {
         console.error("Error loading page:", error);
-        document.getElementById("contentPage").innerHTML = "<h3>Error loading page.</h3>";
+        document.getElementById("dynamicContent").innerHTML = "<h3>Error loading page.</h3>";
     });
 }
+
 </script>

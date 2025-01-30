@@ -195,15 +195,13 @@ app.get('/content/:page', (req, res) => {
     res.render(page);  // This will render therapists.hbs, patients.hbs, or courses.hbs
 });
 
+// Allowed pages
+const allowedPages = ["home", "therapists", "patients", "courses", "communityforum", "patientprofile"];
+const allowedGamePages = ["apraxiagameselection", "dysarthriagameselection", "aphasiagameselection"];
+
 // Route to fetch dynamic content
 router.get("/:page", (req, res) => {
     const page = req.params.page;
-
-    // Allowed pages
-const allowedPages = ["home", "therapists", "patients", "courses", "communityforum", 
-    "therapistprofile", "patientprofile", "animalsounds", "bookreading", 
-    "wordsearch", "wordflipbook", "matchinggames", "tonguetwisters", 
-    "apraxiagameselection", "dysarthriagameselection", "aphasiagameselection"];
     
     if (!allowedPages.includes(page)) {
         return res.status(404).send("Page not found");

@@ -94,15 +94,72 @@ app.get("/communityforum", (req, res) => {
     res.render("communityforum")
 })
 
-app.get("/therapistprofile", (req, res) => {
-    res.render("therapistprofile")
-})
+app.get("/therapistprofile", async (req, res) => {
 
-app.get("/patientprofile", (req, res) => {
-    res.render("patientprofile")
-})
+    console.log("Therapist Profile");
+    
+    if (!req.session.user) {
+        return res.redirect("/therapistlogin");
+    }
+
+    console.log("Session User Data:", req.session.user); // Debugging line
+
+    try {
+        const user = await collection.therapistUsersCollection.findOne({ username: req.session.user.username });
+
+        console.log("Fetched User Data:", user); // Debugging line
+
+        if (!user) {
+            return res.redirect("/therapistlogin");
+        }
+
+        res.render("therapistprofile", { 
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username
+        });
+
+    } catch (error) {
+        console.error("Error fetching therapist profile:", error);
+        res.status(500).send("An error occurred.");
+    }
+});
+
+app.get("/patientprofile", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/patientlogin");
+    }
+
+    console.log("Session User Data:", req.session.user); // Debugging line
+   
+
+    try {
+        const user = await collection.patientUsersCollection.findOne({ username: req.session.user.username });
+        console.log(user);
+
+        console.log("Fetched User Data:", user); // Debugging line
+
+        if (!user) {
+            return res.redirect("/patientlogin");
+        }
+
+
+        res.render("patientprofile", { 
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username
+        });
+
+    } catch (error) {
+        console.error("Error fetching patient profile:", error);
+        res.status(500).send("An error occurred.");
+    }
+});
+
 
 app.get("/therapisthome", (req, res) => {
+    console.log("Therapist Home");
     if (!req.session.user) {
         return res.redirect("/therapistlogin"); // Redirect if not logged in
     }
@@ -120,11 +177,17 @@ app.get("/patienthome", (req, res) => {
 
 app.post("/therapistlogin", async (req, res) => {
     try{
-        const check = await collection.therapistUsersCollection.findOne({username : req.body.username})
+        const check = await collection.therapistUsersCollection.findOne({username : req.body.username});
 
         if(check && check.password === req.body.password){          
-            req.session.user = { firstName: check.firstName };
-            res.redirect("therapisthome")
+            req.session.user = { 
+                firstName: check.firstName,
+                lastName: check.lastName,
+                username: check.username
+            };
+
+            console.log("Stored in Session:", req.session.user); // Debugging line
+            res.redirect("/therapisthome");
 
         } else {
             return res.render("therapistlogin", { error: "Invalid username or password." });
@@ -154,8 +217,13 @@ app.post("/patientlogin", async (req, res) => {
         const check = await collection.patientUsersCollection.findOne({username : req.body.username})
 
         if(check && check.password === req.body.password){          
-            req.session.user = { firstName: check.firstName };
-            res.redirect("patienthome")
+            req.session.user = { 
+                firstName: check.firstName,
+                lastName: check.lastName,
+                username: check.username
+            };
+            console.log("Stored in Session:", req.session.user); // Debugging line
+            res.redirect("/patienthome")
 
         } else {
             return res.render("patientlogin", { error: "Invalid username or password." });

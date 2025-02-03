@@ -241,7 +241,7 @@
             <div class="profile-container" onclick="toggleDropdown()">
                 <div class="profile-icon">👤</div>
                 <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="/therapistprofile" onclick="loadPage('therapistprofile')">View Profile</a>
+                    <a href="#" onclick="loadPage('therapistprofile'); return false;">View Profile</a>
                     <a href="/logout" class="logout-btn">Log Out</a>
                 </div>
             </div>
@@ -288,6 +288,89 @@
             alert("Searching: " + document.getElementById("searchInput").value);
         }
 
+
+        function enableEditing() {
+        document.getElementById("firstName").disabled = false;
+        document.getElementById("lastName").disabled = false;
+        document.getElementById("password").disabled = false;
+    
+        document.getElementById("editProfile").style.display = "none";
+        document.getElementById("updateProfile").style.display = "inline-block";
+    } 
+
+        async function updateProfile() {
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const password = document.getElementById("password").value;
+
+        const response = await fetch("/update-profile-therapist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ firstName, lastName, password })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Profile updated successfully!");
+            window.location.reload();
+        } else {
+            alert("Error updating profile.");
+        }
+    }
+
+        async function deleteAccount() {
+        if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+            const response = await fetch("/delete-account-therapist", { method: "POST" });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Account deleted successfully!");
+                window.location.href = "/";
+            } else {
+                alert("Error deleting account.");
+            }
+        }
+    }
+
+        async function verifyTherapistPassword() {
+        const enteredPassword = document.getElementById("verifyPassword").value;
+        
+        // Send password for verification
+        const response = await fetch("/verify-password-therapist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: enteredPassword })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            document.getElementById("passwordField").value = enteredPassword;
+            document.getElementById("togglePassword").disabled = false;
+
+             // Show success message using a popup (alert)
+            alert("Password verified successfully!"); // Simple alert popup
+
+        } else {
+            alert("Incorrect password!");
+        }
+    }
+
+        function togglePassword() {
+        var passwordField = document.getElementById("passwordField");
+        var toggleButton = document.getElementById("togglePassword");
+
+        if (passwordField.type === "*******") {
+            passwordField.type = "text";
+            toggleButton.innerText = "🙈"; // Hide icon
+        } else {
+            passwordField.type = "*******";
+            toggleButton.innerText = "👁"; // Show icon
+        }
+    }
+ 
         document.addEventListener("click", function(event) {
         var dropdown = document.getElementById("dropdownMenu");
         var profileContainer = document.querySelector(".profile-container");

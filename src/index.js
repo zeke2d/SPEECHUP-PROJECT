@@ -3,6 +3,7 @@ const path = require("path") //import PathJS -> for the utilities for working wi
 const hbs = require("hbs") //import HandlebarsJS
 const collection = require("./mongodb")
 const session = require("express-session");
+const bcrypt = require("bcrypt");
 const router = express.Router();
 const app = express() //starting ExpressJS
 
@@ -94,20 +95,14 @@ app.get("/communityforum", (req, res) => {
     res.render("communityforum")
 })
 
-app.get("/therapistprofile", async (req, res) => {
+app.get("/content/therapistprofile", async (req, res) => {
 
-    console.log("Therapist Profile");
-    
     if (!req.session.user) {
         return res.redirect("/therapistlogin");
     }
 
-    console.log("Session User Data:", req.session.user); // Debugging line
-
     try {
-        const user = await collection.therapistUsersCollection.findOne({ username: req.session.user.username });
-
-        console.log("Fetched User Data:", user); // Debugging line
+        const user = await collection.therapistUsersCollection.findOne({ email: req.session.user.email });
 
         if (!user) {
             return res.redirect("/therapistlogin");
@@ -116,7 +111,7 @@ app.get("/therapistprofile", async (req, res) => {
         res.render("therapistprofile", { 
             firstName: user.firstName,
             lastName: user.lastName,
-            username: user.username
+            email: user.email
         });
 
     } catch (error) {
@@ -125,30 +120,23 @@ app.get("/therapistprofile", async (req, res) => {
     }
 });
 
-app.get("/patientprofile", async (req, res) => {
+app.get("/content/patientprofile", async (req, res) => {
 
     if (!req.session.user) {
         return res.redirect("/patientlogin");
     }
 
-    console.log("Session User Data:", req.session.user); // Debugging line
-   
-
     try {
-        const user = await collection.patientUsersCollection.findOne({ username: req.session.user.username });
-        console.log(user);
-
-        console.log("Fetched User Data:", user); // Debugging line
+        const user = await collection.patientUsersCollection.findOne({ email: req.session.user.email });
 
         if (!user) {
             return res.redirect("/patientlogin");
         }
 
-
         res.render("patientprofile", { 
             firstName: user.firstName,
             lastName: user.lastName,
-            username: user.username
+            email: user.email
         });
 
     } catch (error) {
@@ -176,77 +164,240 @@ app.get("/patienthome", (req, res) => {
 });
 
 app.post("/therapistlogin", async (req, res) => {
-    try{
-        const check = await collection.therapistUsersCollection.findOne({username : req.body.username});
+    try {
+        const check = await collection.therapistUsersCollection.findOne({ email: req.body.email });
 
-        if(check && check.password === req.body.password){          
-            req.session.user = { 
-                firstName: check.firstName,
-                lastName: check.lastName,
-                username: check.username
-            };
-
-            console.log("Stored in Session:", req.session.user); // Debugging line
-            res.redirect("/therapisthome");
-
-        } else {
-            return res.render("therapistlogin", { error: "Invalid username or password." });
+        if (!check) {
+            console.log("No user found with email:", req.body.email);
+            return res.render("therapistlogin", { error: "Invalid email or password." });
         }
+
+        // Compare hashed password
+        const passwordMatch = await bcrypt.compare(req.body.password, check.password);
+
+        if (!passwordMatch) {
+            console.log("Incorrect password for user:", req.body.email);
+            return res.render("therapistlogin", { error: "Invalid email or password." });
+        }
+
+        // Store session data
+        req.session.user = {
+            firstName: check.firstName,
+            lastName: check.lastName,
+            email: check.email
+        };
+
+        console.log("Stored in Session:", req.session.user);
+        res.redirect("/therapisthome");
+
     } catch (error) {
+        console.error("Login Error:", error);
         return res.render("therapistlogin", { error: "An error occurred. Please try again." });
     }
 });
 
 app.post("/therapistsignup", async (req, res) => {
-    var newUser = {
 
-    firstName : req.body.firstName,
-    lastName : req.body.lastName,    
-    username : req.body.username,
-    password : req.body.password
+    try {
+        // Hash password before storing
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+        var newUser = {
+
+            firstName : req.body.firstName,
+            lastName : req.body.lastName,    
+            email : req.body.email,
+            password : hashedPassword
+
+        }; 
+
+        await collection.therapistUsersCollection.insertMany([newUser]);
+
+        console.log("User registered successfully:", newUser);
+        res.redirect("/therapistlogin"); // Redirect to login instead of homepage
+
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).send("An error occurred during signup.");
     }
-
-    await collection.therapistUsersCollection.insertMany([newUser])
-
-    res.redirect("therapisthome")
-})
+});
 
 app.post("/patientlogin", async (req, res) => {
-    try{
-        const check = await collection.patientUsersCollection.findOne({username : req.body.username})
+    try {
+        const check = await collection.patientUsersCollection.findOne({ email: req.body.email });
 
-        if(check && check.password === req.body.password){          
-            req.session.user = { 
-                firstName: check.firstName,
-                lastName: check.lastName,
-                username: check.username
-            };
-            console.log("Stored in Session:", req.session.user); // Debugging line
-            res.redirect("/patienthome")
-
-        } else {
-            return res.render("patientlogin", { error: "Invalid username or password." });
+        if (!check) {
+            console.log("No patient found with email:", req.body.email);
+            return res.render("patientlogin", { error: "Invalid email or password." });
         }
+
+        const passwordMatch = await bcrypt.compare(req.body.password, check.password);
+
+        if (!passwordMatch) {
+            console.log("Incorrect password for patient:", req.body.email);
+            return res.render("patientlogin", { error: "Invalid email or password." });
+        }
+
+        req.session.user = {
+            firstName: check.firstName,
+            lastName: check.lastName,
+            email: check.email
+        };
+
+        console.log("Stored in Session:", req.session.user);
+        res.redirect("/patienthome");
+
     } catch (error) {
+        console.error("Login Error:", error);
         return res.render("patientlogin", { error: "An error occurred. Please try again." });
     }
 });
 
 app.post("/patientsignup", async (req, res) => {
-    var newUser = {
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    firstName : req.body.firstName,
-    lastName : req.body.lastName,
-    username : req.body.username,
-    password : req.body.password
+        var newUser = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: hashedPassword
+        };
 
+        await collection.patientUsersCollection.insertMany([newUser]);
+
+        console.log("Patient registered successfully:", newUser);
+        res.redirect("/patientlogin");
+
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).send("An error occurred during signup.");
+    }
+});
+
+app.post("/update-profile-therapist", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    await collection.patientUsersCollection.insertMany([newUser])
+    try {
+        let updatedFields = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+        };
 
-    res.redirect("patienthome")
-})
+        if (req.body.password) {
+            updatedFields.password = await bcrypt.hash(req.body.password, 10);
+        }
+
+        await collection.therapistUsersCollection.updateOne(
+            { email: req.session.user.email },
+            { $set: updatedFields }
+        );
+
+        req.session.user.firstName = req.body.firstName;
+        req.session.user.lastName = req.body.lastName;
+
+        res.json({ success: true });
+
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+});
+
+app.post("/delete-account-therapist", async (req, res) => {
+    await collection.therapistUsersCollection.deleteOne({ email: req.session.user.email });
+    req.session.destroy(() => res.json({ success: true }));
+});
+
+app.post("/update-profile-patient", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    try {
+        let updatedFields = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+        };
+
+        if (req.body.password) {
+            updatedFields.password = await bcrypt.hash(req.body.password, 10);
+        }
+
+        await collection.patientUsersCollection.updateOne(
+            { email: req.session.user.email },
+            { $set: updatedFields }
+        );
+
+        req.session.user.firstName = req.body.firstName;
+        req.session.user.lastName = req.body.lastName;
+
+        res.json({ success: true });
+
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+});
+
+app.post("/delete-account-patient", async (req, res) => {
+    await collection.patientUsersCollection.deleteOne({ email: req.session.user.email });
+    req.session.destroy(() => res.json({ success: true }));
+});
+
+app.post("/verify-password-therapist", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    try {
+        // Fetch the user's hashed password from the database
+        const user = await collection.therapistUsersCollection.findOne({ email: req.session.user.email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Compare entered password with hashed password
+        const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+
+        if (passwordMatch) {
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: "Incorrect password" });
+        }
+    } catch (error) {
+        console.error("Password verification error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+app.post("/verify-password-patient", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    try {
+        // Fetch the patient's hashed password from the database
+        const user = await collection.patientUsersCollection.findOne({ email: req.session.user.email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Compare entered password with hashed password
+        const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+
+        if (passwordMatch) {
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: "Incorrect password" });
+        }
+    } catch (error) {
+        console.error("Password verification error:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
 
 router.get("/therapisthome", (req, res) => {
     res.render("therapisthome", { firstName: req.user.firstName });

@@ -20,9 +20,10 @@ const therapistUsersSchema = new mongoose.Schema({
       required: true,
     },
 
-    username : {
+    email : {
         type : String,
-        required : true
+        required : true,
+        unique: true
     },
     password : {
         type : String,
@@ -43,9 +44,10 @@ const patientUsersSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    username: {
+    email: {
       type: String,
       required: true,
+      unique: true
     },
     password: {
       type: String,

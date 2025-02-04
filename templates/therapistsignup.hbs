@@ -180,6 +180,50 @@
         .back-btn:hover {
             color: #0056b3;
         }
+
+
+                .checkbox-container {
+            display: flex;
+            align-items: center; /* Vertically align items */
+            margin-bottom: 20px; /* Add some space below */
+        }
+
+        .checkbox-container label {
+            margin-right: 10px;  /* Space between label and checkbox */
+            cursor: pointer;      /* Make label clickable */
+            color: #555;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            appearance: none; /* Remove default checkbox styling */
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative; /* For positioning the checkmark */
+            margin: 0; /* Reset default margins */
+            vertical-align: middle; /* Align checkbox with label */
+        }
+
+        .checkbox-container input[type="checkbox"]:checked {
+            border-color: #007bff; /* Highlight border when checked */
+        }
+
+        .checkbox-container input[type="checkbox"]:checked::before {
+            content: "\2713"; /* Unicode checkmark character */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #007bff; /* Checkmark color */
+        }
+
+        /* Optional: Add a hover effect */
+        .checkbox-container:hover input[type="checkbox"] {
+            border-color: #ccc;
+        }
     </style>
 </head>
 
@@ -196,6 +240,7 @@
             <form id="therapistsignupForm" action="/therapistsignup" method="post">
                 <input type="text" name="firstName" placeholder="First Name" required>
                 <input type="text" name="lastName" placeholder="Last Name" required>
+<<<<<<< Updated upstream
                 <input type="text" name="email" placeholder="Email" required>
 
                 <div class="password-container">
@@ -207,14 +252,18 @@
                     <label for="rememberMe">Remember Me</label>
                     <input type="checkbox" name="rememberMe" id="rememberMe">
                 </p>
+=======
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+>>>>>>> Stashed changes
                 
                 <button type="submit" class="signup-btn">Sign Up</button>
             </form>
             <div class="social-login">
                 <p>or</p>
-                <img src="/assets/images/icons/google.png">
-                <img src="/assets/images/icons/facebook.png">
-                <img src="/assets/images/icons/twitter.png">
+                <img src="google-logo.png">
+                <img src="facebook-logo.png">
+                <img src="twitterX-logo.jpg">
             </div>
             <br>
             <p class="login-link center-text">Already have an account? <a href="/therapistlogin">Click here!</a></p>

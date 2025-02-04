@@ -149,14 +149,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #dcd7d9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            cursor: pointer;
+            object-fit: cover;
         }
 
         .dropdown-menu {
@@ -239,7 +232,7 @@
                 <button onclick="searchFunction()">🔍</button>
             </div>
             <div class="profile-container" onclick="toggleDropdown()">
-                <div class="profile-icon">👤</div>
+                <img class="profile-icon" id="therapistProfileIcon" src="{{profileImageTherapist}}" alt="Profile">
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="#" onclick="loadPage('therapistprofile'); return false;">View Profile</a>
                     <a href="/logout" class="logout-btn">Log Out</a>
@@ -253,8 +246,6 @@
         </div>
 
     </div>
-    
-
 
     <script>
         function toggleSidebar() {
@@ -273,12 +264,99 @@
             })
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
+
+                // Add event listeners AFTER the content is loaded
+            if (page === 'courses') {  // Check if it's the courses page
+                addCoursesEventListeners(); // Call a new function
+            }
+            if (page === 'apraxiagameselection') {
+                addApraxiaEventListeners();
+            }
+            if (page === 'dysarthriagameselection') {
+                addDysarthriaEventListeners();
+            }
+            if (page === 'aphasiagameselection') {
+                addAphasiaEventListeners();
+            }
+
             })
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
             });
     }
+
+    function addCoursesEventListeners() {
+        const apraxiaButton = document.querySelector('.button-group button:nth-child(1)'); // Select Apraxia button
+            if (apraxiaButton) {
+        apraxiaButton.addEventListener('click', () => {
+            loadPage('apraxiagameselection');
+        });
+    }
+
+        const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)'); // Select Dysarthria button
+            if (dysarthriaButton) {
+        dysarthriaButton.addEventListener('click', () => {
+            loadPage('dysarthriagameselection');
+        });
+    }
+
+        const aphasiaButton = document.querySelector('.button-group button:nth-child(3)'); // Select Aphasia button
+            if (aphasiaButton) {
+        aphasiaButton.addEventListener('click', () => {
+            loadPage('aphasiagameselection');
+        });
+    }
+
+}
+
+    function addApraxiaEventListeners(){
+        const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
+            if(animalSoundsButton){
+        animalSoundsButton.addEventListener('click', () => {
+            loadPage('animalsounds'); // Load the animal sounds page
+        });
+    }
+
+        const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
+             if(bookReadingButton){
+        bookReadingButton.addEventListener('click', () => {
+            loadPage('bookreading'); // Load the book reading page
+        });
+    }
+}
+
+    function addDysarthriaEventListeners(){
+        const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
+            if(wordSearchButton){
+        wordSearchButton.addEventListener('click', () => {
+            loadPage('wordsearch'); 
+        });
+    }
+
+        const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
+             if(wordFlipbookButton){
+        wordFlipbookButton.addEventListener('click', () => {
+            loadPage('wordflipbook');
+        });
+    }
+}
+
+    function addAphasiaEventListeners(){
+        const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
+            if(matchingGamesButton){
+        matchingGamesButton.addEventListener('click', () => {
+            loadPage('matchinggames'); 
+        });
+    }
+
+        const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
+             if(tongueTwistersButton){
+        tongueTwistersButton.addEventListener('click', () => {
+            loadPage('tonguetwisters'); 
+        });
+    }
+}
 
         function toggleDropdown() {
             document.getElementById("dropdownMenu").classList.toggle("active");
@@ -289,7 +367,7 @@
         }
 
 
-        function enableEditing() {
+    function enableEditing() {
         document.getElementById("firstName").disabled = false;
         document.getElementById("lastName").disabled = false;
         document.getElementById("password").disabled = false;
@@ -298,7 +376,7 @@
         document.getElementById("updateProfile").style.display = "inline-block";
     } 
 
-        async function updateProfile() {
+    async function updateProfile() {
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const password = document.getElementById("password").value;
@@ -312,6 +390,15 @@
         const result = await response.json();
 
         if (result.success) {
+
+             if (result.profileImageTherapist) {
+            document.getElementById("profileImageTherapist").src = result.profileImageTherapist;
+            document.querySelectorAll(".profile-icon").forEach(icon => {
+                icon.src = result.profileImageTherapist;
+            });
+        }
+
+
             alert("Profile updated successfully!");
             window.location.reload();
         } else {
@@ -319,7 +406,7 @@
         }
     }
 
-        async function deleteAccount() {
+    async function deleteAccount() {
         if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
             const response = await fetch("/delete-account-therapist", { method: "POST" });
 
@@ -334,7 +421,7 @@
         }
     }
 
-        async function verifyTherapistPassword() {
+    async function verifyTherapistPassword() {
         const enteredPassword = document.getElementById("verifyPassword").value;
         
         // Send password for verification
@@ -358,6 +445,41 @@
         }
     }
 
+function uploadTherapistProfileImage(event) {
+    event.preventDefault(); // ✅ Prevent form from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImageTherapist", fileInput);
+
+    fetch("/upload-therapist-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("profileImageTherapist").src = data.profileImageTherapist; // ✅ Update profile image
+            document.querySelectorAll(".profile-icon").forEach(icon => {
+                icon.src = data.profileImageTherapist;
+            });
+
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image.");
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+    });
+}
+
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");
         var toggleButton = document.getElementById("togglePassword");
@@ -370,7 +492,7 @@
             toggleButton.innerText = "👁"; // Show icon
         }
     }
- 
+
         document.addEventListener("click", function(event) {
         var dropdown = document.getElementById("dropdownMenu");
         var profileContainer = document.querySelector(".profile-container");

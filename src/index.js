@@ -4,13 +4,41 @@ const hbs = require("hbs") //import HandlebarsJS
 const collection = require("./mongodb")
 const session = require("express-session");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 const router = express.Router();
 const app = express() //starting ExpressJS
 
 const templatePath = path.join(__dirname, "../templates") //preparing our templatePath to replace the views path
 
+// Set storage engine for Multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "uploads/");
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+    },
+});
+
+// File upload filter (allow only images)
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /jpeg|jpg|png|gif/;
+        const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimeType = fileTypes.test(file.mimetype);
+
+        if (extName && mimeType) {
+            return cb(null, true);
+        } else {
+            cb("Error: Only images are allowed!");
+        }
+    }
+});
+
 app.use(express.json()) //get the hbs files and get mongodb successfully connected
 
+app.use("/uploads", express.static("uploads"));
 
 app.set("view engine", "hbs")
 app.set("views", templatePath)
@@ -19,7 +47,8 @@ app.use(express.urlencoded({extended:false}))
 app.use(session({
     secret: "speechup_secret", // Change this to a secure random string
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: { secure: false } 
 }));
 
 
@@ -101,23 +130,14 @@ app.get("/content/therapistprofile", async (req, res) => {
         return res.redirect("/therapistlogin");
     }
 
-    try {
         const user = await collection.therapistUsersCollection.findOne({ email: req.session.user.email });
-
-        if (!user) {
-            return res.redirect("/therapistlogin");
-        }
 
         res.render("therapistprofile", { 
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            email: user.email,
+            profileImage: user.profileImage || "/uploads/default-profile.png"
         });
-
-    } catch (error) {
-        console.error("Error fetching therapist profile:", error);
-        res.status(500).send("An error occurred.");
-    }
 });
 
 app.get("/content/patientprofile", async (req, res) => {
@@ -146,21 +166,24 @@ app.get("/content/patientprofile", async (req, res) => {
 });
 
 
-app.get("/therapisthome", (req, res) => {
-    console.log("Therapist Home");
+app.get("/therapisthome", async (req, res) => {
     if (!req.session.user) {
-        return res.redirect("/therapistlogin"); // Redirect if not logged in
+        return res.redirect("/therapistlogin");
     }
-
-    res.render("therapisthome", { firstName: req.session.user.firstName });
+    res.render("therapisthome", {
+        firstName: req.session.user.firstName,
+        profileImageTherapist: req.session.user.profileImageTherapist || "/default-profile.png"
+    });
 });
 
-app.get("/patienthome", (req, res) => {
+app.get("/patienthome", async (req, res) => {
     if (!req.session.user) {
-        return res.redirect("/therapistlogin"); // Redirect if not logged in
+        return res.redirect("/patientlogin");
     }
-
-    res.render("patienthome", { firstName: req.session.user.firstName });
+    res.render("patienthome", {
+        firstName: req.session.user.firstName,
+        profileImagePatient: req.session.user.profileImagePatient || "/default-profile.png"
+    });
 });
 
 app.post("/therapistlogin", async (req, res) => {
@@ -168,7 +191,6 @@ app.post("/therapistlogin", async (req, res) => {
         const check = await collection.therapistUsersCollection.findOne({ email: req.body.email });
 
         if (!check) {
-            console.log("No user found with email:", req.body.email);
             return res.render("therapistlogin", { error: "Invalid email or password." });
         }
 
@@ -176,7 +198,6 @@ app.post("/therapistlogin", async (req, res) => {
         const passwordMatch = await bcrypt.compare(req.body.password, check.password);
 
         if (!passwordMatch) {
-            console.log("Incorrect password for user:", req.body.email);
             return res.render("therapistlogin", { error: "Invalid email or password." });
         }
 
@@ -184,7 +205,8 @@ app.post("/therapistlogin", async (req, res) => {
         req.session.user = {
             firstName: check.firstName,
             lastName: check.lastName,
-            email: check.email
+            email: check.email,
+            profileImageTherapist: check.profileImageTherapist || "/uploads/default-profile.png"
         };
 
         console.log("Stored in Session:", req.session.user);
@@ -241,7 +263,8 @@ app.post("/patientlogin", async (req, res) => {
         req.session.user = {
             firstName: check.firstName,
             lastName: check.lastName,
-            email: check.email
+            email: check.email,
+            profileImage: check.profileImage || "/uploads/default-profile.png"
         };
 
         console.log("Stored in Session:", req.session.user);
@@ -398,6 +421,77 @@ app.post("/verify-password-patient", async (req, res) => {
         res.status(500).json({ success: false, message: "Server error" });
     }
 });
+
+// Upload profile picture route
+app.post("/upload-therapist-profile", upload.single("profileImageTherapist"), async (req, res) => {
+
+    try {
+
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - No session user found" });
+    }
+
+    console.log("File received:", req.file); // Debugging: Check if file is received
+
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded." });
+        }
+
+        const updatedProfileImageTherapist = "/uploads/" + req.file.filename;
+
+        const user = await collection.therapistUsersCollection.findOneAndUpdate(
+            { email: req.session.user.email },
+            { $set: { profileImageTherapist: updatedProfileImageTherapist } },
+            { new: true }
+        );
+
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        req.session.user.profileImageTherapist = updatedProfileImageTherapist;
+
+        console.log("Profile Image Updated:", updatedProfileImageTherapist);
+        res.json({ success: true, profileImageTherapist: updatedProfileImageTherapist });
+    } catch (err) {
+        console.error("Error uploading profile image:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// Upload profile picture route
+app.post("/upload-patient-profile", upload.single("profileImagePatient"), async (req, res) => {
+
+    try {
+
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - No session user found" });
+    }
+
+    console.log("File received:", req.file); // Debugging: Check if file is received
+
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded." });
+        }
+
+        const updatedProfileImage = "/uploads/" + req.file.filename;
+
+        const user = await collection.patientUsersCollection.findOneAndUpdate(
+            { email: req.session.user.email },
+            { $set: { profileImage: updatedProfileImage } },
+            { new: true }
+        );
+
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        req.session.user.profileImage = updatedProfileImage;
+
+        console.log("Profile Image Updated:", updatedProfileImage);
+        res.json({ success: true, profileImage: updatedProfileImage });
+    } catch (err) {
+        console.error("Error uploading profile image:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
 
 router.get("/therapisthome", (req, res) => {
     res.render("therapisthome", { firstName: req.user.firstName });

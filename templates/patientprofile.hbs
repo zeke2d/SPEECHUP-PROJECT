@@ -87,9 +87,10 @@
     <div class="container">
         <div class="profile-header">
             <div class="profile-picture">
-                <img id="profileImage" src="/uploads/default-profile.png" alt="Profile Picture">
-                <form id="uploadForm" action="/upload-profile" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
+                <img id="profileImage" src="{{profileImagePatient}}" alt="Profile Picture">
+
+                <form id="uploadForm" enctype="multipart/form-data" onsubmit="uploadPatientProfileImage(event)">
+                    <input type="file" name="profileImagePatient" id="profileImageInput" accept="image/*">
                     <button type="submit">Upload</button>
                 </form>
             </div>
@@ -134,3 +135,41 @@
         </div>
 
     </div>
+
+    <script>
+    function uploadPatientProfileImage(event) {
+    event.preventDefault(); // ✅ Prevent form from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImagePatient", fileInput);
+
+    fetch("/upload-patient-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("profileImagePatient").src = data.profileImagePatient; // ✅ Update profile image
+            document.querySelectorAll(".profile-icon").forEach(icon => {
+                icon.src = data.profileImagePatient;
+            });
+
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image.");
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+    });
+}
+
+    </script>

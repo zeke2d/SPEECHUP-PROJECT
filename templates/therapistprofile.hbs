@@ -87,9 +87,10 @@
     <div class="container">
         <div class="profile-header">
             <div class="profile-picture">
-                <img id="profileImage" src="/uploads/default-profile.png" alt="Profile Picture">
-                <form id="uploadForm" action="/upload-profile" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
+                <img id="profileImageTherapist" src="{{profileImageTherapist}}" alt="Profile Picture">
+
+                <form id="uploadForm" enctype="multipart/form-data" onsubmit="uploadTherapistProfileImage(event)">
+                    <input type="file" name="profileImageTherapist" id="profileImageInput" accept="image/*">
                     <button type="submit">Upload</button>
                 </form>
             </div>
@@ -134,3 +135,45 @@
         </div>
 
       </div>
+
+    <script>
+    function uploadTherapistProfileImage(event) {
+    event.preventDefault(); // ✅ Prevent form from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImageTherapist", fileInput);
+
+    fetch("/upload-therapist-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Updated Image Path:", data.profileImageTherapist);
+            
+            // ✅ Prevent browser caching issue by appending timestamp
+            let newImageSrc = data.profileImageTherapist + "?t=" + new Date().getTime();
+
+            document.getElementById("profileImageTherapist").src = data.profileImageTherapist; // ✅ Update profile image
+            document.querySelectorAll(".profile-icon").forEach(icon => {
+                icon.src = newImageSrc;
+            });
+
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image.");
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+    });
+}
+    </script>

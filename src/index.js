@@ -37,6 +37,7 @@ const upload = multer({
 });
 
 app.use(express.json()) //get the hbs files and get mongodb successfully connected
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use("/uploads", express.static("uploads"));
 
@@ -50,6 +51,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false } 
 }));
+
 
 
 app.get("/", (req, res) => {

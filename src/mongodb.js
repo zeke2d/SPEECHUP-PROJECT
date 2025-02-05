@@ -28,12 +28,8 @@ const therapistUsersSchema = new mongoose.Schema({
     password : {
         type : String,
         required : true
-    },
-    profileImage: {
-      type: String, // Store the image path (URL or file path)
-      default: "/uploads/default-profile.png" // Default profile image
     }
-  });
+})
 
 //define the collection and specify the schema for the collection
 const therapistUsersCollection = new mongoose.model("therapist_users", therapistUsersSchema) //name of the collection, schema of the collection
@@ -57,10 +53,6 @@ const patientUsersSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    profileImage: {
-      type: String, // Store the image path (URL or file path)
-      default: "/uploads/default-profile.png" // Default profile image
-    }
   });
   
   // Define the patient_users collection

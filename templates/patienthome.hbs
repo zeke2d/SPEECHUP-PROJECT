@@ -239,7 +239,7 @@
                 <button onclick="searchFunction()">🔍</button>
             </div>
             <div class="profile-container" onclick="toggleDropdown()">
-                <img class="profile-icon" src="{{profileImagePatient}}" alt="Profile">
+                <div class="profile-icon">👤</div>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="#" onclick="loadPage('patientprofile'); return false;">View Profile</a>
                     <a href="/logout" class="logout-btn">Log Out</a>
@@ -272,99 +272,12 @@
             })
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
-
-                // Add event listeners AFTER the content is loaded
-            if (page === 'courses') {  // Check if it's the courses page
-                addCoursesEventListeners(); // Call a new function
-            }
-            if (page === 'apraxiagameselection') {
-                addApraxiaEventListeners();
-            }
-            if (page === 'dysarthriagameselection') {
-                addDysarthriaEventListeners();
-            }
-            if (page === 'aphasiagameselection') {
-                addAphasiaEventListeners();
-            }
-
             })
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
             });
     }
-
-        function addCoursesEventListeners() {
-        const apraxiaButton = document.querySelector('.button-group button:nth-child(1)'); // Select Apraxia button
-            if (apraxiaButton) {
-        apraxiaButton.addEventListener('click', () => {
-            loadPage('apraxiagameselection');
-        });
-    }
-
-        const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)'); // Select Dysarthria button
-            if (dysarthriaButton) {
-        dysarthriaButton.addEventListener('click', () => {
-            loadPage('dysarthriagameselection');
-        });
-    }
-
-        const aphasiaButton = document.querySelector('.button-group button:nth-child(3)'); // Select Aphasia button
-            if (aphasiaButton) {
-        aphasiaButton.addEventListener('click', () => {
-            loadPage('aphasiagameselection');
-        });
-    }
-
-}
-
-        function addApraxiaEventListeners(){
-        const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
-            if(animalSoundsButton){
-        animalSoundsButton.addEventListener('click', () => {
-            loadPage('animalsounds'); // Load the animal sounds page
-        });
-    }
-
-        const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
-             if(bookReadingButton){
-        bookReadingButton.addEventListener('click', () => {
-            loadPage('bookreading'); // Load the book reading page
-        });
-    }
-}
-
-        function addDysarthriaEventListeners(){
-        const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
-            if(wordSearchButton){
-        wordSearchButton.addEventListener('click', () => {
-            loadPage('wordsearch'); 
-        });
-    }
-
-        const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
-             if(wordFlipbookButton){
-        wordFlipbookButton.addEventListener('click', () => {
-            loadPage('wordflipbook');
-        });
-    }
-}
-
-        function addAphasiaEventListeners(){
-        const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
-            if(matchingGamesButton){
-        matchingGamesButton.addEventListener('click', () => {
-            loadPage('matchinggames'); 
-        });
-    }
-
-        const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
-             if(tongueTwistersButton){
-        tongueTwistersButton.addEventListener('click', () => {
-            loadPage('tonguetwisters'); 
-        });
-    }
-}
 
         function toggleDropdown() {
             document.getElementById("dropdownMenu").classList.toggle("active");
@@ -442,41 +355,6 @@
             alert("Incorrect password!");
         }
     }
-
-    function uploadPatientProfileImage(event) {
-    event.preventDefault(); // ✅ Prevent form from reloading the page
-
-    let formData = new FormData();
-    let fileInput = document.getElementById("profileImageInput").files[0];
-
-    if (!fileInput) {
-        alert("Please select an image to upload.");
-        return;
-    }
-
-    formData.append("profileImagePatient", fileInput);
-
-    fetch("/upload-patient-profile", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById("profileImagePatient").src = data.profileImagePatient; // ✅ Update profile image
-            document.querySelectorAll(".profile-icon").forEach(icon => {
-                icon.src = data.profileImagePatient;
-            });
-
-            alert("Profile image updated successfully!");
-        } else {
-            alert("Error uploading image.");
-        }
-    })
-    .catch(error => {
-        console.error("Upload error:", error);
-    });
-}
 
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");

@@ -98,10 +98,10 @@
     <div class="container">
         <div class="profile-header">
             <div class="profile-picture">
-                <img id="profileImage" src="/uploads/default-profile.png" alt="Profile Picture">
-                <form id="uploadForm" action="/upload-profile" method="POST" enctype="multipart/form-data">
+                <img id="profileImage" src="{{profileImage}}?t={{timestamp}}" alt="Profile Picture">
+                <form id="uploadForm" enctype="multipart/form-data">
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
-                    <button type="submit">Upload</button>
+                    <button type="button" onclick="uploadPatientProfileImage(event)">Upload</button>
                 </form>
             </div>
             <h2 id="username">{{firstName}} {{lastName}}</h2>
@@ -145,3 +145,47 @@
         </div>
 
     </div>
+
+    <script>
+function uploadPatientProfileImage(event) {
+    event.preventDefault(); // Prevent form from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImage", fileInput);
+
+    fetch("/upload-patient-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+
+            let profileImageElement = document.getElementById("profileImage");
+            if (profileImageElement) {
+                profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
+            }
+
+            let homeProfileIcon = document.querySelector(".profile-icon");
+            if (homeProfileIcon) {
+                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
+            }
+
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+        alert("An error occurred while uploading.");
+    });
+}
+    </script>

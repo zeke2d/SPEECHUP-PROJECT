@@ -4,10 +4,37 @@ const hbs = require("hbs") //import HandlebarsJS
 const collection = require("./mongodb")
 const session = require("express-session");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 const router = express.Router();
 const app = express() //starting ExpressJS
 
 const templatePath = path.join(__dirname, "../templates") //preparing our templatePath to replace the views path
+
+// Set storage engine for Multer
+const storage = multer.diskStorage({
+    destination: "./public/uploads/",
+    filename: (req, file, cb) => {
+        cb(null, req.session.user.email + path.extname(file.originalname)); // Save as userId.extension
+    }
+});
+
+// File upload filter (allow only images)
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /jpeg|jpg|png|gif/;
+        const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimeType = fileTypes.test(file.mimetype);
+
+        if (extName && mimeType) {
+            return cb(null, true);
+        } else {
+            cb("Error: Only images are allowed!");
+        }
+    }
+});
+
+app.use("/uploads", express.static("public/uploads"));
 
 app.use(express.json()) //get the hbs files and get mongodb successfully connected
 app.use(express.static(path.join(__dirname, 'public'))); //get images
@@ -22,8 +49,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-
-
 
 app.get("/", (req, res) => {
     res.render("index")
@@ -100,69 +125,95 @@ app.get("/communityforum", (req, res) => {
 app.get("/content/therapistprofile", async (req, res) => {
 
     if (!req.session.user) {
-        return res.redirect("/therapistlogin");
+        return res.redirect("/therapistlogin"); // ✅ Redirect to therapist login if not authenticated
     }
 
     try {
         const user = await collection.therapistUsersCollection.findOne({ email: req.session.user.email });
-
-        if (!user) {
-            return res.redirect("/therapistlogin");
+        if (user) {
+            req.session.user.profileImage = user.profileImage; // ✅ Ensure session has latest image
+            res.render("therapistprofile", {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                profileImage: user.profileImage || "/default-profile.png" // ✅ Ensure a fallback image
+            });
+        } else {
+            res.redirect("/therapistlogin"); // Redirect if user not found
         }
-
-        res.render("therapistprofile", { 
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email
-        });
-
-    } catch (error) {
-        console.error("Error fetching therapist profile:", error);
-        res.status(500).send("An error occurred.");
+    } catch (err) {
+        console.error("Error fetching profile:", err);
+        res.redirect("/therapistlogin");
     }
 });
 
 app.get("/content/patientprofile", async (req, res) => {
 
     if (!req.session.user) {
-        return res.redirect("/patientlogin");
+        return res.redirect("/patientlogin"); // ✅ Redirect to therapist login if not authenticated
     }
 
     try {
         const user = await collection.patientUsersCollection.findOne({ email: req.session.user.email });
-
-        if (!user) {
-            return res.redirect("/patientlogin");
+        if (user) {
+            req.session.user.profileImage = user.profileImage; // ✅ Ensure session has latest image
+            res.render("patientprofile", {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                profileImage: user.profileImage || "/default-profile.png" // ✅ Ensure a fallback image
+            });
+        } else {
+            res.redirect("/patientlogin"); // Redirect if user not found
         }
-
-        res.render("patientprofile", { 
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email
-        });
-
-    } catch (error) {
-        console.error("Error fetching patient profile:", error);
-        res.status(500).send("An error occurred.");
+    } catch (err) {
+        console.error("Error fetching profile:", err);
+        res.redirect("/patientlogin");
     }
 });
 
-
-app.get("/therapisthome", (req, res) => {
-    console.log("Therapist Home");
+app.get("/therapisthome", async (req, res) => {
     if (!req.session.user) {
-        return res.redirect("/therapistlogin"); // Redirect if not logged in
+        return res.redirect("/therapistlogin"); // ✅ Redirect if not logged in
     }
 
-    res.render("therapisthome", { firstName: req.session.user.firstName });
+    try {
+        const user = await collection.therapistUsersCollection.findOne({ email: req.session.user.email });
+        if (user) {
+            req.session.user.profileImage = user.profileImage; // ✅ Ensure session has latest image
+            res.render("therapisthome", {
+                firstName: user.firstName,
+                profileImage: user.profileImage || "/default-profile.png"
+            });
+        } else {
+            res.redirect("/therapistlogin");
+        }
+    } catch (err) {
+        console.error("Error fetching homepage:", err);
+        res.redirect("/therapistlogin");
+    }
 });
 
-app.get("/patienthome", (req, res) => {
+app.get("/patienthome", async (req, res) => {
     if (!req.session.user) {
-        return res.redirect("/therapistlogin"); // Redirect if not logged in
+        return res.redirect("/patientlogin"); // ✅ Redirect if not logged in
     }
 
-    res.render("patienthome", { firstName: req.session.user.firstName });
+    try {
+        const user = await collection.patientUsersCollection.findOne({ email: req.session.user.email });
+        if (user) {
+            req.session.user.profileImage = user.profileImage; // ✅ Ensure session has latest image
+            res.render("patienthome", {
+                firstName: user.firstName,
+                profileImage: user.profileImage || "/default-profile.png"
+            });
+        } else {
+            res.redirect("/patientlogin");
+        }
+    } catch (err) {
+        console.error("Error fetching homepage:", err);
+        res.redirect("/patientlogin");
+    }
 });
 
 app.post("/therapistlogin", async (req, res) => {
@@ -398,6 +449,70 @@ app.post("/verify-password-patient", async (req, res) => {
     } catch (error) {
         console.error("Password verification error:", error);
         res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+
+// Upload profile picture route
+app.post("/upload-therapist-profile", upload.single("profileImage"), async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - No session user found" });
+    }
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+
+        const updatedProfileImage = "/uploads/" + req.file.filename;
+
+        const user = await collection.therapistUsersCollection.findOneAndUpdate(
+            { email: req.session.user.email },
+            { $set: { profileImage: updatedProfileImage } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        req.session.user.profileImage = updatedProfileImage;
+
+        res.json({ success: true, profileImage: updatedProfileImage });
+    } catch (err) {
+        console.error("Error uploading profile image:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.post("/upload-patient-profile", upload.single("profileImage"), async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - No session user found" });
+    }
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+
+        const updatedProfileImage = "/uploads/" + req.file.filename;
+
+        const user = await collection.patientUsersCollection.findOneAndUpdate(
+            { email: req.session.user.email },
+            { $set: { profileImage: updatedProfileImage } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        req.session.user.profileImage = updatedProfileImage;
+
+        res.json({ success: true, profileImage: updatedProfileImage });
+    } catch (err) {
+        console.error("Error uploading profile image:", err);
+        res.status(500).json({ error: "Server error" });
     }
 });
 

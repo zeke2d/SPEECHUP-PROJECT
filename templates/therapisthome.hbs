@@ -150,14 +150,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #dcd7d9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            cursor: pointer;
+            object-fit: cover;
         }
 
         .dropdown-menu {
@@ -240,7 +233,7 @@
                 <button onclick="searchFunction()">🔍</button>
             </div>
             <div class="profile-container" onclick="toggleDropdown()">
-                <div class="profile-icon">👤</div>
+                <img class="profile-icon" src="{{profileImage}}" alt="Profile">
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="#" onclick="loadPage('therapistprofile'); return false;">View Profile</a>
                     <a href="/logout" class="logout-btn">Log Out</a>
@@ -256,8 +249,6 @@
 
     </div>
     
-
-
     <script>
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("hidden");
@@ -445,6 +436,45 @@
             alert("Incorrect password!");
         }
     }
+
+    function uploadTherapistProfileImage(event) {
+    event.preventDefault(); // ✅ Prevent form submission from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImage", fileInput);
+
+    fetch("/upload-therapist-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+
+            let profileImageElement = document.getElementById("profileImage");
+            profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Force refresh image cache
+            
+            let homeProfileIcon = document.querySelector(".profile-icon");
+            if (homeProfileIcon) {
+                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Also refresh homepage icon
+            }
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+        alert("An error occurred while uploading.");
+    });
+}
 
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");

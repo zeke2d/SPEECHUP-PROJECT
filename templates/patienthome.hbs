@@ -239,7 +239,7 @@
                 <button onclick="searchFunction()">🔍</button>
             </div>
             <div class="profile-container" onclick="toggleDropdown()">
-                <div class="profile-icon">👤</div>
+                <img class="profile-icon" src="{{profileImage}}" alt="Profile">
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="#" onclick="loadPage('patientprofile'); return false;">View Profile</a>
                     <a href="/logout" class="logout-btn">Log Out</a>
@@ -442,6 +442,48 @@
             alert("Incorrect password!");
         }
     }
+
+    function uploadPatientProfileImage(event) {
+    event.preventDefault(); // Prevent form from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImage", fileInput);
+
+    fetch("/upload-patient-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+
+            let profileImageElement = document.getElementById("profileImage");
+            if (profileImageElement) {
+                profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
+            }
+
+            let homeProfileIcon = document.querySelector(".profile-icon");
+            if (homeProfileIcon) {
+                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
+            }
+
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+        alert("An error occurred while uploading.");
+    });
+}
 
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");

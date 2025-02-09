@@ -78,6 +78,28 @@
             z-index: 10; /* Ensure it's above other content */
         }
 
+        /* Style for the custom file upload button */
+        .custom-file-input {
+            display: none; /* Hide the default file input */
+        }
+
+        .custom-file-label {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #df1645; /* Match Upload button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.3s ease;
+        }         
+
+        .custom-file-label:hover {
+        background-color: #b81237; /* Darker shade on hover */
+        }
+
+
         #editProfile {
             background-color: #007bff;
         }
@@ -91,6 +113,18 @@
             background-color: red;
         }
 
+        /* Hide the default file input */
+        #profileImageInput {
+            display: none;
+        }
+
+        /* To show the selected file name */
+        #file-name {
+            margin-left: 2px;
+            margin-right: 2px;
+            color: #333;
+        }
+
     </style>
     <link rel="icon" href="tabpic.png" type="image/png">    
     <h2>Your Profile</h2>
@@ -100,7 +134,9 @@
             <div class="profile-picture">
                 <img id="profileImage" src="{{profileImage}}?t={{timestamp}}" alt="Profile Picture">
                 <form id="uploadForm" enctype="multipart/form-data">
+                <label for="profileImageInput" class="custom-file-label">Choose File</label>
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
+                    <span id="file-name">No file chosen</span> 
                     <button type="button" onclick="uploadPatientProfileImage(event)">Upload</button>
                 </form>
             </div>
@@ -147,6 +183,28 @@
     </div>
 
     <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+    function updateFileName() {
+        let fileInput = document.getElementById("profileImageInput");
+        let fileNameDisplay = document.getElementById("file-name");
+
+        if (fileInput && fileNameDisplay) {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
+            } else {
+                fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
+            }
+        }
+    }
+
+    document.body.addEventListener("change", function (event) {
+        if (event.target && event.target.id === "profileImageInput") {
+            updateFileName();
+        }
+    });
+});
+
 function uploadPatientProfileImage(event) {
     event.preventDefault(); // Prevent form from reloading the page
 

@@ -476,6 +476,27 @@
     });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    function updateFileName() {
+        let fileInput = document.getElementById("profileImageInput");
+        let fileNameDisplay = document.getElementById("file-name");
+
+        if (fileInput && fileNameDisplay) {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
+            } else {
+                fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
+            }
+        }
+    }
+
+    document.body.addEventListener("change", function (event) {
+        if (event.target && event.target.id === "profileImageInput") {
+            updateFileName();
+        }
+    });
+});
+
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");
         var toggleButton = document.getElementById("togglePassword");

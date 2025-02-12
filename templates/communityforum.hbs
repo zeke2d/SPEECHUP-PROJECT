@@ -72,34 +72,34 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Community Forum</h1>
-            <p>Engage in meaningful discussion posts within our growing community.</p>
-        </div>
-        
-        <section class="forum-container">
-            <form action="/communityforum/post" method="POST">
-                <input type="text" name="username" placeholder="First Name" required>
-                <textarea name="content" placeholder="Type here..." required></textarea>
-                <button type="submit">Post</button>
-            </form>
-            
-            {{#each posts}}
-            <div class="post">
-                <p><strong>{{this.username}}</strong>: {{this.content}}</p>
-                <form action="/communityforum/reply/{{this._id}}" method="POST">
-                    <input type="text" name="username" placeholder="First Name" required>
-                    <input type="text" name="content" placeholder="Reply..." required>
-                    <button type="submit">Reply</button>
-                </form>
-                <div class="replies">
-                    {{#each this.replies}}
-                    <p class="reply"><strong>{{this.username}}</strong>: {{this.content}}</p>
-                    {{/each}}
-                </div>
-            </div>
-            {{/each}}
-        </section>
+    <div class="header">
+        <h1>Community Forum</h1>
+        <p>Engage in meaningful discussion posts within our growing community.</p>
     </div>
+    
+    <section class="forum-container">
+        <form action="/communityforum/post" method="POST">
+            <input type="text" name="username" placeholder="First Name" required>
+            <textarea name="content" placeholder="Type here..." required></textarea>
+            <button type="submit">Post</button>
+        </form>
+        
+        {{#each posts}}
+        <div class="post">
+            <p><strong>{{this.username}}</strong>: {{this.content}}</p>
+            <form action="/communityforum/reply/{{this._id}}" method="POST">
+                <input type="text" name="username" placeholder="First Name" required>
+                <input type="text" name="content" placeholder="Reply..." required>
+                <button type="submit">Reply</button>
+            </form>
+            <div class="replies">
+                {{#each this.replies}}
+                <p class="reply"><strong>{{this.username}}</strong>: {{this.content}}</p>
+                {{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </section>
+</div>
 </body>
 </html>

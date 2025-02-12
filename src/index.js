@@ -344,12 +344,17 @@ app.get("/communityforum", async (req, res) => {
 
 // API route to add a post
 app.post("/communityforum/post", async (req, res) => {
-    const { username, content } = req.body;
+    const { username, content } = req.body; // Ensure the server is parsing JSON
     if (!username || !content) return res.status(400).send("Invalid post");
 
-    const newPost = new ForumPost({ username, content, replies: [] });
-    await newPost.save();
-    res.redirect("/communityforum");
+    try {
+        const newPost = new ForumPost({ username, content, replies: [] });
+        await newPost.save();
+        res.status(200).send("Post created successfully"); // Send a success response
+    } catch (error) {
+        console.error("Error creating post:", error);
+        res.status(500).send("Error creating post");
+    }
 });
 
 // API route to add a reply

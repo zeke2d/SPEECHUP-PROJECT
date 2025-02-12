@@ -3,6 +3,7 @@ const path = require("path") //import PathJS -> for the utilities for working wi
 const hbs = require("hbs") //import HandlebarsJS
 const collection = require("./mongodb")
 const session = require("express-session");
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const router = express.Router();
@@ -119,9 +120,7 @@ app.get("/tonguetwisters", (req, res) => {
     res.render("tonguetwisters")
 })
 
-app.get("/communityforum", (req, res) => {
-    res.render("communityforum")
-})
+
 
 app.get("/content/therapistprofile", async (req, res) => {
 
@@ -327,6 +326,44 @@ app.post("/patientsignup", async (req, res) => {
         console.error("Signup Error:", error);
         res.status(500).send("An error occurred during signup.");
     }
+});
+
+// Community Forum Schema
+const forumSchema = new mongoose.Schema({
+    username: String,
+    content: String,
+    replies: [{ username: String, content: String }]
+});
+const ForumPost = mongoose.model("ForumPost", forumSchema);
+
+// Route to render community forum
+app.get("/communityforum", async (req, res) => {
+    const posts = await ForumPost.find();
+    res.render("communityforum", { posts });
+});
+
+// API route to add a post
+app.post("/communityforum/post", async (req, res) => {
+    const { username, content } = req.body;
+    if (!username || !content) return res.status(400).send("Invalid post");
+
+    const newPost = new ForumPost({ username, content, replies: [] });
+    await newPost.save();
+    res.redirect("/communityforum");
+});
+
+// API route to add a reply
+app.post("/communityforum/reply/:postId", async (req, res) => {
+    const { postId } = req.params;
+    const { username, content } = req.body;
+    if (!username || !content) return res.status(400).send("Invalid reply");
+
+    const post = await ForumPost.findById(postId);
+    if (!post) return res.status(404).send("Post not found");
+
+    post.replies.push({ username, content });
+    await post.save();
+    res.redirect("/communityforum");
 });
 
 app.post("/update-profile-therapist", async (req, res) => {

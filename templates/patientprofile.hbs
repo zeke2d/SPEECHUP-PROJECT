@@ -96,7 +96,7 @@
         }         
 
         .custom-file-label:hover {
-        background-color: #b81237; /* Darker shade on hover */
+        background-color: #ff003c; /* Darker shade on hover */
         }
 
 
@@ -104,13 +104,25 @@
             background-color: #007bff;
         }
 
+        #editProfile:hover {
+            background-color: #ff003c;
+        }
+
         #updateProfile {
             background-color: #007bff;
             display: none;
         }
 
+        #updateProfile:hover {
+            background-color: #ff003c;
+        }
+
         #deleteAccount {
-            background-color: red;
+            background-color: rgb(221, 32, 32);
+        }
+
+        #deleteAccount:hover {
+            background-color: #ff003c;
         }
 
         /* Hide the default file input */
@@ -137,7 +149,7 @@
                 <label for="profileImageInput" class="custom-file-label">Choose File</label>
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
                     <span id="file-name">No file chosen</span> 
-                    <button type="button" onclick="uploadPatientProfileImage(event)">Upload</button>
+                    <button type="button" onclick="uploadPatientProfileImage(event)" class="custom-file-label">Upload</button>
                 </form>
             </div>
             <h2 id="username">{{firstName}} {{lastName}}</h2>
@@ -163,14 +175,14 @@
         <!-- Password Verification Field -->
         <p><strong>Enter your password to view it:</strong></p>
         <input type="password" id="verifyPassword" placeholder="Enter your password">
-        <button onclick="verifyPatientPassword()">Verify</button>
+        <button onclick="verifyPatientPassword()" class="custom-file-label">Verify</button>
         <br>
         <br>
         <!-- Password Display -->
         <p><strong>Your Password:</strong></p>
         <div class="password-container">
             <input type="password" id="passwordField" value="*******" readonly>
-            <button id="togglePassword" onclick="togglePassword()" disabled>👁</button>
+            <button id="togglePassword" onclick="togglePassword()" class="custom-file-label" disabled>👁</button>
         </div>
         <br>
         <br>

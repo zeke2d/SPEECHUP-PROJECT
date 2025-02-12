@@ -104,13 +104,26 @@
             background-color: #007bff;
         }
 
+        #editProfile:hover {
+            background-color: #b81237;
+        }
+
         #updateProfile {
             background-color: #007bff;
             display: none;
         }
 
+        #updateProfile:hover {
+            background-color: #b81237;
+            display: none;
+        }
+
         #deleteAccount {
-            background-color: red;
+            background-color: rgb(221, 32, 32);
+        }
+
+        #deleteAccount:hover {
+            background-color: #ff0000;
         }
 
         /* Hide the default file input */
@@ -137,7 +150,7 @@
                 <label for="profileImageInput" class="custom-file-label">Choose File</label>
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
                     <span id="file-name">No file chosen</span> 
-                    <button type="button" onclick="uploadTherapistProfileImage(event)">Upload</button>
+                    <button type="button" onclick="uploadTherapistProfileImage(event)" class="custom-file-label">Upload</button>
                 </form>
             </div>
             <h2 id="username">{{firstName}} {{lastName}}</h2>
@@ -163,14 +176,14 @@
         <!-- Password Verification Field -->
         <p><strong>Enter your password to view it:</strong></p>
         <input type="password" id="verifyPassword" placeholder="Enter your password">
-        <button onclick="verifyTherapistPassword()">Verify</button>
+        <button onclick="verifyTherapistPassword()" class="custom-file-label">Verify</button>
         <br>
         <br>  
         <!-- Password Display -->
         <p><strong>Your Password:</strong></p>
         <div class="password-container">
             <input type="password" id="passwordField" value="*******" readonly>
-            <button id="togglePassword" onclick="togglePassword()" disabled>👁</button>
+            <button id="togglePassword" onclick="togglePassword()" class="custom-file-label" disabled>👁</button>
         </div>
         <br>
         <br>

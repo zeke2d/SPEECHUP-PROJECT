@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const router = express.Router();
 const app = express() //starting ExpressJS
+const { therapistUsersCollection, patientUsersCollection, appointmentCollection } = require("./mongodb");
 
 const templatePath = path.join(__dirname, "../templates") //preparing our templatePath to replace the views path
 
@@ -512,6 +513,146 @@ app.post("/upload-patient-profile", upload.single("profileImage"), async (req, r
         res.json({ success: true, profileImage: updatedProfileImage });
     } catch (err) {
         console.error("Error uploading profile image:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// Render the appointment setting page
+app.get("/setappointment", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/patientlogin"); // Redirect if not logged in
+    }
+
+    res.render("setappointment", { 
+        patientEmail: req.session.user.email });
+});
+
+// ➜ Get Appointments for a Patient
+app.get("/get-patient-appointments", async (req, res) => {
+    if (!req.session.user) {
+        console.log("❌ Unauthorized access attempt to get patient appointments.");
+        return res.status(401).json({ error: "Unauthorized - Please log in" });
+    }
+
+    try {
+        console.log(`📢 Fetching appointments for patient: ${req.session.user.email}`);
+
+        const appointments = await appointmentCollection.find({ email: req.session.user.email });
+        res.json(appointments);
+    } catch (err) {
+        console.error("❌ Error fetching patient appointments:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// ➜ Get Pending Appointments for a Therapist
+app.get("/get-therapist-appointments", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - Please log in" });
+    }
+
+    try {
+        const pendingAppointments = await appointmentCollection.find({ 
+            therapistEmail: req.session.user.email, 
+            status: "Pending" 
+        });
+
+        res.json(pendingAppointments);
+    } catch (err) {
+        console.error("❌ Error fetching therapist appointments:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// ➜ Patient Requests an Appointment
+app.post("/add-appointment", async (req, res) => {
+    try {
+        console.log("📩 Received Appointment Request:", req.body);
+
+        const { therapistEmail, patientEmail, date, time } = req.body;
+
+        // Ensure required fields exist
+        if (!therapistEmail || !patientEmail || !date || !time) {
+            console.log("❌ Missing fields:", { therapistEmail, patientEmail, date, time });
+            return res.status(400).json({ error: "All fields are required." });
+        }
+
+        // Check if therapist exists
+        const therapist = await therapistUsersCollection.findOne({ email: therapistEmail });
+        if (!therapist) {
+            return res.status(404).json({ error: "Therapist not found." });
+        }
+
+        // Check if patient exists
+        const patient = await patientUsersCollection.findOne({ email: patientEmail });
+        if (!patient) {
+            return res.status(400).json({ error: "Patient email not found. Please try logging in again." });
+        }
+
+        // Create appointment
+        const newAppointment = new appointmentCollection({
+            therapistEmail,
+            patientEmail,
+            date,
+            time,
+            status: "Pending"
+        });
+
+        await newAppointment.save();
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error("❌ Error adding appointment:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// ➜ Therapist Approves an Appointment
+app.post("/approve-appointment", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - Please log in" });
+    }
+
+    try {
+        const { appointmentId } = req.body;
+        const appointment = await appointmentCollection.findByIdAndUpdate(
+            appointmentId, 
+            { status: "Approved" }, 
+            { new: true }
+        );
+
+        if (!appointment) {
+            return res.status(404).json({ error: "Appointment not found" });
+        }
+
+        res.json({ success: true, message: "Appointment approved successfully!" });
+    } catch (err) {
+        console.error("❌ Error approving appointment:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// ➜ Therapist Rejects an Appointment
+app.post("/reject-appointment", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - Please log in" });
+    }
+
+    try {
+        const { appointmentId } = req.body;
+        const appointment = await appointmentCollection.findByIdAndUpdate(
+            appointmentId, 
+            { status: "Rejected" }, 
+            { new: true }
+        );
+
+        if (!appointment) {
+            return res.status(404).json({ error: "Appointment not found" });
+        }
+
+        res.json({ success: true, message: "Appointment rejected successfully!" });
+    } catch (err) {
+        console.error("❌ Error rejecting appointment:", err);
         res.status(500).json({ error: "Server error" });
     }
 });

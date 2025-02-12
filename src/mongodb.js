@@ -65,5 +65,30 @@ const patientUsersSchema = new mongoose.Schema({
   
   // Define the patient_users collection
   const patientUsersCollection = new mongoose.model("patient_users", patientUsersSchema);
+
+  const appointmentSchema = new mongoose.Schema({
+    therapistEmail: { 
+      type: String, 
+      required: true 
+    },
+    patientEmail: { 
+      type: String, 
+      required: true 
+    },
+    date: { 
+      type: String, 
+      required: true 
+    },
+    time: {
+       type: String, 
+       required: true 
+    },
+    status: { type: String, 
+      enum: ['Pending', 'Approved', 'Rejected'], 
+      default: 'Pending' 
+    }
+});
+
+const appointmentCollection = new mongoose.model('appointments', appointmentSchema);
   
-module.exports = {therapistUsersCollection, patientUsersCollection};
+module.exports = {therapistUsersCollection, patientUsersCollection, appointmentCollection};

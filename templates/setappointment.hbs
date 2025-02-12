@@ -1,0 +1,129 @@
+<style>
+   /* Set Appointment Form */
+.content-area {
+    max-width: 5000px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heading */
+.content-area h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #2d3e50;
+}
+
+
+/* Appointment Form */
+.appointment-form {
+    margin-top: 20px;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.appointment-form label {
+    font-weight: bold;
+    align-self: flex-start;
+    margin-bottom: 5px;
+}
+
+.appointment-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Readonly Input */
+#therapistEmail {
+    background-color: #e9f0ff;
+    cursor: not-allowed;
+}
+
+/* Button */
+.btn {
+    background-color: #df1645;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+.btn:hover {
+    background-color: #ff003c;
+}
+
+</style>
+
+<div class="content-area">
+    <h2>Set an Appointment</h2>
+
+    <!-- Appointment Form -->
+    <div class="appointment-form">
+        <label for="therapistEmail">Enter Therapist's Email:</label>
+        <input type="email" id="therapistEmail" required>
+        
+        <label for="selectedDate">Select Date:</label>
+        <input type="date" id="selectedDate" required>
+
+        <label for="selectedTime">Select Time:</label>
+        <input type="time" id="selectedTime" required>
+
+        <button class="btn" onclick="requestAppointment()">Request Appointment</button>
+    </div>
+
+</div>
+
+ <!-- Hidden input for patient email -->
+    <input type="hidden" id="patientEmail" value="{{patientEmail}}">
+
+<script>
+
+    function requestAppointment() {
+        let therapistEmail = document.getElementById("therapistEmail").value;
+        let selectedDate = document.getElementById("selectedDate").value;
+        let selectedTime = document.getElementById("selectedTime").value;
+        let patientEmail = document.getElementById("patientEmail")?.value; // Get from session
+
+        console.log("📢 Sending Appointment Request:", { therapistEmail, patientEmail, date: selectedDate, time: selectedTime });
+
+        // 🛑 Validate inputs
+        if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
+            alert("Please fill in all fields before requesting an appointment.");
+            return;
+        }
+
+        fetch("/add-appointment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                therapistEmail,
+                patientEmail,
+                date: selectedDate,
+                time: selectedTime,
+                status: "Pending"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Appointment request sent! Waiting for therapist approval.");
+                loadPage('patienthome'); // ✅ Redirects back to home page inside content area
+            } else {
+                alert("Error submitting appointment: " + data.error);
+            }
+        })
+        .catch(error => console.error("❌ Error:", error));
+    }
+
+    console.log("👤 Patient Email from input:", document.getElementById("patientEmail").value);
+</script>

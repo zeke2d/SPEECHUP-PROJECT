@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPEECH UP</title>
     <link rel="icon" href="tabpic.png" type="image/png">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-
         
         * {
             margin: 0;
@@ -66,7 +66,7 @@
         .sidebar-toggle {
             position: fixed;
             top: 300px;
-            left: 260px;
+            left: 255px;
             background-color: #2c3e50;
             color: white;
             border: none;
@@ -211,7 +211,41 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 10px;
+            background-color: #df1645; /* Match Upload button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
+        }         
+
+        .btn:hover {
+        background-color: #ff003c; /* Darker shade on hover */
+        }
+        
+        /* Appointment Request Form */
+        .appointment-form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-form label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        
     </style>
+
 </head>
 
 <body>
@@ -222,7 +256,6 @@
         <a href="/patienthome" onclick="loadPage('home')">Home</a>
         <a href="#" onclick="loadPage('therapists')">Therapists</a>
         <a href="#" onclick="loadPage('courses')">Courses</a>
-        <a href="#" onclick="loadPage('setappointment')">Set an Appointment</a>
         <a href="#" onclick="loadPage('communityforum')">Community Forum</a>
     </div>
 
@@ -250,9 +283,17 @@
         <!-- Dynamic Content Area -->
         <div class="content-area" id="contentArea">
             <h2>Welcome back {{firstName}}!</h2>
-        </div>
-
+            <br>
+            <h3>Are you ready to start a therapy session with your therapist?</h3>
+            <br>
+            <h3>Click on the button below to set your appointment.</h3>
+            <br>
+            <button class="btn" onclick="loadPage('setappointment')">Set Appointment</button>
     </div>
+
+     <!-- Hidden input to store patient email -->
+        <input type="hidden" id="patientEmail" value="{{email}}">
+
 
     <script>
         
@@ -285,6 +326,10 @@
             }
             if (page === 'aphasiagameselection') {
                 addAphasiaEventListeners();
+            }
+            if (page === 'setappointment') {
+                console.log("Appointment form loaded.");
+                
             }
 
             })
@@ -527,6 +572,43 @@ document.addEventListener("DOMContentLoaded", function () {
             dropdown.classList.remove("active");
         }
     });
+
+    function requestAppointment() {
+        let therapistEmail = document.getElementById("therapistEmail").value;
+        let selectedDate = document.getElementById("selectedDate").value;
+        let selectedTime = document.getElementById("selectedTime").value;
+        let patientEmail = document.getElementById("patientEmail")?.value; // Get from session
+
+        console.log("📢 Sending Appointment Request:", { therapistEmail, patientEmail, date: selectedDate, time: selectedTime });
+
+        // 🛑 Validate inputs
+        if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
+            alert("Please fill in all fields before requesting an appointment.");
+            return;
+        }
+
+        fetch("/add-appointment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                therapistEmail,
+                patientEmail,
+                date: selectedDate,
+                time: selectedTime,
+                status: "Pending"
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Appointment request sent! Waiting for therapist approval.");
+                location.reload();
+            } else {
+                alert("Error submitting appointment: " + data.error);
+            }
+        })
+        .catch(error => console.error("❌ Error:", error));
+    }
     </script>
 
 </body>

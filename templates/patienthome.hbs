@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPEECH UP</title>
-    
+    <link rel="icon" href="tabpic.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -218,7 +218,7 @@
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <h3>SPEECH UP</h3>
+        <img src="speechuplogo.png" alt="SpeechUp Logo" class="speechup-logo">
         <a href="/patienthome" onclick="loadPage('home')">Home</a>
         <a href="#" onclick="loadPage('therapists')">Therapists</a>
         <a href="#" onclick="loadPage('courses')">Courses</a>
@@ -272,6 +272,21 @@
             })
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
+
+                  // Add event listeners AFTER the content is loaded
+            if (page === 'courses') {  // Check if it's the courses page
+                addCoursesEventListeners(); // Call a new function
+            }
+            if (page === 'apraxiagameselection') {
+                addApraxiaEventListeners();
+            }
+            if (page === 'dysarthriagameselection') {
+                addDysarthriaEventListeners();
+            }
+            if (page === 'aphasiagameselection') {
+                addAphasiaEventListeners();
+            }
+
             })
             .catch(error => {
                 console.error("Error loading page:", error);
@@ -286,6 +301,78 @@
         function searchFunction() {
             alert("Searching: " + document.getElementById("searchInput").value);
         }
+
+        function addCoursesEventListeners() {
+        const apraxiaButton = document.querySelector('.button-group button:nth-child(1)'); // Select Apraxia button
+    if (apraxiaButton) {
+        apraxiaButton.addEventListener('click', () => {
+            loadPage('apraxiagameselection');
+        });
+    }
+
+        const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)'); // Select Dysarthria button
+    if (dysarthriaButton) {
+        dysarthriaButton.addEventListener('click', () => {
+            loadPage('dysarthriagameselection');
+        });
+    }
+
+        const aphasiaButton = document.querySelector('.button-group button:nth-child(3)'); // Select Aphasia button
+    if (aphasiaButton) {
+        aphasiaButton.addEventListener('click', () => {
+            loadPage('aphasiagameselection');
+        });
+    }
+
+}
+
+        function addApraxiaEventListeners(){
+        const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
+    if(animalSoundsButton){
+        animalSoundsButton.addEventListener('click', () => {
+            loadPage('animalsounds'); // Load the animal sounds page
+        });
+    }
+
+        const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
+    if(bookReadingButton){
+        bookReadingButton.addEventListener('click', () => {
+            loadPage('bookreading'); // Load the book reading page
+        });
+    }
+}
+
+        function addDysarthriaEventListeners(){
+        const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
+    if(wordSearchButton){
+        wordSearchButton.addEventListener('click', () => {
+            loadPage('wordsearch'); 
+        });
+    }
+
+        const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
+    if(wordFlipbookButton){
+        wordFlipbookButton.addEventListener('click', () => {
+            loadPage('wordflipbook');
+        });
+    }
+}
+
+        function addAphasiaEventListeners(){
+        const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
+    if(matchingGamesButton){
+        matchingGamesButton.addEventListener('click', () => {
+            loadPage('matchinggames');
+        });
+    }
+
+        const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
+    if(tongueTwistersButton){
+        tongueTwistersButton.addEventListener('click', () => {
+            loadPage('tonguetwisters');
+        });
+    }
+}
 
         function enableEditing() {
         document.getElementById("firstName").disabled = false;

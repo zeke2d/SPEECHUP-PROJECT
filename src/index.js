@@ -10,7 +10,7 @@ const app = express() //starting ExpressJS
 const templatePath = path.join(__dirname, "../templates") //preparing our templatePath to replace the views path
 
 app.use(express.json()) //get the hbs files and get mongodb successfully connected
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); //get images
 
 
 app.set("view engine", "hbs")

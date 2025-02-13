@@ -99,9 +99,12 @@
         background-color: #b81237; /* Darker shade on hover */
         }
 
-
         #editProfile {
             background-color: #007bff;
+        }
+
+        #editProfile:hover{
+            background-color: #b81237;
         }
 
         #editProfile:hover {
@@ -111,6 +114,10 @@
         #updateProfile {
             background-color: #007bff;
             display: none;
+        }
+
+        #updateProfile:hover{
+            background-color: #b81237;
         }
 
         #updateProfile:hover {
@@ -151,6 +158,7 @@
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
                     <span id="file-name">No file chosen</span> 
                     <button type="button" onclick="uploadTherapistProfileImage(event)" class="custom-file-label">Upload</button>
+                    <button type="button" class="custom-file-label" onclick="uploadTherapistProfileImage(event)">Upload</button>
                 </form>
             </div>
             <h2 id="username">{{firstName}} {{lastName}}</h2>
@@ -177,6 +185,7 @@
         <p><strong>Enter your password to view it:</strong></p>
         <input type="password" id="verifyPassword" placeholder="Enter your password">
         <button onclick="verifyTherapistPassword()" class="custom-file-label">Verify</button>
+        <button class="custom-file-label" onclick="verifyTherapistPassword()">Verify</button>
         <br>
         <br>  
         <!-- Password Display -->
@@ -184,6 +193,7 @@
         <div class="password-container">
             <input type="password" id="passwordField" value="*******" readonly>
             <button id="togglePassword" onclick="togglePassword()" class="custom-file-label" disabled>👁</button>
+            <button id="togglePassword" class="custom-file-label" onclick="togglePassword()" disabled>👁</button>
         </div>
         <br>
         <br>

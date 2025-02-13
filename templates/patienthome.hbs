@@ -6,10 +6,15 @@
     <title>SPEECH UP</title>
     <link rel="icon" href="tabpic.png" type="image/png">
 
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     
     <style>
         
+
         * {
             margin: 0;
             padding: 0;
@@ -291,6 +296,8 @@
             <button class="btn" onclick="loadPage('setappointment')">Set Appointment</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
      <!-- Hidden input to store patient email -->
         <input type="hidden" id="patientEmail" value="{{email}}">
 
@@ -488,68 +495,68 @@
         }
     }
 
-    function uploadPatientProfileImage(event) {
-    event.preventDefault(); // Prevent form from reloading the page
-
-    let formData = new FormData();
-    let fileInput = document.getElementById("profileImageInput").files[0];
-
-    if (!fileInput) {
-        alert("Please select an image to upload.");
-        return;
-    }
-
-    formData.append("profileImage", fileInput);
-
-    fetch("/upload-patient-profile", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-
-            let profileImageElement = document.getElementById("profileImage");
-            if (profileImageElement) {
-                profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
-            }
-
-            let homeProfileIcon = document.querySelector(".profile-icon");
-            if (homeProfileIcon) {
-                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
-            }
-
-            alert("Profile image updated successfully!");
-        } else {
-            alert("Error uploading image: " + (data.error || "Unknown error"));
+        function uploadPatientProfileImage(event) {
+        event.preventDefault(); // Prevent form from reloading the page
+    
+        let formData = new FormData();
+        let fileInput = document.getElementById("profileImageInput").files[0];
+    
+        if (!fileInput) {
+            alert("Please select an image to upload.");
+            return;
         }
-    })
-    .catch(error => {
-        console.error("Upload error:", error);
-        alert("An error occurred while uploading.");
-    });
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    function updateFileName() {
-        let fileInput = document.getElementById("profileImageInput");
-        let fileNameDisplay = document.getElementById("file-name");
-
-        if (fileInput && fileNameDisplay) {
-            if (fileInput.files.length > 0) {
-                fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
+    
+        formData.append("profileImage", fileInput);
+    
+        fetch("/upload-patient-profile", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+    
+                let profileImageElement = document.getElementById("profileImage");
+                if (profileImageElement) {
+                    profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
+                }
+    
+                let homeProfileIcon = document.querySelector(".profile-icon");
+                if (homeProfileIcon) {
+                    homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
+                }
+    
+                alert("Profile image updated successfully!");
             } else {
-                fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
+                alert("Error uploading image: " + (data.error || "Unknown error"));
+            }
+        })
+        .catch(error => {
+            console.error("Upload error:", error);
+            alert("An error occurred while uploading.");
+        });
+    }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateFileName() {
+                let fileInput = document.getElementById("profileImageInput");
+                let fileNameDisplay = document.getElementById("file-name");
+    
+            if (fileInput && fileNameDisplay) {
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
+                } else {
+                    fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
+                }
             }
         }
-    }
-
-    document.body.addEventListener("change", function (event) {
-        if (event.target && event.target.id === "profileImageInput") {
-            updateFileName();
-        }
+    
+        document.body.addEventListener("change", function (event) {
+            if (event.target && event.target.id === "profileImageInput") {
+                updateFileName();
+            }
+        });
     });
-});
 
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");

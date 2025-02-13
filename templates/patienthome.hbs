@@ -9,9 +9,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- FullCalendar CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-    
     <style>
         
 
@@ -248,6 +245,26 @@
             display: block;
             margin-top: 10px;
         }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            border-color: #2c3e50;
+        }
+        
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        th {
+            background-color: #df1645;
+            color: white;
+            border-radius: 5px;
+        }
         
     </style>
 
@@ -289,17 +306,41 @@
         <div class="content-area" id="contentArea">
             <h2>Welcome back {{firstName}}!</h2>
             <br>
+            <br>
             <h3>Are you ready to start a therapy session with your therapist?</h3>
             <br>
             <h3>Click on the button below to set your appointment.</h3>
             <br>
             <button class="btn" onclick="loadPage('setappointment')">Set Appointment</button>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-
-     <!-- Hidden input to store patient email -->
+            <!-- Hidden input to store patient email -->
         <input type="hidden" id="patientEmail" value="{{email}}">
+
+        <br>
+        <br>
+        <br>
+        <br>
+               <!-- New "View Approved Appointments" section -->
+  <button class="btn" onclick="loadApprovedAppointments()">View Approved Appointments</button>
+  
+  <!-- Table to display approved appointments -->
+  <table border="1" id="patientApprovedAppointmentsTable">
+    <thead>
+      <tr>
+        <th>Therapist Email</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Approved Appointments</td></tr>
+    </tbody>
+  </table>
+</div>
+
+        </div>
+
+    </div>
 
 
     <script>
@@ -336,6 +377,7 @@
             }
             if (page === 'setappointment') {
                 console.log("Appointment form loaded.");
+                generateTimeOptions("selectedTime", 15);
                 
             }
 
@@ -580,42 +622,115 @@
         }
     });
 
-    function requestAppointment() {
-        let therapistEmail = document.getElementById("therapistEmail").value;
-        let selectedDate = document.getElementById("selectedDate").value;
-        let selectedTime = document.getElementById("selectedTime").value;
-        let patientEmail = document.getElementById("patientEmail")?.value; // Get from session
-
-        console.log("📢 Sending Appointment Request:", { therapistEmail, patientEmail, date: selectedDate, time: selectedTime });
-
-        // 🛑 Validate inputs
-        if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
+    // Function to generate time options dynamically in 15-minute intervals
+        function generateTimeOptions(selectElementId, intervalMinutes) {
+          const select = document.getElementById(selectElementId);
+          // Start at midnight
+          let current = new Date();
+          current.setHours(0, 0, 0, 0);
+          
+          // End at 11:45 PM
+          const end = new Date();
+          end.setHours(23, 59, 59, 999);
+        
+          while (current <= end) {
+            // Calculate hours and minutes
+            let hours = current.getHours();
+            let minutes = current.getMinutes();
+            // Determine AM/PM and convert to 12-hour format
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            let displayHour = hours % 12;
+            if (displayHour === 0) displayHour = 12;
+            // Format minutes with leading zero if needed
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            const timeString = `${displayHour}:${formattedMinutes} ${suffix}`;
+        
+            // Create and append an option
+            const option = document.createElement('option');
+            option.value = timeString;
+            option.textContent = timeString;
+            select.appendChild(option);
+        
+            // Increase current time by the interval
+            current.setMinutes(current.getMinutes() + intervalMinutes);
+          }
+        }
+        
+        // Generate options on page load (using 15-minute intervals)
+        document.addEventListener("DOMContentLoaded", function () {
+          generateTimeOptions("selectedTime", 15);
+        });
+        
+        function requestAppointment() {
+          const therapistEmail = document.getElementById("therapistEmail").value.trim();
+          const selectedDate   = document.getElementById("selectedDate").value.trim();
+          const selectedTime   = document.getElementById("selectedTime").value.trim();
+          const patientEmail   = document.getElementById("patientEmail").value.trim();
+        
+          console.log("📢 Sending Appointment Request:", {
+            therapistEmail,
+            patientEmail,
+            date: selectedDate,
+            time: selectedTime
+          });
+        
+          // Validate inputs
+          if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
             alert("Please fill in all fields before requesting an appointment.");
             return;
-        }
-
-        fetch("/add-appointment", {
+          }
+        
+          fetch("/add-appointment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                therapistEmail,
-                patientEmail,
-                date: selectedDate,
-                time: selectedTime,
-                status: "Pending"
+              therapistEmail,
+              patientEmail,
+              date: selectedDate,
+              time: selectedTime, // now includes AM/PM, e.g. "3:15 PM"
+              status: "Pending"
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
                 alert("Appointment request sent! Waiting for therapist approval.");
                 location.reload();
-            } else {
+              } else {
                 alert("Error submitting appointment: " + data.error);
-            }
-        })
-        .catch(error => console.error("❌ Error:", error));
-    }
+              }
+            })
+            .catch(error => console.error("❌ Error:", error));
+        }
+        
+        function loadApprovedAppointments() {
+          fetch("/get-patient-approved-appointments")
+            .then(response => response.json())
+            .then(data => {
+              const tableBody = document.querySelector("#patientApprovedAppointmentsTable tbody");
+              tableBody.innerHTML = ""; // Clear existing rows
+        
+              if (data.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='3'>No approved appointments</td></tr>";
+                return;
+              }
+        
+              data.forEach(appointment => {
+                const row = `
+                  <tr>
+                    <td>${appointment.therapistEmail}</td>
+                    <td>${appointment.date}</td>
+                    <td>${appointment.time}</td>
+                  </tr>
+                `;
+                tableBody.innerHTML += row;
+              });
+            })
+            .catch(error => {
+              console.error("Error fetching approved patient appointments:", error);
+            });
+        }
+    
     </script>
 
 </body>

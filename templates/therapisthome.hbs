@@ -7,7 +7,6 @@
     <link rel="icon" href="tabpic.png" type="image/png">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 
     <style>
         * {
@@ -206,52 +205,72 @@
         }
 
         /* Therapist Home - Pending Appointments */
-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            border-color: #2c3e50;
+        }
+        
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        th {
+            background-color: #df1645;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        /* Action Buttons */
+        td button {
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        td button:first-child {
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        td button:first-child:hover {
+            background-color: #00ff62;
+            color: white;
+        }
+        
+        td button:last-child {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        td button:last-child:hover {
+            background-color: #ff0000;
+            color: white;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 10px;
+            background-color: #df1645; /* Match Upload button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
+        }         
 
-th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
-}
+        .btn:hover {
+        background-color: #ff003c; /* Darker shade on hover */
+        }
 
-th {
-    background-color: #007bff;
-    color: white;
-}
-
-/* Action Buttons */
-td button {
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-td button:first-child {
-    background-color: #28a745;
-    color: white;
-    border-radius: 5px;
-}
-
-td button:first-child:hover {
-    background-color: #00ff62;
-    color: white;
-}
-
-td button:last-child {
-    background-color: #dc3545;
-    color: white;
-    border-radius: 5px;
-}
-
-td button:last-child:hover {
-    background-color: #ff0000;
-    color: white;
-}
     </style>
 </head>
 
@@ -293,6 +312,7 @@ td button:last-child:hover {
         <div class="content-area" id="contentArea">
             <h2>Welcome back {{firstName}}!</h2>
             <br>
+            <br>
             <h3>Here are your Appointment Requests</h3>
     <table border="1">
         <thead>
@@ -307,6 +327,25 @@ td button:last-child:hover {
             <tr><td colspan="4">Loading appointments...</td></tr>
         </tbody>
     </table>
+    <br>
+    <br>
+
+     <!-- New "View Approved Appointments" section -->
+  <button class="btn" onclick="loadTherapistApprovedAppointments()">View Approved Appointments</button>
+
+  <table border="1" id="therapistApprovedAppointmentsTable">
+    <thead>
+      <tr>
+        <th>Patient Email</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Approved Appointments</td></tr>
+    </tbody>
+  </table>
+</div>
 
         </div>
 
@@ -342,9 +381,6 @@ td button:last-child:hover {
             }
             if (page === 'aphasiagameselection') {
                 addAphasiaEventListeners();
-            }
-            if (page === 'setappointment') {
-                initializeCalendar(); // ✅ Calls calendar function only when setappointment is loaded
             }
 
             })
@@ -599,6 +635,7 @@ td button:last-child:hover {
             }
 
             data.forEach(appointment => {
+
                 let row = `
                     <tr>
                         <td>${appointment.patientEmail}</td>
@@ -628,7 +665,7 @@ td button:last-child:hover {
                 alert("Appointment approved!");
                 location.reload();
             } else {
-                alert("Error approving appointment.");
+                alert("Error approving appointment." + data.error);
             }
         });
     }
@@ -647,6 +684,35 @@ td button:last-child:hover {
             } else {
                 alert("Error rejecting appointment.");
             }
+        });
+    }
+
+    // NEW function to load the therapist's approved appointments
+    function loadTherapistApprovedAppointments() {
+      fetch("/get-therapist-approved-appointments")
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.querySelector("#therapistApprovedAppointmentsTable tbody");
+          tableBody.innerHTML = ""; // Clear existing rows
+    
+          if (data.length === 0) {
+            tableBody.innerHTML = "<tr><td colspan='3'>No approved appointments</td></tr>";
+            return;
+          }
+    
+          data.forEach(appointment => {
+            const row = `
+              <tr>
+                <td>${appointment.patientEmail}</td>
+                <td>${appointment.date}</td>
+                <td>${appointment.time}</td>
+              </tr>
+            `;
+            tableBody.innerHTML += row;
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching approved therapist appointments:", error);
         });
     }
     </script>

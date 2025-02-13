@@ -80,10 +80,11 @@ const patientUsersSchema = new mongoose.Schema({
       required: true 
     },
     time: {
-       type: String, 
-       required: true 
+      type: String, 
+      required: true 
     },
-    status: { type: String, 
+    status: { 
+      type: String, 
       enum: ['Pending', 'Approved', 'Rejected'], 
       default: 'Pending' 
     }

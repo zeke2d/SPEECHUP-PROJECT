@@ -23,7 +23,8 @@ app.use(session({
     saveUninitialized: true
 }));
 
-
+//animalsounds
+app.use(express.static('src'));
 
 app.get("/", (req, res) => {
     res.render("index")

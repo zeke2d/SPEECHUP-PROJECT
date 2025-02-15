@@ -1,0 +1,105 @@
+{{! Community Forum Page }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Forum</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        .header {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ff3b3f;
+        }
+        p {
+            color: #6c757d;
+        }
+        .forum-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #ff3b3f;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .post {
+            background: #fff;
+            padding: 15px;
+            border-left: 5px solid #ff3b3f;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .replies {
+            background: #f1f1f1;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .reply {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div class="header">
+        <h1>Community Forum</h1>
+        <p>Engage in meaningful discussion posts within our growing community.</p>
+    </div>
+    
+    <section class="forum-container">
+        <form action="/communityforum/post" method="POST">
+            <input type="text" name="username" placeholder="First Name" required>
+            <textarea name="content" placeholder="Type here..." required></textarea>
+            <button type="submit">Post</button>
+        </form>
+        
+        {{#each posts}}
+        <div class="post">
+            <p><strong>{{this.username}}</strong>: {{this.content}}</p>
+            <form action="/communityforum/reply/{{this._id}}" method="POST">
+                <input type="text" name="username" placeholder="First Name" required>
+                <input type="text" name="content" placeholder="Reply..." required>
+                <button type="submit">Reply</button>
+            </form>
+            <div class="replies">
+                {{#each this.replies}}
+                <p class="reply"><strong>{{this.username}}</strong>: {{this.content}}</p>
+                {{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </section>
+</div>
+</body>
+</html>

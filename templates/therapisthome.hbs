@@ -289,7 +289,12 @@
             if (page === 'aphasiagameselection') {
                 addAphasiaEventListeners();
             }
-
+            // If it's the animalsounds page, dynamically load the script
+                    if (page === 'animalsounds') {
+                        const script = document.createElement('script');
+                        script.src = '/animalsounds-script.js';
+                        document.body.appendChild(script);
+                    }
             })
             .catch(error => {
                 console.error("Error loading page:", error);

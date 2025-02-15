@@ -23,8 +23,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-//animalsounds
-app.use(express.static('src'));
 
 app.get("/", (req, res) => {
     res.render("index")
@@ -412,9 +410,15 @@ router.get("/patienthome", (req, res) => {
 
 app.get('/content/:page', (req, res) => {
     const page = req.params.page;
-    res.render(page);  // This will render therapists.hbs, patients.hbs, or courses.hbs
-});
-
+    res.render(page, (err, html) => {
+        if (err) {
+          console.error(`Error rendering page: ${page}`, err);
+          return res.status(404).send("Page not found");
+        }
+        res.send(html);
+      });
+    });
+    
 // Allowed pages
 const allowedPages = ["home", "therapists", "patients", "courses", "communityforum", "patientprofile"];
 const allowedGamePages = ["apraxiagameselection", "dysarthriagameselection", "aphasiagameselection"];

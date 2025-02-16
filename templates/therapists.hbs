@@ -1,6 +1,100 @@
-<h2>THERAPISTS</h2>
-<br>
-<h3>Here are the list of Registered Therapists</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapists</title>
+    <link rel="icon" href="tabpic.png" type="image/png">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .therapist-card {
+            width: 260px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .therapist-card img {
+            width: 100%;
+            height: auto;
+            display: block; /* Prevents image from affecting layout */
+            margin-bottom: 10px;
+        }
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: #eee; /* Placeholder for avatar */
+            margin-bottom: 10px;
+        }
+        .therapist-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .therapist-bio {
+            font-size: 12px;
+            margin-bottom: 10px;
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis (...) */
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+        .follow-button {
+            background-color: #eee;
+            color: #333;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px; /* Add margin to separate from stats */
+        }
+
+    </style>
+</head>
+<body>
 
 
-       
+    <div class="container">
+
+        <div class="therapist-card">
+            <img src="placeholder.jpg" alt="therapist Image">
+            <div class="avatar"></div>
+            <div class="therapist-name">Jono Pogi "get from db"</div>
+            <div class="therapist-bio">Hi, I am Jono pogi specializing in kapogian "set sa edit profile ng therapist"</div>
+            <button class="follow-button">Set Appointment</button>
+        </div>
+
+                <div class="therapist-card">
+            <img src="placeholder.jpg" alt="therapist Image">
+            <div class="avatar"></div>
+            <div class="therapist-name">Jono Pogi "get from db"</div>
+            <div class="therapist-bio">Hi, I am Jono pogi specializing in kapogian "set sa edit profile ng therapist"</div>
+            <button class="follow-button">Set Appointment</button>
+        </div>
+
+                <div class="therapist-card">
+            <img src="placeholder.jpg" alt="therapist Image">
+            <div class="avatar"></div>
+            <div class="therapist-name">Jono Pogi "get from db"</div>
+            <div class="therapist-bio">Hi, I am Jono pogi specializing in kapogian "set sa edit profile ng therapist"</div>
+            <button class="follow-button">Set Appointment</button>
+        </div>
+
+                <div class="therapist-card">
+            <img src="placeholder.jpg" alt="therapist Image">
+            <div class="avatar"></div>
+            <div class="therapist-name">Jono Pogi "get from db"</div>
+            <div class="therapist-bio">Hi, I am Jono pogi specializing in kapogian "set sa edit profile ng therapist"</div>
+            <button class="follow-button">Set Appointment</button>
+        </div>
+
+    </div>
+
+</body>
+</html>

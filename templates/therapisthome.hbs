@@ -1,797 +1,797 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPEECH UP</title>
-    <link rel="icon" href="tabpic.png" type="image/png">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>SPEECH UP</title>
+  <link rel="icon" href="tabpic.png" type="image/png">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-        body {
-            display: flex;
-            height: 100vh;
-            background-color: #eef3fa;
-        }
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            transition: transform 0.3s ease-in-out;
-        }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
 
-        .sidebar h3 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #eef3fa;
+    }
 
-        .sidebar a {
-            text-decoration: none;
-            color: white;
-            padding: 10px;
-            margin: 5px 0;
-            display: block;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      transition: transform 0.3s ease-in-out;
+    }
 
-        .sidebar a:hover {
-            background-color: #34495e;
-        }
+    .sidebar h3 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
 
-        /* Hidden Sidebar */
-        .sidebar.hidden {
-            transform: translateX(-100%);
-        }
+    .sidebar a {
+      text-decoration: none;
+      color: white;
+      padding: 10px;
+      margin: 5px 0;
+      display: block;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        /* Sidebar Toggle Button */
-        .sidebar-toggle {
-            position: fixed;
-            top: 300px;
-            left: 255px;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 10px;
-            padding: 5px;
-            border-radius: 50%;
-            transition: left 0.3s ease-in-out;
-        }
+    .sidebar a:hover {
+      background-color: #df1645;
+    }
 
-        .sidebar.hidden + .sidebar-toggle {
-            left: 10px;
-        }
+    /* Hidden Sidebar */
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 260px;
-            transition: margin-left 0.3s ease-in-out;
-            width: 100%;
-        }
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+      position: fixed;
+      top: 300px;
+      left: 255px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 10px;
+      padding: 5px;
+      border-radius: 50%;
+      transition: left 0.3s ease-in-out;
+    }
 
-        .sidebar.hidden ~ .main-content {
-            margin-left: 20px;
-        }
+    .sidebar.hidden + .sidebar-toggle {
+      left: 10px;
+    }
 
-        /* Top Bar */
-        .top-bar {
-            background-color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      margin-left: 260px;
+      transition: margin-left 0.3s ease-in-out;
+      width: 100%;
+    }
 
-        /* Search Bar */
-        .search-container {
-            display: flex;
-            align-items: center;
-            background-color: #eef3fa;
-            border-radius: 20px;
-            padding: 1px 10px;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
+    .sidebar.hidden ~ .main-content {
+      margin-left: 20px;
+    }
 
-        .search-container input {
-            border: none;
-            background: transparent;
-            padding: 8px;
-            outline: none;
-            width: 200px;
-        }
+    /* Top Bar */
+    .top-bar {
+      background-color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .search-container button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #555;
-        }
+    /* Search Bar */
+    .search-container {
+      display: flex;
+      align-items: center;
+      background-color: #eef3fa;
+      border-radius: 20px;
+      padding: 1px 10px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Welcome Text */
-        .welcome-section {
-            margin-top: 20px;
-        }
+    .search-container input {
+      border: none;
+      background: transparent;
+      padding: 8px;
+      outline: none;
+      width: 200px;
+    }
 
-        h2 {
-            color: #333;
-        }
+    .search-container button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #555;
+    }
 
-        /* Profile Section */
-        .profile-container {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
+    /* Welcome Text */
+    .welcome-section {
+      margin-top: 20px;
+    }
 
-        .profile-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+    h2 {
+      color: #333;
+    }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 60px;
-            right: 0;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: none;
-            width: 150px;
-        }
+    /* Profile Section */
+    .profile-container {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
 
-        .dropdown-menu a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-            text-align: left;
-        }
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #dcd7d9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+    }
 
-        .dropdown-menu a:hover {
-            background-color: #f1f1f1;
-        }
+    .dropdown-menu {
+      position: absolute;
+      top: 70px;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+      width: 150px;
+    }
 
-        .dropdown-menu.active {
-            display: block;
-        }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: #333;
+      text-align: left;
+    }
 
-        .logout-btn {
-            display: block;
-            padding: 10px;
-            color: white;
-            background-color: red;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
-        }
+    .dropdown-menu a:hover {
+      background-color: #f1f1f1;
+    }
 
-        .logout-btn:hover {
-            background-color: darkred;
-        }
+    .dropdown-menu.active {
+      display: block;
+    }
 
-        /* Dynamic Content */
-        .content-area {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
+    .logout-btn {
+      display: block;
+      padding: 10px;
+      color: white;
+      background-color: red;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+    }
 
-        /* Therapist Home - Pending Appointments */
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-radius: 5px;
-            border-color: #2c3e50;
-        }
-        
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-            border-radius: 5px;
-        }
-        
-        th {
-            background-color: #df1645;
-            color: white;
-            border-radius: 5px;
-        }
-        
-        /* Action Buttons */
-        td button {
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        td button:first-child {
-            background-color: #28a745;
-            color: white;
-            border-radius: 5px;
-        }
-        
-        td button:first-child:hover {
-            background-color: #00ff62;
-            color: white;
-        }
-        
-        td button:last-child {
-            background-color: #dc3545;
-            color: white;
-            border-radius: 5px;
-        }
-        
-        td button:last-child:hover {
-            background-color: #ff0000;
-            color: white;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 10px 10px;
-            background-color: #df1645; /* Match Upload button */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 15px;
-            transition: background-color 0.3s ease;
-        }         
+    .logout-btn:hover {
+      background-color: darkred;
+    }
 
-        .btn:hover {
-        background-color: #ff003c; /* Darker shade on hover */
-        }
+    /* Dynamic Content */
+    .content-area {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
 
-    </style>
+    /* Therapist Home - Pending Appointments */
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 5px;
+      border-color: #2c3e50;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    th {
+      background-color: #df1645;
+      color: white;
+      border-radius: 5px;
+    }
+
+    /* Action Buttons */
+    td button {
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    td button:first-child {
+      background-color: #28a745;
+      color: white;
+      border-radius: 5px;
+    }
+
+    td button:first-child:hover {
+      background-color: #00ff62;
+      color: white;
+    }
+
+    td button:last-child {
+      background-color: #dc3545;
+      color: white;
+      border-radius: 5px;
+    }
+
+    td button:last-child:hover {
+      background-color: #ff0000;
+      color: white;
+    }
+
+    /* Our custom .btn class (not Bootstrap) */
+    .btn {
+      display: inline-block;
+      padding: 10px 10px;
+      background-color: #df1645; 
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #ff003c;
+    }
+
+  </style>
 </head>
-
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <img src="speechuplogo.png" alt="SpeechUp Logo" class="speechup-logo">
-        <br>
-        <a href="/therapisthome" onclick="loadPage('home')">Home</a>
-        <a href="#" onclick="loadPage('therapists')">Therapists</a>
-        <a href="#" onclick="loadPage('patients')">Patients</a>
-        <a href="#" onclick="loadPage('courses')">Courses</a>
-        <a href="#" onclick="loadPage('communityforum')">Community Forum</a>
+  <!-- Sidebar -->
+ <div class="sidebar" id="sidebar">
+    <img src="speechuplogo.png" alt="SpeechUp Logo" class="speechup-logo">
+    <br>
+    <a href="/therapisthome" onclick="loadPage('home')">
+      <i class="fas fa-home"></i> Home
+    </a>
+    <a href="#" onclick="loadPage('therapists')">
+      <i class="fas fa-user"></i> Therapists
+    </a>
+    <a href="#" onclick="loadPage('patients')">
+      <i class="fas fa-heart"></i> Patients
+    </a>
+    <a href="#" onclick="loadPage('courses')">
+      <i class="fas fa-book"></i> Courses
+    </a>
+    <a href="#" onclick="loadPage('communityforum')">
+      <i class="fas fa-comments"></i> Community Forum
+    </a>
+  </div>
+
+  <!-- Sidebar Toggle Button -->
+  <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9664;</button>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+
+    <!-- Top Bar with Search and Profile -->
+    <div class="top-bar">
+      <div class="search-container">
+        <input type="text" placeholder="Search..." id="searchInput">
+        <button onclick="searchFunction()">🔍</button>
+      </div>
+      <div class="profile-container" onclick="toggleDropdown()">
+        <img class="profile-icon" src="{{profileImage}}" alt="Profile">
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="#" onclick="loadPage('therapistprofile'); return false;">View Profile</a>
+          <a href="/logout" class="logout-btn">Log Out</a>
+        </div>
+      </div>
     </div>
 
-    <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9664;</button>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-
-        <!-- Top Bar with Search and Profile -->
-        <div class="top-bar">
-            <div class="search-container">
-                <input type="text" placeholder="Search..." id="searchInput">
-                <button onclick="searchFunction()">🔍</button>
-            </div>
-            <div class="profile-container" onclick="toggleDropdown()">
-                <img class="profile-icon" src="{{profileImage}}" alt="Profile">
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="#" onclick="loadPage('therapistprofile'); return false;">View Profile</a>
-                    <a href="/logout" class="logout-btn">Log Out</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dynamic Content Area -->
-        <div class="content-area" id="contentArea">
-            <h2>Welcome back {{firstName}}!</h2>
-            <br>
-            <br>
-            <h3>Here are your Appointment Requests</h3>
-    <table border="1">
+    <!-- Dynamic Content Area -->
+    <div class="content-area" id="contentArea">
+      <h2>Welcome back {{firstName}}!</h2>
+      <br><br>
+      <h3>Here are your Appointment Requests</h3>
+      <table border="1">
         <thead>
-            <tr>
-                <th>Patient Email</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Actions</th>
-            </tr>
+          <tr>
+            <th>Patient Email</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Actions</th>
+          </tr>
         </thead>
         <tbody id="appointmentsTable">
-            <tr><td colspan="4">Loading appointments...</td></tr>
+          <tr><td colspan="4">Loading appointments...</td></tr>
         </tbody>
-    </table>
-    <br>
-    <br>
+      </table>
+      <br><br>
 
-     <!-- New "View Approved Appointments" section -->
-  <button class="btn" onclick="loadTherapistApprovedAppointments()">View Approved Appointments</button>
+      <!-- New "View Approved Appointments" section -->
+      <button class="btn" onclick="loadTherapistApprovedAppointments()">View Approved Appointments</button>
 
-  <table border="1" id="therapistApprovedAppointmentsTable">
-    <thead>
-      <tr>
-        <th>Patient Email</th>
-        <th>Date</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="3">Approved Appointments</td></tr>
-    </tbody>
-  </table>
-</div>
-
-        </div>
-
+      <table border="1" id="therapistApprovedAppointmentsTable">
+        <thead>
+          <tr>
+            <th>Patient Email</th>
+            <th>Date</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3">Approved Appointments</td></tr>
+        </tbody>
+      </table>
     </div>
-    
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("hidden");
-            document.getElementById("sidebarToggle").innerHTML = 
-                document.getElementById("sidebar").classList.contains("hidden") ? "&#9654;" : "&#9664;";
-        }
 
-        function loadPage(page) {
-    if (page === 'communityforum') {
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("hidden");
+      document.getElementById("sidebarToggle").innerHTML = 
+        document.getElementById("sidebar").classList.contains("hidden") ? "&#9654;" : "&#9664;";
+    }
+
+    function loadPage(page) {
+      if (page === 'communityforum') {
         fetch('/communityforum')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("contentArea").innerHTML = html;
-                addForumEventListeners(); // Add event listeners for the forum
-            })
-            .catch(error => {
-                console.error("Error loading page:", error);
-                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
-            });
-    } else {
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById("contentArea").innerHTML = html;
+            addForumEventListeners();
+          })
+          .catch(error => {
+            console.error("Error loading page:", error);
+            document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+          });
+      } else {
         fetch(`/content/${page}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Page not found");
-                }
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById("contentArea").innerHTML = html;
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Page not found");
+            }
+            return response.text();
+          })
+          .then(html => {
+            document.getElementById("contentArea").innerHTML = html;
 
-                // Add event listeners AFTER the content is loaded
-                if (page === 'courses') {
-                    addCoursesEventListeners();
-                }
-                if (page === 'apraxiagameselection') {
-                    addApraxiaEventListeners();
-                }
-                if (page === 'dysarthriagameselection') {
-                    addDysarthriaEventListeners();
-                }
-                if (page === 'aphasiagameselection') {
-                    addAphasiaEventListeners();
-                }
-            })
-
-            .catch(error => {
-                console.error("Error loading page:", error);
-                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
-            });
+            // Add event listeners AFTER the content is loaded
+            if (page === 'courses') {
+              addCoursesEventListeners();
+            }
+            if (page === 'apraxiagameselection') {
+              addApraxiaEventListeners();
+            }
+            if (page === 'dysarthriagameselection') {
+              addDysarthriaEventListeners();
+            }
+            if (page === 'aphasiagameselection') {
+              addAphasiaEventListeners();
+            }
+          })
+          .catch(error => {
+            console.error("Error loading page:", error);
+            document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+          });
+      }
     }
-}
 
-function addForumEventListeners() {
-    const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
-    if (postForm) {
+    function addForumEventListeners() {
+      const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
+      if (postForm) {
         postForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent the default form submission
+          e.preventDefault();
 
-            // Log the form data for debugging
-            const formData = new FormData(postForm);
-            const data = Object.fromEntries(formData.entries());
-            console.log("Form Data:", data);
+          const formData = new FormData(postForm);
+          const data = Object.fromEntries(formData.entries());
+          console.log("Form Data:", data);
 
-            try {
-                const response = await fetch('/communityforum/post', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json', // Ensure the server expects JSON
-                    },
-                    body: JSON.stringify(data), // Send the form data as JSON
-                });
+          try {
+            const response = await fetch('/communityforum/post', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
 
-                if (response.ok) {
-                    console.log("Post submitted successfully!");
-                    loadPage('communityforum'); // Reload the forum content
-                } else {
-                    console.error("Failed to submit post:", response.statusText);
-                }
-            } catch (error) {
-                console.error("Error submitting post:", error);
+            if (response.ok) {
+              console.log("Post submitted successfully!");
+              loadPage('communityforum');
+            } else {
+              console.error("Failed to submit post:", response.statusText);
             }
+          } catch (error) {
+            console.error("Error submitting post:", error);
+          }
         });
-    }
+      }
 
-    const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');
-    replyForms.forEach(form => {
+      const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');
+      replyForms.forEach(form => {
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent the default form submission
+          e.preventDefault();
 
-            // Log the form data for debugging
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            console.log("Reply Form Data:", data);
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+          console.log("Reply Form Data:", data);
 
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json', // Ensure the server expects JSON
-                    },
-                    body: JSON.stringify(data), // Send the form data as JSON
-                });
+          try {
+            const response = await fetch(form.action, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
 
-                if (response.ok) {
-                    console.log("Reply submitted successfully!");
-                    loadPage('communityforum'); // Reload the forum content
-                } else {
-                    console.error("Failed to submit reply:", response.statusText);
-                }
-            } catch (error) {
-                console.error("Error submitting reply:", error);
+            if (response.ok) {
+              console.log("Reply submitted successfully!");
+              loadPage('communityforum');
+            } else {
+              console.error("Failed to submit reply:", response.statusText);
             }
+          } catch (error) {
+            console.error("Error submitting reply:", error);
+          }
         });
-    });
-}
+      });
+    }
 
-        function toggleDropdown() {
-            document.getElementById("dropdownMenu").classList.toggle("active");
-        }
+    function toggleDropdown() {
+      document.getElementById("dropdownMenu").classList.toggle("active");
+    }
 
-        function searchFunction() {
-            alert("Searching: " + document.getElementById("searchInput").value);
-        }
+    function searchFunction() {
+      alert("Searching: " + document.getElementById("searchInput").value);
+    }
 
-        function addCoursesEventListeners() {
-        const apraxiaButton = document.querySelector('.button-group button:nth-child(1)'); // Select Apraxia button
-    if (apraxiaButton) {
+    function addCoursesEventListeners() {
+      const apraxiaButton = document.querySelector('.button-group button:nth-child(1)');
+      if (apraxiaButton) {
         apraxiaButton.addEventListener('click', () => {
-            loadPage('apraxiagameselection');
+          loadPage('apraxiagameselection');
         });
-    }
+      }
 
-        const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)'); // Select Dysarthria button
-    if (dysarthriaButton) {
+      const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)');
+      if (dysarthriaButton) {
         dysarthriaButton.addEventListener('click', () => {
-            loadPage('dysarthriagameselection');
+          loadPage('dysarthriagameselection');
         });
-    }
+      }
 
-        const aphasiaButton = document.querySelector('.button-group button:nth-child(3)'); // Select Aphasia button
-    if (aphasiaButton) {
+      const aphasiaButton = document.querySelector('.button-group button:nth-child(3)');
+      if (aphasiaButton) {
         aphasiaButton.addEventListener('click', () => {
-            loadPage('aphasiagameselection');
+          loadPage('aphasiagameselection');
         });
+      }
     }
 
-}
-
-        function addApraxiaEventListeners(){
-        const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
-    if(animalSoundsButton){
+    function addApraxiaEventListeners() {
+      const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
+      if (animalSoundsButton) {
         animalSoundsButton.addEventListener('click', () => {
-            loadPage('animalsounds'); // Load the animal sounds page
+          loadPage('animalsounds');
         });
-    }
+      }
 
-        const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
-    if(bookReadingButton){
+      const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
+      if (bookReadingButton) {
         bookReadingButton.addEventListener('click', () => {
-            loadPage('bookreading'); // Load the book reading page
+          loadPage('bookreading');
         });
+      }
     }
-}
 
-        function addDysarthriaEventListeners(){
-        const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
-    if(wordSearchButton){
+    function addDysarthriaEventListeners() {
+      const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
+      if (wordSearchButton) {
         wordSearchButton.addEventListener('click', () => {
-            loadPage('wordsearch'); 
+          loadPage('wordsearch');
         });
-    }
+      }
 
-        const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
-    if(wordFlipbookButton){
+      const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
+      if (wordFlipbookButton) {
         wordFlipbookButton.addEventListener('click', () => {
-            loadPage('wordflipbook');
+          loadPage('wordflipbook');
         });
+      }
     }
-}
 
-        function addAphasiaEventListeners(){
-        const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
-    if(matchingGamesButton){
+    function addAphasiaEventListeners() {
+      const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
+      if (matchingGamesButton) {
         matchingGamesButton.addEventListener('click', () => {
-            loadPage('matchinggames');
+          loadPage('matchinggames');
         });
-    }
+      }
 
-        const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
-    if(tongueTwistersButton){
+      const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
+      if (tongueTwistersButton) {
         tongueTwistersButton.addEventListener('click', () => {
-            loadPage('tonguetwisters');
+          loadPage('tonguetwisters');
         });
+      }
     }
-}
 
-        function enableEditing() {
-        document.getElementById("firstName").disabled = false;
-        document.getElementById("lastName").disabled = false;
-        document.getElementById("password").disabled = false;
-    
-        document.getElementById("editProfile").style.display = "none";
-        document.getElementById("updateProfile").style.display = "inline-block";
-    } 
+    function enableEditing() {
+      document.getElementById("firstName").disabled = false;
+      document.getElementById("lastName").disabled = false;
+      document.getElementById("password").disabled = false;
 
-        async function updateProfile() {
-        const firstName = document.getElementById("firstName").value;
-        const lastName = document.getElementById("lastName").value;
-        const password = document.getElementById("password").value;
+      document.getElementById("editProfile").style.display = "none";
+      document.getElementById("updateProfile").style.display = "inline-block";
+    }
 
-        const response = await fetch("/update-profile-therapist", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ firstName, lastName, password })
-        });
+    async function updateProfile() {
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const password = document.getElementById("password").value;
 
+      const response = await fetch("/update-profile-therapist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, password })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Profile updated successfully!");
+        window.location.reload();
+      } else {
+        alert("Error updating profile.");
+      }
+    }
+
+    async function deleteAccount() {
+      if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+        const response = await fetch("/delete-account-therapist", { method: "POST" });
         const result = await response.json();
 
         if (result.success) {
-            alert("Profile updated successfully!");
-            window.location.reload();
+          alert("Account deleted successfully!");
+          window.location.href = "/";
         } else {
-            alert("Error updating profile.");
+          alert("Error deleting account.");
         }
+      }
     }
 
-        async function deleteAccount() {
-        if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-            const response = await fetch("/delete-account-therapist", { method: "POST" });
+    async function verifyTherapistPassword() {
+      const enteredPassword = document.getElementById("verifyPassword").value;
+      
+      const response = await fetch("/verify-password-therapist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: enteredPassword })
+      });
 
-            const result = await response.json();
+      const result = await response.json();
 
-            if (result.success) {
-                alert("Account deleted successfully!");
-                window.location.href = "/";
-            } else {
-                alert("Error deleting account.");
-            }
-        }
+      if (result.success) {
+        document.getElementById("passwordField").value = enteredPassword;
+        document.getElementById("togglePassword").disabled = false;
+        alert("Password verified successfully!");
+      } else {
+        alert("Incorrect password!");
+      }
     }
 
-        async function verifyTherapistPassword() {
-        const enteredPassword = document.getElementById("verifyPassword").value;
-        
-        // Send password for verification
-        const response = await fetch("/verify-password-therapist", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password: enteredPassword })
-        });
+    function uploadTherapistProfileImage(event) {
+      event.preventDefault();
 
-        const result = await response.json();
+      let formData = new FormData();
+      let fileInput = document.getElementById("profileImageInput").files[0];
 
-        if (result.success) {
-            document.getElementById("passwordField").value = enteredPassword;
-            document.getElementById("togglePassword").disabled = false;
+      if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+      }
 
-             // Show success message using a popup (alert)
-            alert("Password verified successfully!"); // Simple alert popup
+      formData.append("profileImage", fileInput);
 
+      fetch("/upload-therapist-profile", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          let profileImageElement = document.getElementById("profileImage");
+          profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
+          
+          let homeProfileIcon = document.querySelector(".profile-icon");
+          if (homeProfileIcon) {
+            homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
+          }
+          alert("Profile image updated successfully!");
         } else {
-            alert("Incorrect password!");
+          alert("Error uploading image: " + (data.error || "Unknown error"));
         }
+      })
+      .catch(error => {
+        console.error("Upload error:", error);
+        alert("An error occurred while uploading.");
+      });
     }
 
-        function uploadTherapistProfileImage(event) {
-        event.preventDefault(); // ✅ Prevent form submission from reloading the page
-    
-        let formData = new FormData();
-        let fileInput = document.getElementById("profileImageInput").files[0];
-    
-        if (!fileInput) {
-            alert("Please select an image to upload.");
-            return;
+    document.addEventListener("DOMContentLoaded", function () {
+      function updateFileName() {
+        let fileInput = document.getElementById("profileImageInput");
+        let fileNameDisplay = document.getElementById("file-name");
+
+        if (fileInput && fileNameDisplay) {
+          if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = fileInput.files[0].name;
+          } else {
+            fileNameDisplay.textContent = "No file chosen";
+          }
         }
-    
-        formData.append("profileImage", fileInput);
-    
-        fetch("/upload-therapist-profile", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-    
-                let profileImageElement = document.getElementById("profileImage");
-                profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Force refresh image cache
-                
-                let homeProfileIcon = document.querySelector(".profile-icon");
-                if (homeProfileIcon) {
-                    homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Also refresh homepage icon
-                }
-                alert("Profile image updated successfully!");
-            } else {
-                alert("Error uploading image: " + (data.error || "Unknown error"));
-            }
-        })
-        .catch(error => {
-            console.error("Upload error:", error);
-            alert("An error occurred while uploading.");
-        });
-    }
+      }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            function updateFileName() {
-                let fileInput = document.getElementById("profileImageInput");
-                let fileNameDisplay = document.getElementById("file-name");
-
-            if (fileInput && fileNameDisplay) {
-                if (fileInput.files.length > 0) {
-                    fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
-                } else {
-                    fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
-                }
-            }
+      document.body.addEventListener("change", function (event) {
+        if (event.target && event.target.id === "profileImageInput") {
+          updateFileName();
         }
-
-        document.body.addEventListener("change", function (event) {
-            if (event.target && event.target.id === "profileImageInput") {
-                updateFileName();
-            }
-        });
+      });
     });
 
-        function togglePassword() {
-        var passwordField = document.getElementById("passwordField");
-        var toggleButton = document.getElementById("togglePassword");
+    function togglePassword() {
+      var passwordField = document.getElementById("passwordField");
+      var toggleButton = document.getElementById("togglePassword");
 
-        if (passwordField.type === "*******") {
-            passwordField.type = "text";
-            toggleButton.innerText = "🙈"; // Hide icon
-        } else {
-            passwordField.type = "*******";
-            toggleButton.innerText = "👁"; // Show icon
-        }
+      if (passwordField.type === "*******") {
+        passwordField.type = "text";
+        toggleButton.innerText = "🙈";
+      } else {
+        passwordField.type = "*******";
+        toggleButton.innerText = "👁";
+      }
     }
- 
-        document.addEventListener("click", function(event) {
-        var dropdown = document.getElementById("dropdownMenu");
-        var profileContainer = document.querySelector(".profile-container");
 
-        if (!profileContainer.contains(event.target)) {
-            dropdown.classList.remove("active");
-        }
+    document.addEventListener("click", function(event) {
+      var dropdown = document.getElementById("dropdownMenu");
+      var profileContainer = document.querySelector(".profile-container");
+
+      if (!profileContainer.contains(event.target)) {
+        dropdown.classList.remove("active");
+      }
     });
 
     document.addEventListener("DOMContentLoaded", function () {
-        fetch("/get-therapist-appointments")
-        .then(response => response.json())
-        .then(data => {
-            let tableBody = document.getElementById("appointmentsTable");
-            tableBody.innerHTML = ""; // Clear previous content
+      fetch("/get-therapist-appointments")
+      .then(response => response.json())
+      .then(data => {
+        let tableBody = document.getElementById("appointmentsTable");
+        tableBody.innerHTML = ""; // Clear previous content
 
-            if (data.length === 0) {
-                tableBody.innerHTML = "<tr><td colspan='4'>No pending appointments</td></tr>";
-                return;
-            }
+        if (data.length === 0) {
+          tableBody.innerHTML = "<tr><td colspan='4'>No pending appointments</td></tr>";
+          return;
+        }
 
-            data.forEach(appointment => {
-
-                let row = `
-                    <tr>
-                        <td>${appointment.patientEmail}</td>
-                        <td>${appointment.date}</td>
-                        <td>${appointment.time}</td>
-                        <td>
-                            <button onclick="approveAppointment('${appointment._id}')">Approve</button>
-                            <button onclick="rejectAppointment('${appointment._id}')">Reject</button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        })
-        .catch(error => console.error("Error fetching appointments:", error));
+        data.forEach(appointment => {
+          let row = `
+            <tr>
+              <td>${appointment.patientEmail}</td>
+              <td>${appointment.date}</td>
+              <td>${appointment.time}</td>
+              <td>
+                <button onclick="approveAppointment('${appointment._id}')">Approve</button>
+                <button onclick="rejectAppointment('${appointment._id}')">Reject</button>
+              </td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
+        });
+      })
+      .catch(error => console.error("Error fetching appointments:", error));
     });
 
     function approveAppointment(appointmentId) {
-        fetch("/approve-appointment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ appointmentId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Appointment approved!");
-                location.reload();
-            } else {
-                alert("Error approving appointment." + data.error);
-            }
-        });
+      fetch("/approve-appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Appointment approved!");
+          location.reload();
+        } else {
+          alert("Error approving appointment." + data.error);
+        }
+      });
     }
 
     function rejectAppointment(appointmentId) {
-        fetch("/reject-appointment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ appointmentId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Appointment rejected.");
-                location.reload();
-            } else {
-                alert("Error rejecting appointment.");
-            }
-        });
+      fetch("/reject-appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Appointment rejected.");
+          location.reload();
+        } else {
+          alert("Error rejecting appointment.");
+        }
+      });
     }
 
     // NEW function to load the therapist's approved appointments
     function loadTherapistApprovedAppointments() {
       fetch("/get-therapist-approved-appointments")
-        .then(response => response.json())
-        .then(data => {
-          const tableBody = document.querySelector("#therapistApprovedAppointmentsTable tbody");
-          tableBody.innerHTML = ""; // Clear existing rows
-    
-          if (data.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='3'>No approved appointments</td></tr>";
-            return;
-          }
-    
-          data.forEach(appointment => {
-            const row = `
-              <tr>
-                <td>${appointment.patientEmail}</td>
-                <td>${appointment.date}</td>
-                <td>${appointment.time}</td>
-              </tr>
-            `;
-            tableBody.innerHTML += row;
-          });
-        })
-        .catch(error => {
-          console.error("Error fetching approved therapist appointments:", error);
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.querySelector("#therapistApprovedAppointmentsTable tbody");
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        if (data.length === 0) {
+          tableBody.innerHTML = "<tr><td colspan='3'>No approved appointments</td></tr>";
+          return;
+        }
+
+        data.forEach(appointment => {
+          const row = `
+            <tr>
+              <td>${appointment.patientEmail}</td>
+              <td>${appointment.date}</td>
+              <td>${appointment.time}</td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
         });
+      })
+      .catch(error => {
+        console.error("Error fetching approved therapist appointments:", error);
+      });
     }
-    </script>
+  </script>
 
 </body>
 </html>

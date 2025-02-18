@@ -387,6 +387,9 @@
                 if (page === 'aphasiagameselection') {
                     addAphasiaEventListeners();
                 }
+                if (page === 'setappointment') {
+                generateTimeOptions("selectedTime", 15);
+            }
             })
 
             .catch(error => {

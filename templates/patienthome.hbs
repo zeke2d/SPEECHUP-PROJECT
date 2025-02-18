@@ -289,8 +289,26 @@
             if (page === 'animalsounds') {
                 startGameAnimalSounds();
             }
+            if (page === 'bookreading') {
+                startGameBookReading();
+            }
+            if (page === 'wordflipbook') {
+                startGameWordFlipbook();
+            }
+            if (page === 'tonguetwisters') {
+                startGameTongueTwisters();
+            }
 
-            })
+             // Execute inline scripts manually
+          const scripts = contentArea.querySelectorAll("script");
+          scripts.forEach(script => {
+            try {
+              eval(script.innerText);
+            } catch (e) {
+              console.error("Error executing script:", e);
+            }
+          });
+        })
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
@@ -468,7 +486,7 @@
         }
     });
 
-    function startGameAnimalSounds(){
+function startGameAnimalSounds(){
 
   console.log("animalsounds-script.js loaded!");
 
@@ -541,6 +559,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
 });
   
 }
+
     </script>
 
 </body>

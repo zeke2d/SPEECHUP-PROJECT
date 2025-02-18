@@ -365,6 +365,18 @@
         }
 
         function loadPage(page) {
+    if (page === 'communityforum') {
+        fetch('/communityforum')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("contentArea").innerHTML = html;
+                addForumEventListeners(); // Add event listeners for the forum
+            })
+            .catch(error => {
+                console.error("Error loading page:", error);
+                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+            });
+    } else {
         fetch(`/content/${page}`)
             .then(response => {
                 if (!response.ok) {
@@ -375,31 +387,94 @@
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
 
-                  // Add event listeners AFTER the content is loaded
-            if (page === 'courses') {  // Check if it's the courses page
-                addCoursesEventListeners(); // Call a new function
-            }
-            if (page === 'apraxiagameselection') {
-                addApraxiaEventListeners();
-            }
-            if (page === 'dysarthriagameselection') {
-                addDysarthriaEventListeners();
-            }
-            if (page === 'aphasiagameselection') {
-                addAphasiaEventListeners();
-            }
-            if (page === 'setappointment') {
-                console.log("Appointment form loaded.");
+                // Add event listeners AFTER the content is loaded
+                if (page === 'courses') {
+                    addCoursesEventListeners();
+                }
+                if (page === 'apraxiagameselection') {
+                    addApraxiaEventListeners();
+                }
+                if (page === 'dysarthriagameselection') {
+                    addDysarthriaEventListeners();
+                }
+                if (page === 'aphasiagameselection') {
+                    addAphasiaEventListeners();
+                }
+                if (page === 'setappointment') {
                 generateTimeOptions("selectedTime", 15);
-                
             }
-
             })
+
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
             });
     }
+}
+
+function addForumEventListeners() {
+    const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
+    if (postForm) {
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Log the form data for debugging
+            const formData = new FormData(postForm);
+            const data = Object.fromEntries(formData.entries());
+            console.log("Form Data:", data);
+
+            try {
+                const response = await fetch('/communityforum/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Ensure the server expects JSON
+                    },
+                    body: JSON.stringify(data), // Send the form data as JSON
+                });
+
+                if (response.ok) {
+                    console.log("Post submitted successfully!");
+                    loadPage('communityforum'); // Reload the forum content
+                } else {
+                    console.error("Failed to submit post:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error submitting post:", error);
+            }
+        });
+    }
+
+    const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');
+    replyForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Log the form data for debugging
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            console.log("Reply Form Data:", data);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Ensure the server expects JSON
+                    },
+                    body: JSON.stringify(data), // Send the form data as JSON
+                });
+
+                if (response.ok) {
+                    console.log("Reply submitted successfully!");
+                    loadPage('communityforum'); // Reload the forum content
+                } else {
+                    console.error("Failed to submit reply:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error submitting reply:", error);
+            }
+        });
+    });
+}
 
         function toggleDropdown() {
             document.getElementById("dropdownMenu").classList.toggle("active");

@@ -345,13 +345,21 @@ app.get("/communityforum", async (req, res) => {
 
 // API route to add a post
 app.post("/communityforum/post", async (req, res) => {
-    const { username, content } = req.body; // Ensure the server is parsing JSON
-    if (!username || !content) return res.status(400).send("Invalid post");
+    if (!req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    const { content } = req.body;
+    if (!content) return res.status(400).send("Invalid post");
 
     try {
-        const newPost = new ForumPost({ username, content, replies: [] });
+        const newPost = new ForumPost({ 
+            username: `${req.session.user.firstName} ${req.session.user.lastName}`, 
+            content, 
+            replies: [] 
+        });
         await newPost.save();
-        res.status(200).send("Post created successfully"); // Send a success response
+        res.status(200).send("Post created successfully");
     } catch (error) {
         console.error("Error creating post:", error);
         res.status(500).send("Error creating post");
@@ -360,18 +368,24 @@ app.post("/communityforum/post", async (req, res) => {
 
 // API route to add a reply
 app.post("/communityforum/reply/:postId", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
     const { postId } = req.params;
-    const { username, content } = req.body;
-    if (!username || !content) return res.status(400).send("Invalid reply");
+    const { content } = req.body;
+    if (!content) return res.status(400).send("Invalid reply");
 
     const post = await ForumPost.findById(postId);
     if (!post) return res.status(404).send("Post not found");
 
-    post.replies.push({ username, content });
+    post.replies.push({ 
+        username: `${req.session.user.firstName} ${req.session.user.lastName}`, 
+        content 
+    });
     await post.save();
     res.redirect("/communityforum");
 });
-
 app.post("/update-profile-therapist", async (req, res) => {
     if (!req.session.user) {
         return res.status(401).json({ success: false, message: "Unauthorized" });

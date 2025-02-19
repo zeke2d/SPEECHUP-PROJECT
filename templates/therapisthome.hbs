@@ -82,6 +82,10 @@
       left: 10px;
     }
 
+    .speechup-logo{
+      border-radius: 5px;
+    }
+
     /* Main Content */
     .main-content {
       flex: 1;
@@ -106,32 +110,6 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    /* Search Bar */
-    .search-container {
-      display: flex;
-      align-items: center;
-      background-color: #eef3fa;
-      border-radius: 20px;
-      padding: 1px 10px;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .search-container input {
-      border: none;
-      background: transparent;
-      padding: 8px;
-      outline: none;
-      width: 200px;
-    }
-
-    .search-container button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      color: #555;
-    }
-
     /* Welcome Text */
     .welcome-section {
       margin-top: 20px;
@@ -146,6 +124,7 @@
       display: flex;
       align-items: center;
       cursor: pointer;
+      margin-left: auto; 
     }
 
     .profile-icon {
@@ -166,8 +145,8 @@
       position: absolute;
       top: 70px;
       right: 0;
-      background-color: white;
-      border: 1px solid #ddd;
+      background-color: #2c3e50;
+      border: 1px solid #2c3e50;
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       display: none;
@@ -178,12 +157,12 @@
       display: block;
       padding: 10px;
       text-decoration: none;
-      color: #333;
+      color: #ffffff;
       text-align: left;
     }
 
     .dropdown-menu a:hover {
-      background-color: #f1f1f1;
+      background-color: #df1645;
     }
 
     .dropdown-menu.active {
@@ -218,7 +197,7 @@
       width: 100%;
       margin-top: 20px;
       border-radius: 5px;
-      border-color: #2c3e50;
+      border: 4px solid #2c3e50;
     }
 
     th, td {
@@ -314,10 +293,6 @@
 
     <!-- Top Bar with Search and Profile -->
     <div class="top-bar">
-      <div class="search-container">
-        <input type="text" placeholder="Search..." id="searchInput">
-        <button onclick="searchFunction()">🔍</button>
-      </div>
       <div class="profile-container" onclick="toggleDropdown()">
         <img class="profile-icon" src="{{profileImage}}" alt="Profile">
         <div class="dropdown-menu" id="dropdownMenu">

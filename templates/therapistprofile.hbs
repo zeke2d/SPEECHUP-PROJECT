@@ -15,10 +15,10 @@
             gap: 10px;
         }
 
-        input[type="password"], input[type="text"] {
+        input[type="password"], input[type="email"], input[type="text"] {
             width: 200px;
             padding: 5px;
-            border: 1px solid #ccc;
+            border: 2px solid #2c3e50;
             border-radius: 5px;
         }
 
@@ -33,14 +33,20 @@
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #007bff;
+            border: 3px solid #df1645;
         }
 
         .profile-details {
             margin-top: 20px;
             text-align: left;
             padding: 10px;
-            border-top: 1px solid #ddd;
+            border: 4px solid #2c3e50;
+            border-radius: 5px;
+        }
+
+        .bio-input {
+            border: 2px solid #2c3e50;
+            border-radius: 5px;
         }
 
         .logout-btn {
@@ -100,28 +106,25 @@
         }
 
         #editProfile {
-            background-color: #007bff;
+            background-color: #df1645;
         }
 
         #editProfile:hover{
-            background-color: #b81237;
+            background-color: #ff003c;
         }
 
-        #editProfile:hover {
-            background-color: #b81237;
-        }
 
         #updateProfile {
-            background-color: #007bff;
+            background-color: #df1645;
             display: none;
         }
 
         #updateProfile:hover{
-            background-color: #b81237;
+            background-color: #ff003c;
         }
 
         #updateProfile:hover {
-            background-color: #b81237;
+            background-color: #ff003c;
             display: none;
         }
 
@@ -199,7 +202,7 @@
         <br>
          <!-- New Bio Field (initially disabled) -->
         <p><strong>Bio:</strong></p>
-        <textarea id="bio" disabled>{{bio}}</textarea>
+        <textarea id="bio" class="bio-input">{{bio}}</textarea>
         <br>
         <br>
 

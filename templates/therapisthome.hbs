@@ -558,6 +558,7 @@
       document.getElementById("firstName").disabled = false;
       document.getElementById("lastName").disabled = false;
       document.getElementById("password").disabled = false;
+      document.getElementById("bio").disabled = false;
 
       document.getElementById("editProfile").style.display = "none";
       document.getElementById("updateProfile").style.display = "inline-block";
@@ -567,11 +568,12 @@
       const firstName = document.getElementById("firstName").value;
       const lastName = document.getElementById("lastName").value;
       const password = document.getElementById("password").value;
+      const bio = document.getElementById("bio").value;
 
       const response = await fetch("/update-profile-therapist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, password })
+        body: JSON.stringify({ firstName, lastName, password, bio })
       });
 
       const result = await response.json();

@@ -137,7 +137,8 @@ app.get("/content/therapistprofile", async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                profileImage: user.profileImage || "/default-profile.png" // ✅ Ensure a fallback image
+                profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
+                bio: user.bio
             });
         } else {
             res.redirect("/therapistlogin"); // Redirect if user not found
@@ -162,7 +163,8 @@ app.get("/content/patientprofile", async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                profileImage: user.profileImage || "/default-profile.png" // ✅ Ensure a fallback image
+                profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
+                bio: user.bio
             });
         } else {
             res.redirect("/patientlogin"); // Redirect if user not found
@@ -394,7 +396,8 @@ app.post("/update-profile-therapist", async (req, res) => {
     try {
         let updatedFields = {
             firstName: req.body.firstName,
-            lastName: req.body.lastName
+            lastName: req.body.lastName,
+            bio: req.body.bio
         };
 
         if (req.body.password) {
@@ -408,6 +411,7 @@ app.post("/update-profile-therapist", async (req, res) => {
 
         req.session.user.firstName = req.body.firstName;
         req.session.user.lastName = req.body.lastName;
+        req.session.user.bio = req.body.bio;
 
         res.json({ success: true });
 
@@ -429,7 +433,8 @@ app.post("/update-profile-patient", async (req, res) => {
     try {
         let updatedFields = {
             firstName: req.body.firstName,
-            lastName: req.body.lastName
+            lastName: req.body.lastName,
+            bio: req.body.bio
         };
 
         if (req.body.password) {
@@ -443,6 +448,7 @@ app.post("/update-profile-patient", async (req, res) => {
 
         req.session.user.firstName = req.body.firstName;
         req.session.user.lastName = req.body.lastName;
+        req.session.user.bio = req.body.bio;
 
         res.json({ success: true });
 

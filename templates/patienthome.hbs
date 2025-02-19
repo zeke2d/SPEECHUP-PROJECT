@@ -252,6 +252,7 @@
             margin-top: 20px;
             border-radius: 5px;
             border-color: #2c3e50;
+            border-collapse: collapse;
         }
         
         th, td {
@@ -282,9 +283,6 @@
     </a>
     <a href="#" onclick="loadPage('therapists')">
       <i class="fas fa-user"></i> Therapists
-    </a>
-    <a href="#" onclick="loadPage('patients')">
-      <i class="fas fa-heart"></i> Patients
     </a>
     <a href="#" onclick="loadPage('courses')">
       <i class="fas fa-book"></i> Courses
@@ -349,12 +347,27 @@
       <tr><td colspan="3">Approved Appointments</td></tr>
     </tbody>
   </table>
+
+   <br>
+      <h3>My Grades</h3>
+      <table border="1" id="patientGradesTable">
+        <thead>
+          <tr>
+            <th>Animal Sounds</th>
+            <th>Book Reading</th>
+            <th>Word Search</th>
+            <th>Word Flipbook</th>
+            <th>Matching Games</th>
+            <th>Tongue Twisters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="6">Loading Grades.....</td></tr>
+        </tbody>
+      </table>
 </div>
 
         </div>
-
-    </div>
-
 
     <script>
         
@@ -820,6 +833,62 @@ function addForumEventListeners() {
               console.error("Error fetching approved patient appointments:", error);
             });
         }
+
+      function loadPatientGrades() {
+      fetch("/get-patient-grades")
+        .then((response) => response.json())
+        .then((data) => {
+          const gradesTableBody = document.querySelector("#patientGradesTable tbody");
+
+          if (!data.success) {
+            gradesTableBody.innerHTML = `<tr><td colspan='6'>Error loading grades</td></tr>`;
+            return;
+          }
+
+          const {
+            animalSounds,
+            bookReading,
+            wordSearch,
+            wordFlipbook,
+            matchingGames,
+            tongueTwisters
+          } = data.grades || {};
+
+          // If all are null, show "No grades found"
+          const allNull =
+            animalSounds == null &&
+            bookReading == null &&
+            wordSearch == null &&
+            wordFlipbook == null &&
+            matchingGames == null &&
+            tongueTwisters == null;
+
+          if (allNull) {
+            gradesTableBody.innerHTML = `<tr><td colspan='6'>No grades found</td></tr>`;
+          } else {
+            gradesTableBody.innerHTML = `
+              <tr>
+                <td>${animalSounds ?? ""}</td>
+                <td>${bookReading ?? ""}</td>
+                <td>${wordSearch ?? ""}</td>
+                <td>${wordFlipbook ?? ""}</td>
+                <td>${matchingGames ?? ""}</td>
+                <td>${tongueTwisters ?? ""}</td>
+              </tr>
+            `;
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching patient grades:", error);
+          const gradesTableBody = document.querySelector("#patientGradesTable tbody");
+          gradesTableBody.innerHTML = `<tr><td colspan='6'>Error loading grades</td></tr>`;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Automatically load the patient's grades
+      loadPatientGrades();
+    });
     
     </script>
 

@@ -793,6 +793,48 @@
         console.error("Error fetching approved therapist appointments:", error);
       });
     }
+
+    // Toggle visibility of the grade form for a specific patient
+  function toggleGradeForm(email) {
+    const form = document.getElementById(`gradeForm-${email}`);
+    if (form) {
+      form.style.display = (form.style.display === 'none' ? 'block' : 'none');
+    }
+  }
+
+  // Collect the grades and send them to the server
+  async function saveGrades(email) {
+    const games = ['animalSounds', 'bookReading', 'wordSearch', 'wordFlipbook', 'matchingGames', 'tongueTwisters'];
+    let grades = {};
+
+    for (let game of games) {
+      const input = document.getElementById(`grade-${game}-${email}`);
+      if (input) {
+        // Convert the grade to a number (or leave as string if preferred)
+        const value = input.value.trim();
+        grades[game] = value === "" ? null : Number(value);
+      }
+    }
+
+    try {
+      const response = await fetch("/add-grades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, grades })
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Grades saved successfully!");
+        // Optionally, reload the page to update the display
+        window.location.reload();
+      } else {
+        alert("Error saving grades: " + (data.message || ""));
+      }
+    } catch (err) {
+      console.error("Error saving grades:", err);
+      alert("Server error saving grades.");
+    }
+  }
   </script>
 
 </body>

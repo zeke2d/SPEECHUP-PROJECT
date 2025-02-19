@@ -68,6 +68,14 @@ const patientUsersSchema = new mongoose.Schema({
     bio: {
       type: String,
       default: "", // Initialize empty by default
+    },
+    grades: {
+    animalSounds: { type: Number, default: null },
+    bookReading: { type: Number, default: null },
+    wordSearch: { type: Number, default: null },
+    wordFlipbook: { type: Number, default: null },
+    matchingGames: { type: Number, default: null },
+    tongueTwisters: { type: Number, default: null }
     }
   });
   

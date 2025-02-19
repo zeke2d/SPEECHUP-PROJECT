@@ -160,7 +160,10 @@
                     <button type="button" class="custom-file-label" onclick="uploadTherapistProfileImage(event)">Upload</button>
                 </form>
             </div>
-            <h2 id="username">{{firstName}} {{lastName}}</h2>
+            <br>
+            <h2>{{firstName}} {{lastName}}</h2>
+            <br>
+            <p>{{bio}}</p>
         </div>
         
         <div class="profile-details">
@@ -194,6 +197,12 @@
         </div>
         <br>
         <br>
+         <!-- New Bio Field (initially disabled) -->
+        <p><strong>Bio:</strong></p>
+        <textarea id="bio" disabled>{{bio}}</textarea>
+        <br>
+        <br>
+
         <button id="editProfile" onclick="enableEditing()">Edit Profile</button>
         <button id="updateProfile" onclick="updateProfile()">Update Profile</button>
         <button id="deleteAccount" onclick="deleteAccount()">Delete Account</button>

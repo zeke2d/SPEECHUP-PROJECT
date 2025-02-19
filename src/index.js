@@ -73,14 +73,6 @@ app.get("/patientsignup", (req, res) => {
     res.render("patientsignup")
 })
 
-app.get("/therapists", (req, res) => {
-    res.render("therapists")
-})
-
-app.get("/patients", (req, res) => {
-    res.render("patients")
-})
-
 app.get("/courses", (req, res) => {
     res.render("courses")
 })
@@ -121,7 +113,58 @@ app.get("/tonguetwisters", (req, res) => {
     res.render("tonguetwisters")
 })
 
+app.get("/content/therapists", async (req, res) => {
+    try {
+      // 1) Get all therapists from the DB
+      const allTherapists = await therapistUsersCollection.find({});
+  
+      // 2) Render the therapists.hbs template
+      //    If you are using a layout, you can omit "layout: false"
+      //    If you do partial page loads, set layout to false so we only get the snippet
+      res.render("therapists", {
+        layout: false,            // or remove if using a default layout
+        therapists: allTherapists // Pass array of therapists to the template
+      });
+    } catch (err) {
+      console.error("Error retrieving therapists:", err);
+      res.status(500).send("Error retrieving therapists");
+    }
+  });
 
+  // app.js (or wherever your routes are defined)
+app.get("/content/patients", async (req, res) => {
+    try {
+      // 1. Ensure therapist is logged in
+      if (!req.session.user) {
+        return res.redirect("/login");
+      }
+  
+      // 2. Grab the therapist’s email from session
+      const therapistEmail = req.session.user.email;
+  
+      // 3. Find all approved appointments for this therapist
+      const approvedAppointments = await appointmentCollection.find({
+        therapistEmail: therapistEmail,
+        status: "Approved"
+      });
+  
+      // 4. Extract the unique patientEmails from these appointments
+      const patientEmails = approvedAppointments.map(appt => appt.patientEmail);
+      const uniquePatientEmails = [...new Set(patientEmails)]; // remove duplicates
+  
+      // 5. Find those patients in the patientUsersCollection
+      const approvedPatients = await patientUsersCollection.find({
+        email: { $in: uniquePatientEmails }
+      });
+  
+      // 6. Render the "patients.hbs" template with those patients
+      //    Use "layout: false" if you’re injecting into #contentArea dynamically
+      res.render("patients", { layout: false, patients: approvedPatients });
+    } catch (err) {
+      console.error("Error retrieving approved patients:", err);
+      res.status(500).send("Error retrieving approved patients");
+    }
+  });
 
 app.get("/content/therapistprofile", async (req, res) => {
 
@@ -137,7 +180,8 @@ app.get("/content/therapistprofile", async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                profileImage: user.profileImage || "/default-profile.png" // ✅ Ensure a fallback image
+                profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
+                bio: user.bio
             });
         } else {
             res.redirect("/therapistlogin"); // Redirect if user not found
@@ -162,7 +206,8 @@ app.get("/content/patientprofile", async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                profileImage: user.profileImage || "/default-profile.png" // ✅ Ensure a fallback image
+                profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
+                bio: user.bio
             });
         } else {
             res.redirect("/patientlogin"); // Redirect if user not found
@@ -216,6 +261,28 @@ app.get("/patienthome", async (req, res) => {
         res.redirect("/patientlogin");
     }
 });
+
+app.get("/get-patient-grades", async (req, res) => {
+    try {
+      // Ensure the user is logged in
+      if (!req.session.user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+  
+      // Find the patient by the session email
+      const patientEmail = req.session.user.email;
+      const patient = await patientUsersCollection.findOne({ email: patientEmail });
+      if (!patient) {
+        return res.json({ success: false, message: "Patient not found" });
+      }
+  
+      // Return the patient's grades
+      res.json({ success: true, grades: patient.grades || {} });
+    } catch (error) {
+      console.error("Error fetching patient grades:", error);
+      res.json({ success: false, message: "Server error" });
+    }
+  });
 
 app.post("/therapistlogin", async (req, res) => {
     try {
@@ -394,7 +461,8 @@ app.post("/update-profile-therapist", async (req, res) => {
     try {
         let updatedFields = {
             firstName: req.body.firstName,
-            lastName: req.body.lastName
+            lastName: req.body.lastName,
+            bio: req.body.bio
         };
 
         if (req.body.password) {
@@ -408,6 +476,7 @@ app.post("/update-profile-therapist", async (req, res) => {
 
         req.session.user.firstName = req.body.firstName;
         req.session.user.lastName = req.body.lastName;
+        req.session.user.bio = req.body.bio;
 
         res.json({ success: true });
 
@@ -429,7 +498,8 @@ app.post("/update-profile-patient", async (req, res) => {
     try {
         let updatedFields = {
             firstName: req.body.firstName,
-            lastName: req.body.lastName
+            lastName: req.body.lastName,
+            bio: req.body.bio
         };
 
         if (req.body.password) {
@@ -443,6 +513,7 @@ app.post("/update-profile-patient", async (req, res) => {
 
         req.session.user.firstName = req.body.firstName;
         req.session.user.lastName = req.body.lastName;
+        req.session.user.bio = req.body.bio;
 
         res.json({ success: true });
 
@@ -762,6 +833,31 @@ app.post("/reject-appointment", async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 });
+
+// In your main server file (app.js or similar)
+app.post("/add-grades", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.json({ success: false, message: "Unauthorized" });
+      }
+  
+      const { email, grades } = req.body; // grades should be an object with keys for each game
+  
+      const patient = await patientUsersCollection.findOne({ email });
+      if (!patient) {
+        return res.json({ success: false, message: "Patient not found" });
+      }
+  
+      // Merge the new grades into the existing grades object
+      patient.grades = { ...patient.grades, ...grades };
+  
+      await patient.save();
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error adding grades:", error);
+      res.json({ success: false, message: "Server error" });
+    }
+  });
 
 router.get("/therapisthome", (req, res) => {
     res.render("therapisthome", { firstName: req.user.firstName });

@@ -151,7 +151,10 @@
                     <button type="button" onclick="uploadPatientProfileImage(event)" class="custom-file-label">Upload</button>
                 </form>
             </div>
+            <br>
             <h2 id="username">{{firstName}} {{lastName}}</h2>
+            <br>
+            <p id="displayBio">{{bio}}</p>
         </div>
         
         <div class="profile-details">
@@ -183,6 +186,11 @@
             <input type="password" id="passwordField" value="*******" readonly>
             <button id="togglePassword" onclick="togglePassword()" class="custom-file-label" disabled>👁</button>
         </div>
+        <br>
+        <br>
+          <!-- New Bio Field (initially disabled) -->
+         <p><strong>Bio:</strong></p>
+         <textarea id="bio" disabled>{{bio}}</textarea>
         <br>
         <br>
         <button id="editProfile" onclick="enableEditing()">Edit Profile</button>

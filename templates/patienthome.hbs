@@ -457,7 +457,7 @@
               console.error("Error executing script:", e);
             }
           });
-        })
+          
             document.getElementById("loading-overlay").style.display = "none";
             })
 
@@ -468,7 +468,6 @@
             });
     }
 }
-
 function addForumEventListeners() {
     const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
     if (postForm) {

@@ -432,11 +432,7 @@
               console.error("Error executing script:", e);
             }
           });
-
-        })
-            .catch(error => {
-                console.error("Error loading page:", error);
-                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                      
             document.getElementById("loading-overlay").style.display = "none";
           })
           .catch(error => {

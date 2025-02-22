@@ -1,34 +1,278 @@
+{{!-- matchinggames.hbs --}}
+
 <style>
+  /****************************************
+   * BACK BUTTON (same style as animalsounds.hbs)
+   ****************************************/
+  .back-btn {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    color: #333;
+    border: none;
+    padding: 8px 8px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .back-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateX(-3px);
+  }
+  .back-btn::before {
+    content: "⮐";
+    margin-right: 8px;
+    font-size: 18px;
+  }
 
-    .back-btn {
-        display: flex;
-        align-items: center;
-        background-color: #f8f9fa;
-        color: #333;
-        border: none;
-        padding: 8px 8px;
-        font-size: 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-weight: bold;
-        margin-bottom: 20px; /* Space below the back button */
-    }
+  /****************************************
+   * HEADER CONTAINER (same style as animalsounds.hbs)
+   ****************************************/
+  .header-container {
+    background-color: #FF7878;
+    padding: 20px;
+    border-radius: 20px;
+    width: fit-content;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 330px; /* Adjust or remove if you don't need this offset */
+  }
+  .header-container h1 {
+    color: white;
+    margin: 0;
+  }
+  .header-container h6 {
+    color: white;
+    font-style: italic;
+    opacity: 0.75;
+    margin-top: 5px;
+  }
 
-    .back-btn:hover {
-        background-color: #e0e0e0;
-        transform: translateX(-3px);
-    }
+  /****************************************
+   * GAME CONTAINER (similar to animalsounds.hbs)
+   ****************************************/
+  .game-container {
+    position: relative; /* So the modal can be absolutely placed within */
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+  }
 
-    .back-btn::before {
-        content: "⮐";
-        margin-right: 8px;
-        font-size: 18px;
-    }
+  /****************************************
+   * BOARD & CARD STYLES
+   ****************************************/
+  .board {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-template-rows: repeat(4, 100px);
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .card {
+    width: 100px;
+    height: 100px;
+    background-color: #D9D9D9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border-radius: 10px;
+    /* Removed margin-left: 500px! */
+  }
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .card .hidden {
+    display: none;
+  }
+  /* Hide the question mark when the fruit is visible */
+  .card:not(.matched):has(img.visible)::after {
+      content: ""; /* Remove the '?' when the image is shown */
+  }
+  .card:not(.matched)::after {
+    content: "?";
+    font-size: 32px;
+    font-weight: bold;
+    color: #FF7878;
+    position: absolute;
+  }
+  .card.matched::after {
+    content: ""; /* Remove '?' when matched */
+  }
+  .card.matched {
+    border: 2px solid #FF7878;
+    box-shadow: 0 0 10px rgba(255, 120, 120, 0.5);
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+  }
 
+  /****************************************
+   * MODAL (confined to .game-container)
+   ****************************************/
+  .modal {
+    position: absolute; /* absolute to the .game-container */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* You can use a semi-transparent overlay if you like: */
+    background: rgba(255, 120, 120, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  .modal-content {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    /* If you want a smaller modal, set a max-width, etc. */
+  }
+
+  /****************************************
+   * BUTTON STYLES
+   ****************************************/
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #FF7878;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #d65c5c;
+  }
 </style>
 
 <!-- Back Button -->
-<button onclick="loadPage('aphasiagameselection')" class="back-btn">Back to Aphasia Unit</button>
+<button onclick="loadPage('aphasiagameselection')" class="back-btn">
+  Back to Aphasia Unit
+</button>
 
-<h2>MATCHING GAMES</h2>
+<!-- Header Section -->
+<div class="header-container">
+  <h1>Aphasia Unit - Matching Games</h1>
+  <h6>Boost Memory, Boost Speech. Let's Match!</h6>
+</div>
+
+<!-- Main Container for the Game -->
+<div class="game-container">
+  <!-- Modal (confined to .game-container) -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2>Memorize the fruits!</h2>
+      <button id="startGame">Start Game</button>
+    </div>
+  </div>
+
+  <!-- Game Board -->
+  <div id="gameBoard" class="board"></div>
+</div>
+
+<script>
+  const images = [
+    "apple.jpg", "kiwi.jpg", "orange.jpg", "watermelon.jpg",
+    "blueberry.jpg", "grape.jpg", "dragonfruit.jpg", "peach.jpg"
+  ];
+
+  let cards = [...images, ...images]; // Duplicate to make pairs
+  let flippedCards = [];
+  let matchedPairs = 0;
+  let canFlip = false; // Prevent flipping during memorization
+
+  function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
+
+  function createBoard() {
+    const board = document.getElementById("gameBoard");
+    board.innerHTML = "";
+    const shuffledCards = shuffle(cards);
+    shuffledCards.forEach((image) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+
+      const img = document.createElement("img");
+      img.src = image;
+      img.classList.add("visible"); // Start visible for 5 seconds
+
+      card.appendChild(img);
+      board.appendChild(card);
+      card.addEventListener("click", flipCard);
+    });
+
+    // Show images for 5 seconds, then hide them
+    setTimeout(() => {
+      document.querySelectorAll(".card img").forEach(img => {
+        img.classList.remove("visible");
+        img.classList.add("hidden"); // Hide all images after 5 sec
+      });
+      canFlip = true; // Allow flipping after memorization
+    }, 5000);
+  }
+
+  function flipCard() {
+    if (!canFlip || flippedCards.length === 2) return;
+    let img = this.querySelector("img");
+    if (!img.classList.contains("hidden")) return;
+
+    // Show this card
+    img.classList.remove("hidden");
+    img.classList.add("visible");
+    flippedCards.push(this);
+
+    // If two cards are flipped, check match
+    if (flippedCards.length === 2) {
+      canFlip = false;
+      setTimeout(checkMatch, 800);
+    }
+  }
+
+  function checkMatch() {
+    const [card1, card2] = flippedCards;
+    if (card1.querySelector("img").src === card2.querySelector("img").src) {
+      card1.classList.add("matched");
+      card2.classList.add("matched");
+      matchedPairs++;
+      if (matchedPairs === images.length) {
+        setTimeout(() => alert("🎉 Congratulations! You matched all pairs!"), 300);
+      }
+    } else {
+      setTimeout(() => {
+        card1.querySelector("img").classList.remove("visible");
+        card1.querySelector("img").classList.add("hidden");
+        card2.querySelector("img").classList.remove("visible");
+        card2.querySelector("img").classList.add("hidden");
+      }, 800);
+    }
+    flippedCards = [];
+    canFlip = true;
+  }
+
+  // Start Game button inside the modal
+  document.getElementById("startGame").addEventListener("click", () => {
+    document.getElementById("modal").style.display = "none";
+    canFlip = false; // Prevent clicking during the 5-sec reveal
+    createBoard();
+  });
+
+  // Show modal initially
+  document.getElementById("modal").style.display = "flex";
+</script>

@@ -15,10 +15,10 @@
             gap: 10px;
         }
 
-        input[type="password"], input[type="text"] {
+        input[type="password"], input[type="email"], input[type="text"] {
             width: 200px;
             padding: 5px;
-            border: 1px solid #ccc;
+            border: 2px solid #2c3e50;
             border-radius: 5px;
         }
 
@@ -33,14 +33,20 @@
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #007bff;
+            border: 3px solid #df1645;
         }
 
         .profile-details {
             margin-top: 20px;
             text-align: left;
             padding: 10px;
-            border-top: 1px solid #ddd;
+            border: 4px solid #2c3e50;
+            border-radius: 5px;
+        }
+
+        .bio-input {
+            border: 2px solid #2c3e50;
+            border-radius: 5px;
         }
 
         .logout-btn {
@@ -66,7 +72,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-      .back-btn {
+        .back-btn {
             position: absolute; /* Or fixed, depending on desired behavior */
             top: 20px;         /* Adjust as needed */
             left: 20px;        /* Adjust as needed */
@@ -78,33 +84,84 @@
             z-index: 10; /* Ensure it's above other content */
         }
 
-        #editProfile {
-            background-color: #007bff;
+        /* Style for the custom file upload button */
+        .custom-file-input {
+            display: none; /* Hide the default file input */
         }
 
+        .custom-file-label {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #df1645; /* Match Upload button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.3s ease;
+        }         
+
+        .custom-file-label:hover {
+        background-color: #ff003c; /* Darker shade on hover */
+        }
+
+        #editProfile {
+            background-color: #df1645;
+        }
+
+        #editProfile:hover{
+            background-color: #ff003c;
+        }
+
+
         #updateProfile {
-            background-color: #007bff;
+            background-color: #df1645;
             display: none;
         }
 
+        #updateProfile:hover{
+            background-color: #ff003c;
+        }
+
         #deleteAccount {
-            background-color: red;
+            background-color: rgb(221, 32, 32);
+        }
+
+        #deleteAccount:hover {
+            background-color: #ff0000;
+        }
+
+        /* Hide the default file input */
+        #profileImageInput {
+            display: none;
+        }
+
+        /* To show the selected file name */
+        #file-name {
+            margin-left: 2px;
+            margin-right: 2px;
+            color: #333;
         }
 
     </style>
-    <link rel="icon" href="tabpic.png" type="image/png">
+
     <h2>Your Profile</h2>
     
     <div class="container">
         <div class="profile-header">
             <div class="profile-picture">
-                <img id="profileImage" src="/uploads/default-profile.png" alt="Profile Picture">
-                <form id="uploadForm" action="/upload-profile" method="POST" enctype="multipart/form-data">
+                <img id="profileImage" src="{{profileImage}}?t={{timestamp}}" alt="Profile Picture">
+                <form id="uploadForm" enctype="multipart/form-data">
+                <label for="profileImageInput" class="custom-file-label">Choose File</label>
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
-                    <button type="submit">Upload</button>
+                    <span id="file-name">No file chosen</span> 
+                    <button type="button" class="custom-file-label" onclick="uploadTherapistProfileImage(event)">Upload</button>
                 </form>
             </div>
-            <h2 id="username">{{firstName}} {{lastName}}</h2>
+            <br>
+            <h2>{{firstName}} {{lastName}}</h2>
+            <br>
+            <p>{{bio}}</p>
         </div>
         
         <div class="profile-details">
@@ -127,17 +184,23 @@
         <!-- Password Verification Field -->
         <p><strong>Enter your password to view it:</strong></p>
         <input type="password" id="verifyPassword" placeholder="Enter your password">
-        <button onclick="verifyTherapistPassword()">Verify</button>
+        <button class="custom-file-label" onclick="verifyTherapistPassword()">Verify</button>
         <br>
         <br>  
         <!-- Password Display -->
         <p><strong>Your Password:</strong></p>
         <div class="password-container">
             <input type="password" id="passwordField" value="*******" readonly>
-            <button id="togglePassword" onclick="togglePassword()" disabled>👁</button>
+            <button id="togglePassword" class="custom-file-label" onclick="togglePassword()" disabled>👁</button>
         </div>
         <br>
         <br>
+         <!-- New Bio Field (initially disabled) -->
+        <p><strong>Bio:</strong></p>
+        <textarea id="bio" class="bio-input">{{bio}}</textarea>
+        <br>
+        <br>
+
         <button id="editProfile" onclick="enableEditing()">Edit Profile</button>
         <button id="updateProfile" onclick="updateProfile()">Update Profile</button>
         <button id="deleteAccount" onclick="deleteAccount()">Delete Account</button>
@@ -145,3 +208,66 @@
         </div>
 
       </div>
+
+   <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+    function updateFileName() {
+        let fileInput = document.getElementById("profileImageInput");
+        let fileNameDisplay = document.getElementById("file-name");
+
+        if (fileInput && fileNameDisplay) {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
+            } else {
+                fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
+            }
+        }
+    }
+
+    document.body.addEventListener("change", function (event) {
+        if (event.target && event.target.id === "profileImageInput") {
+            updateFileName();
+        }
+    });
+});
+
+function uploadTherapistProfileImage(event) {
+    event.preventDefault(); // ✅ Prevent form submission from reloading the page
+
+    let formData = new FormData();
+    let fileInput = document.getElementById("profileImageInput").files[0];
+
+    if (!fileInput) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("profileImage", fileInput);
+
+    fetch("/upload-therapist-profile", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+
+            let profileImageElement = document.getElementById("profileImage");
+            profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Force refresh image cache
+            
+            let homeProfileIcon = document.querySelector(".profile-icon");
+            if (homeProfileIcon) {
+                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Also refresh homepage icon
+            }
+            alert("Profile image updated successfully!");
+        } else {
+            alert("Error uploading image: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(error => {
+        console.error("Upload error:", error);
+        alert("An error occurred while uploading.");
+    });
+}
+</script>

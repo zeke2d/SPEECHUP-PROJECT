@@ -1,0 +1,88 @@
+<style>
+    h2 {
+    text-align: center;
+    margin-bottom: 10px; /* Adjust as needed */
+  }
+   p {
+    text-align: center;
+    margin-bottom: 10px; /* Adjust as needed */
+  }
+  .forum-container {
+    margin-top: 20px; 
+    text-align: center;
+  }
+
+  .forum-container textarea,
+  .forum-container input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 2px solid #2c3e50;
+  }
+
+  .forum-container button {
+    background-color: #df1645;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+
+  .forum-container button:hover {
+    background-color: #ff003c;
+  }
+
+  .post {
+    background: #fff;
+    padding: 15px;
+    border-left: 5px solid #ff3b3f;
+    margin-top: 20px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .replies {
+    background: #f1f1f1;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .reply {
+    color: #333;
+    text-align: center;
+    margin: 5px 0;
+  }
+</style>
+
+<div>
+    
+  <h2>Community Forum</h2>
+  <p>Engage in meaningful discussion posts within our growing community.</p>
+  
+  <div class="forum-container">
+    <form action="/communityforum/post" method="POST">
+      <textarea name="content" placeholder="Type here..." required></textarea>
+      <button type="submit">Post</button>
+    </form>
+
+    {{#each posts}}
+      <div class="post">
+        <p><strong>{{this.username}}</strong>: {{this.content}}</p>
+        <form action="/communityforum/reply/{{this._id}}" method="POST">
+          <input type="text" name="content" placeholder="Reply..." required>
+          <button type="submit">Reply</button>
+        </form>
+        <div class="replies">
+          {{#each this.replies}}
+            <p class="reply"><strong>{{this.username}}</strong>: {{this.content}}</p>
+          {{/each}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>

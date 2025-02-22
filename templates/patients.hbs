@@ -1,7 +1,177 @@
+<style>
+  .patients-container {
+    padding: 20px;
+  }
+  .patients-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .patients-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .patient-card {
+    width: 240px;
+    border: 4px solid #2c3e50;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
+    box-sizing: border-box;
+  }
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .patient-details {
+    text-align: center;
+  }
+  .patient-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+  .patient-email {
+    font-size: 14px;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+  }
+  .patient-bio {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+  }
+  .patient-grades p {
+    margin: 3px 0;
+    font-size: 14px;
+  }
+  .edit-grades-btn {
+    background-color: #df1645;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  .edit-grades-btn:hover {
+    background-color: #ff003c;
+  }
+  .save-grades-btn {
+    background-color: #df1645;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  .save-grades-btn:hover {
+    background-color: #ff003c;
+  }
+  .grade-form {
+    margin-top: 10px;
+    text-align: left;
+  }
+  .grade-form label {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .grade-form input {
+    width: 100%;
+    padding: 4px;
+    margin-top: 2px;
+    border: 2px solid #2c3e50;
+  }
+</style>
 
-<h2>PATIENTS</h2>
-<br>
-<h3>Here are the list of Patients</h3>
+<!-- patients.hbs -->
+<div class="patients-container">
+  <h2>Your Patients</h2>
 
+  <div class="patients-grid">
+    {{#if patients.length}}
+      {{#each patients}}
+        <div class="patient-card">
+          <!-- Circular avatar -->
+          <div class="avatar">
+            <img src="{{this.profileImage}}" alt="Patient Image" />
+          </div>
 
-    
+          <!-- Patient details -->
+          <div class="patient-details">
+            <div class="patient-name">{{this.firstName}} {{this.lastName}}</div>
+            <div class="patient-email">{{this.email}}</div>
+            <div class="patient-bio">{{this.bio}}</div>
+
+            <!-- Display current grades if available -->
+            <div class="patient-grades">
+              <p><strong>Animal Sounds:</strong> {{this.grades.animalSounds}}</p>
+              <p><strong>Book Reading:</strong> {{this.grades.bookReading}}</p>
+              <p><strong>Word Search:</strong> {{this.grades.wordSearch}}</p>
+              <p><strong>Word Flipbook:</strong> {{this.grades.wordFlipbook}}</p>
+              <p><strong>Matching Games:</strong> {{this.grades.matchingGames}}</p>
+              <p><strong>Tongue Twisters:</strong> {{this.grades.tongueTwisters}}</p>
+            </div>
+
+            <!-- Button to toggle the grades form -->
+            <button class="edit-grades-btn" onclick="toggleGradeForm('{{this.email}}')">
+              Edit Grades
+            </button>
+
+            <!-- Hidden form to enter/update grades -->
+            <div class="grade-form" id="gradeForm-{{this.email}}" style="display: none;">
+              <label>
+                Animal Sounds:
+                <input type="number" id="grade-animalSounds-{{this.email}}" placeholder="Grade" value="{{this.grades.animalSounds}}">
+              </label>
+              <br>
+              <label>
+                Book Reading:
+                <input type="number" id="grade-bookReading-{{this.email}}" placeholder="Grade" value="{{this.grades.bookReading}}">
+              </label>
+              <br>
+              <label>
+                Word Search:
+                <input type="number" id="grade-wordSearch-{{this.email}}" placeholder="Grade" value="{{this.grades.wordSearch}}">
+              </label>
+              <br>
+              <label>
+                Word Flipbook:
+                <input type="number" id="grade-wordFlipbook-{{this.email}}" placeholder="Grade" value="{{this.grades.wordFlipbook}}">
+              </label>
+              <br>
+              <label>
+                Matching Games:
+                <input type="number" id="grade-matchingGames-{{this.email}}" placeholder="Grade" value="{{this.grades.matchingGames}}">
+              </label>
+              <br>
+              <label>
+                Tongue Twisters:
+                <input type="number" id="grade-tongueTwisters-{{this.email}}" placeholder="Grade" value="{{this.grades.tongueTwisters}}">
+              </label>
+              <br>
+              <button class="save-grades-btn" onclick="saveGrades('{{this.email}}')">Save Grades</button>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <p>No approved patients found.</p>
+    {{/if}}
+  </div>
+</div>

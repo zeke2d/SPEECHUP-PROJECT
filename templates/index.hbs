@@ -1,35 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INDEX PAGE</title>
-    <link rel="icon" href="tabpic.png" type="image/png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPEECH UP</title>
+  <link rel="icon" href="tabpic.png" type="image/png">
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" 
+    crossorigin="anonymous"
+  >
+  <script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+    crossorigin="anonymous"
+  ></script>
+
+  <style>
+    /* Bootstrap button color overrides */
+    .btn-primary {
+      background-color: #df1645; 
+      border-color: #df1645;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: #ff003c;  
+      border-color: #ff003c;
+    }
+
+    /* Background video styling */
+    #bg-video {
+      position: fixed;
+      top: 0;
+      bottom: 1;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;           /* Put the video behind the overlay */
+      object-fit: cover;     /* Ensures the video covers the area without stretching */
+    }
+
+    /* Semi-transparent overlay to darken the video */
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      bottom: 1;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4); /* Adjust opacity (0.4) as needed */
+      z-index: -1;                    /* Layer between video (-2) and content (default) */
+    }
+
+    /* Optional: round the corners of the logo */
+    .speechup-logo {
+      border-radius: 5px;
+    }
+
+    /* Text color for headings */
+    h2, h3 {
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="text-center">
-            <br>
-            <br>
-            <br>
-            <img src="speechuplogo.png">
-            <br>
-            <br>
-        <h2>WELCOME TO SPEECH UP!</h2>
-        <h3>"Your Path to Better Speech Starts Here!"</h3>
-        <br>
-         <div class="btn-group" role="group" aria-label="Basic example">
-            
-      <a href="/therapistlogin" class="btn btn-primary">I'm a Therapist</a>
-      <span class="mx-2"></span> 
-      <a href="/patientlogin" class="btn btn-primary">I'm a Patient</a>
-      
+  <!-- Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="speechupvid.mp4" type="video/mp4">
+    <!-- Fallback text if the video doesn't load -->
+    Your browser does not support the video tag.
+  </video>
 
-      <script src="/js/main.js"></script> 
-      </div>
+  <!-- Overlay to darken the video -->
+  <div class="video-overlay"></div>
+
+  <!-- Main content -->
+  <div class="container">
+    <div class="text-center">
+      <br><br><br>
+      <img src="speechuplogo.png" class="speechup-logo" alt="Speech Up Logo">
+      <br><br>
+      <h2>WELCOME TO SPEECH UP!</h2>
+      <h3>"Your Path to Better Speech Starts Here!"</h3>
+      <br>
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <a href="/therapistlogin" class="btn btn-primary rounded-pill btn-lg">I'm a Therapist</a>
+        <span class="mx-2"></span>
+        <a href="/patientlogin" class="btn btn-primary rounded-pill btn-lg">I'm a Patient</a>
       </div>
     </div>
+  </div>
 </body>
 </html>

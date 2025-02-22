@@ -22,7 +22,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #eef3fa;
+            background-image: url('bgimage.jpg'); /* Add your background image here */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
         }
 
         .container {
@@ -77,13 +80,13 @@
         input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 2px solid #2c3e50;
             border-radius: 6px;
             font-size: 14px;
         }
 
         input:focus {
-            border-color: #007bff;
+            border-color: #000000;
             outline: none;
         }
 
@@ -107,18 +110,6 @@
             font-size: 18px;
         }
 
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .checkbox-container input {
-            margin-right: 380px; 
-        }
-
         .actions {
             display: flex;
             justify-content: space-between;
@@ -136,7 +127,7 @@
         }
 
         .signup-btn {
-            background-color: #007bff;
+            background-color: #df1645;
             color: #fff;
             border: none;
             padding: 12px;
@@ -146,7 +137,7 @@
         }
 
         .signup-btn:hover {
-            background-color: #0056b3;
+            background-color: #ff003c;
         }
 
         .social-login {
@@ -181,14 +172,14 @@
         }
 
         .back-btn:hover {
-            color: #0056b3;
+            color: #df1645;
         }
 
-        
     </style>
 </head>
 
 <body>
+  
     <button class="back-btn" onclick="goBack()">&#8592;</button>
 
     <div class="container">

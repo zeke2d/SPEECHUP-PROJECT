@@ -5,17 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPEECH UP</title>
     <link rel="icon" href="tabpic.png" type="image/png">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <style>
 
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
+
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; / Ensure it's on top */
+        }
+.loader {
+            border: 16px solid #f3f3f3; 
+            border-top: 16px solid #db3f34; 
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite; / Spin the element */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        
 
         body {
             display: flex;
@@ -54,7 +85,7 @@
         }
 
         .sidebar a:hover {
-            background-color: #34495e;
+            background-color: #df1645;
         }
 
         /* Hidden Sidebar */
@@ -66,7 +97,7 @@
         .sidebar-toggle {
             position: fixed;
             top: 300px;
-            left: 260px;
+            left: 255px;
             background-color: #2c3e50;
             color: white;
             border: none;
@@ -79,6 +110,10 @@
 
         .sidebar.hidden + .sidebar-toggle {
             left: 10px;
+        }
+
+        .speechup-logo {
+            border-radius: 5px;
         }
 
         /* Main Content */
@@ -105,32 +140,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Search Bar */
-        .search-container {
-            display: flex;
-            align-items: center;
-            background-color: #eef3fa;
-            border-radius: 20px;
-            padding: 1px 10px;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-container input {
-            border: none;
-            background: transparent;
-            padding: 8px;
-            outline: none;
-            width: 200px;
-        }
-
-        .search-container button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #555;
-        }
-
         /* Welcome Text */
         .welcome-section {
             margin-top: 20px;
@@ -145,6 +154,7 @@
             display: flex;
             align-items: center;
             cursor: pointer;
+            margin-left: auto; 
         }
 
         .profile-icon {
@@ -163,10 +173,10 @@
 
         .dropdown-menu {
             position: absolute;
-            top: 60px;
+            top: 70px;
             right: 0;
-            background-color: white;
-            border: 1px solid #ddd;
+            background-color: #2c3e50;
+            border: 1px solid #2c3e50;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: none;
@@ -177,12 +187,12 @@
             display: block;
             padding: 10px;
             text-decoration: none;
-            color: #333;
+            color: #ffffff;
             text-align: left;
         }
 
         .dropdown-menu a:hover {
-            background-color: #f1f1f1;
+            background-color: #df1645;
         }
 
         .dropdown-menu.active {
@@ -211,20 +221,85 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 10px;
+            background-color: #df1645; /* Match Upload button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
+        }         
+
+        .btn:hover {
+        background-color: #ff003c; /* Darker shade on hover */
+        }
+        
+        /* Appointment Request Form */
+        .appointment-form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-form label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            border: 4px solid #2c3e50;
+        }
+        
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        th {
+            background-color: #df1645;
+            color: white;
+            border-radius: 5px;
+        }
+        
     </style>
+
 </head>
 
 <body>
+<div id="loading-overlay"> 
+        <div class="loader"></div>
+    </div>
 
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <img src="speechuplogo.png" alt="SpeechUp Logo" class="speechup-logo">
-        <a href="/patienthome" onclick="loadPage('home')">Home</a>
-        <a href="#" onclick="loadPage('therapists')">Therapists</a>
-        <a href="#" onclick="loadPage('courses')">Courses</a>
-        <a href="#" onclick="loadPage('setappointment')">Set an Appointment</a>
-        <a href="#" onclick="loadPage('communityforum')">Community Forum</a>
-    </div>
+ <div class="sidebar" id="sidebar">
+    <img src="speechuplogo.png" alt="SpeechUp Logo" class="speechup-logo">
+    <br>
+    <a href="/patienthome" onclick="loadPage('home')">
+      <i class="fas fa-home"></i> Home
+    </a>
+    <a href="#" onclick="loadPage('therapists')">
+      <i class="fas fa-user"></i> Therapists
+    </a>
+    <a href="#" onclick="loadPage('courses')">
+      <i class="fas fa-book"></i> Courses
+    </a>
+    <a href="#" onclick="loadPage('communityforum')">
+      <i class="fas fa-comments"></i> Community Forum
+    </a>
+ </div>
 
     <!-- Sidebar Toggle Button -->
     <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9664;</button>
@@ -234,12 +309,8 @@
         
         <!-- Top Bar with Search and Profile -->
         <div class="top-bar">
-            <div class="search-container">
-                <input type="text" placeholder="Search..." id="searchInput">
-                <button onclick="searchFunction()">🔍</button>
-            </div>
             <div class="profile-container" onclick="toggleDropdown()">
-                <div class="profile-icon">👤</div>
+                <img class="profile-icon" src="{{profileImage}}" alt="Profile">
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="#" onclick="loadPage('patientprofile'); return false;">View Profile</a>
                     <a href="/logout" class="logout-btn">Log Out</a>
@@ -250,9 +321,58 @@
         <!-- Dynamic Content Area -->
         <div class="content-area" id="contentArea">
             <h2>Welcome back {{firstName}}!</h2>
-        </div>
+            <br>
+            <br>
+            <h3>Are you ready to start a therapy session with your therapist?</h3>
+            <br>
+            <h3>Click on the button below to set your appointment.</h3>
+            <br>
+            <button class="btn" onclick="loadPage('setappointment')">Set Appointment</button>
 
-    </div>
+            <!-- Hidden input to store patient email -->
+        <input type="hidden" id="patientEmail" value="{{email}}">
+
+        <br>
+        <br>
+        <br>
+        <br>
+               <!-- New "View Approved Appointments" section -->
+  <button class="btn" onclick="loadApprovedAppointments()">View Approved Appointments</button>
+  
+  <!-- Table to display approved appointments -->
+  <table border="1" id="patientApprovedAppointmentsTable">
+    <thead>
+      <tr>
+        <th>Therapist Email</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Approved Appointments</td></tr>
+    </tbody>
+  </table>
+
+   <br>
+      <h3>My Grades</h3>
+      <table border="1" id="patientGradesTable">
+        <thead>
+          <tr>
+            <th>Animal Sounds</th>
+            <th>Book Reading</th>
+            <th>Word Search</th>
+            <th>Word Flipbook</th>
+            <th>Matching Games</th>
+            <th>Tongue Twisters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="6">Loading Grades.....</td></tr>
+        </tbody>
+      </table>
+</div>
+
+        </div>
 
     <script>
         
@@ -263,6 +383,23 @@
         }
 
         function loadPage(page) {
+
+            document.getElementById("loading-overlay").style.display = "flex";
+
+    if (page === 'communityforum') {
+        fetch('/communityforum')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("contentArea").innerHTML = html;
+                addForumEventListeners(); // Add event listeners for the forum
+                document.getElementById("loading-overlay").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error loading page:", error);
+                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                document.getElementById("loading-overlay").style.display = "none";
+            });
+    } else {
         fetch(`/content/${page}`)
             .then(response => {
                 if (!response.ok) {
@@ -273,9 +410,21 @@
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
 
-                  // Add event listeners AFTER the content is loaded
-            if (page === 'courses') {  // Check if it's the courses page
-                addCoursesEventListeners(); // Call a new function
+                // Add event listeners AFTER the content is loaded
+                if (page === 'courses') {
+                    addCoursesEventListeners();
+                }
+                if (page === 'apraxiagameselection') {
+                    addApraxiaEventListeners();
+                }
+                if (page === 'dysarthriagameselection') {
+                    addDysarthriaEventListeners();
+                }
+                if (page === 'aphasiagameselection') {
+                    addAphasiaEventListeners();
+                }
+                if (page === 'setappointment') {
+                generateTimeOptions("selectedTime", 15);
             }
             if (page === 'apraxiagameselection') {
                 addApraxiaEventListeners();
@@ -309,11 +458,80 @@
             }
           });
         })
+            document.getElementById("loading-overlay").style.display = "none";
+            })
+
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                document.getElementById("loading-overlay").style.display = "none";
             });
     }
+}
+
+function addForumEventListeners() {
+    const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
+    if (postForm) {
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Log the form data for debugging
+            const formData = new FormData(postForm);
+            const data = Object.fromEntries(formData.entries());
+            console.log("Form Data:", data);
+
+            try {
+                const response = await fetch('/communityforum/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Ensure the server expects JSON
+                    },
+                    body: JSON.stringify(data), // Send the form data as JSON
+                });
+
+                if (response.ok) {
+                    console.log("Post submitted successfully!");
+                    loadPage('communityforum'); // Reload the forum content
+                } else {
+                    console.error("Failed to submit post:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error submitting post:", error);
+            }
+        });
+    }
+
+    const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');
+    replyForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Log the form data for debugging
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            console.log("Reply Form Data:", data);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Ensure the server expects JSON
+                    },
+                    body: JSON.stringify(data), // Send the form data as JSON
+                });
+
+                if (response.ok) {
+                    console.log("Reply submitted successfully!");
+                    loadPage('communityforum'); // Reload the forum content
+                } else {
+                    console.error("Failed to submit reply:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error submitting reply:", error);
+            }
+        });
+    });
+}
 
         function toggleDropdown() {
             document.getElementById("dropdownMenu").classList.toggle("active");
@@ -399,6 +617,7 @@
         document.getElementById("firstName").disabled = false;
         document.getElementById("lastName").disabled = false;
         document.getElementById("password").disabled = false;
+        document.getElementById("bio").disabled = false;
 
         document.getElementById("editProfile").style.display = "none";
         document.getElementById("updateProfile").style.display = "inline-block";
@@ -408,11 +627,12 @@
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const password = document.getElementById("password").value;
+        const bio = document.getElementById("bio").value;
 
         const response = await fetch("/update-profile-patient", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ firstName, lastName, password })
+            body: JSON.stringify({ firstName, lastName, password, bio })
         });
 
         const result = await response.json();
@@ -463,6 +683,69 @@
             alert("Incorrect password!");
         }
     }
+
+        function uploadPatientProfileImage(event) {
+        event.preventDefault(); // Prevent form from reloading the page
+    
+        let formData = new FormData();
+        let fileInput = document.getElementById("profileImageInput").files[0];
+    
+        if (!fileInput) {
+            alert("Please select an image to upload.");
+            return;
+        }
+    
+        formData.append("profileImage", fileInput);
+    
+        fetch("/upload-patient-profile", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+    
+                let profileImageElement = document.getElementById("profileImage");
+                if (profileImageElement) {
+                    profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
+                }
+    
+                let homeProfileIcon = document.querySelector(".profile-icon");
+                if (homeProfileIcon) {
+                    homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
+                }
+    
+                alert("Profile image updated successfully!");
+            } else {
+                alert("Error uploading image: " + (data.error || "Unknown error"));
+            }
+        })
+        .catch(error => {
+            console.error("Upload error:", error);
+            alert("An error occurred while uploading.");
+        });
+    }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateFileName() {
+                let fileInput = document.getElementById("profileImageInput");
+                let fileNameDisplay = document.getElementById("file-name");
+    
+            if (fileInput && fileNameDisplay) {
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = fileInput.files[0].name; // ✅ Update filename
+                } else {
+                    fileNameDisplay.textContent = "No file chosen"; // ✅ Reset text
+                }
+            }
+        }
+    
+        document.body.addEventListener("change", function (event) {
+            if (event.target && event.target.id === "profileImageInput") {
+                updateFileName();
+            }
+        });
+    });
 
         function togglePassword() {
         var passwordField = document.getElementById("passwordField");
@@ -560,6 +843,179 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
   
 }
 
+    // Function to generate time options dynamically in 15-minute intervals
+        function generateTimeOptions(selectElementId, intervalMinutes) {
+          const select = document.getElementById(selectElementId);
+          // Start at midnight
+          let current = new Date();
+          current.setHours(0, 0, 0, 0);
+          
+          // End at 11:45 PM
+          const end = new Date();
+          end.setHours(23, 59, 59, 999);
+        
+          while (current <= end) {
+            // Calculate hours and minutes
+            let hours = current.getHours();
+            let minutes = current.getMinutes();
+            // Determine AM/PM and convert to 12-hour format
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            let displayHour = hours % 12;
+            if (displayHour === 0) displayHour = 12;
+            // Format minutes with leading zero if needed
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            const timeString = `${displayHour}:${formattedMinutes} ${suffix}`;
+        
+            // Create and append an option
+            const option = document.createElement('option');
+            option.value = timeString;
+            option.textContent = timeString;
+            select.appendChild(option);
+        
+            // Increase current time by the interval
+            current.setMinutes(current.getMinutes() + intervalMinutes);
+          }
+        }
+        
+        // Generate options on page load (using 15-minute intervals)
+        document.addEventListener("DOMContentLoaded", function () {
+          generateTimeOptions("selectedTime", 15);
+        });
+        
+        function requestAppointment() {
+          const therapistEmail = document.getElementById("therapistEmail").value.trim();
+          const selectedDate   = document.getElementById("selectedDate").value.trim();
+          const selectedTime   = document.getElementById("selectedTime").value.trim();
+          const patientEmail   = document.getElementById("patientEmail").value.trim();
+        
+          console.log("📢 Sending Appointment Request:", {
+            therapistEmail,
+            patientEmail,
+            date: selectedDate,
+            time: selectedTime
+          });
+        
+          // Validate inputs
+          if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
+            alert("Please fill in all fields before requesting an appointment.");
+            return;
+          }
+        
+          fetch("/add-appointment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              therapistEmail,
+              patientEmail,
+              date: selectedDate,
+              time: selectedTime, // now includes AM/PM, e.g. "3:15 PM"
+              status: "Pending"
+            })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                alert("Appointment request sent! Waiting for therapist approval.");
+                location.reload();
+              } else {
+                alert("Error submitting appointment: " + data.error);
+              }
+            })
+            .catch(error => console.error("❌ Error:", error));
+        }
+        
+        function loadApprovedAppointments() {
+          fetch("/get-patient-approved-appointments")
+            .then(response => response.json())
+            .then(data => {
+              const tableBody = document.querySelector("#patientApprovedAppointmentsTable tbody");
+              tableBody.innerHTML = ""; // Clear existing rows
+        
+              if (data.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='3'>No approved appointments</td></tr>";
+                return;
+              }
+        
+              data.forEach(appointment => {
+                const row = `
+                  <tr>
+                    <td>${appointment.therapistEmail}</td>
+                    <td>${appointment.date}</td>
+                    <td>${appointment.time}</td>
+                  </tr>
+                `;
+                tableBody.innerHTML += row;
+              });
+            })
+            .catch(error => {
+              console.error("Error fetching approved patient appointments:", error);
+            });
+        }
+
+      function loadPatientGrades() {
+      fetch("/get-patient-grades")
+        .then((response) => response.json())
+        .then((data) => {
+          const gradesTableBody = document.querySelector("#patientGradesTable tbody");
+
+          if (!data.success) {
+            gradesTableBody.innerHTML = `<tr><td colspan='6'>Error loading grades</td></tr>`;
+            return;
+          }
+
+          const {
+            animalSounds,
+            bookReading,
+            wordSearch,
+            wordFlipbook,
+            matchingGames,
+            tongueTwisters
+          } = data.grades || {};
+
+          // If all are null, show "No grades found"
+          const allNull =
+            animalSounds == null &&
+            bookReading == null &&
+            wordSearch == null &&
+            wordFlipbook == null &&
+            matchingGames == null &&
+            tongueTwisters == null;
+
+          if (allNull) {
+            gradesTableBody.innerHTML = `<tr><td colspan='6'>No grades found</td></tr>`;
+          } else {
+            gradesTableBody.innerHTML = `
+              <tr>
+                <td>${animalSounds ?? ""}</td>
+                <td>${bookReading ?? ""}</td>
+                <td>${wordSearch ?? ""}</td>
+                <td>${wordFlipbook ?? ""}</td>
+                <td>${matchingGames ?? ""}</td>
+                <td>${tongueTwisters ?? ""}</td>
+              </tr>
+            `;
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching patient grades:", error);
+          const gradesTableBody = document.querySelector("#patientGradesTable tbody");
+          gradesTableBody.innerHTML = `<tr><td colspan='6'>Error loading grades</td></tr>`;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Automatically load the patient's grades
+      loadPatientGrades();
+    });
+
+    function hideLoading() {
+            document.getElementById("loading-overlay").style.display = "none";
+        }
+
+        // Hide the loading overlay after a 2-second delay
+        window.addEventListener('load', (event) => {
+            setTimeout(hideLoading, 500); 
+        });
     </script>
 
 </body>

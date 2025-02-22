@@ -21,7 +21,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #eef3fa;
+            background-image: url('bgimage.jpg'); /* Add your background image here */
+            background-size: cover; /* Ensure the image covers the entire background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
         }
 
         .container {
@@ -76,13 +79,13 @@
         input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 2px solid #2c3e50;
             border-radius: 6px;
             font-size: 14px;
         }
 
         input:focus {
-            border-color: #007bff;
+            border-color: #000000;
             outline: none;
         }
 
@@ -106,17 +109,6 @@
             font-size: 18px;
         }
 
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #555;
-        }
-
-        .checkbox-container input {
-            margin-right: 380px; 
-        }
-
         .actions {
             display: flex;
             justify-content: space-between;
@@ -134,7 +126,7 @@
         }
 
         .login-btn {
-            background-color: #007bff;
+            background-color: #df1645;
             color: #fff;
             border: none;
             padding: 12px;
@@ -144,7 +136,7 @@
         }
 
         .login-btn:hover {
-            background-color: #0056b3;
+            background-color: #ff003c;
         }
 
         .social-login {
@@ -179,7 +171,7 @@
         }
 
         .back-btn:hover {
-            color: #0056b3;
+            color: #df1645;
         }
 
                         .checkbox-container {
@@ -188,45 +180,10 @@
             margin-bottom: 20px; /* Add some space below */
         }
 
-        .checkbox-container label {
-            margin-right: 10px;  /* Space between label and checkbox */
-            cursor: pointer;      /* Make label clickable */
-            color: #555;
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            appearance: none; /* Remove default checkbox styling */
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative; /* For positioning the checkmark */
-            margin: 0; /* Reset default margins */
-            vertical-align: middle; /* Align checkbox with label */
-        }
-
-        .checkbox-container input[type="checkbox"]:checked {
-            border-color: #007bff; /* Highlight border when checked */
-        }
-
-        .checkbox-container input[type="checkbox"]:checked::before {
-            content: "\2713"; /* Unicode checkmark character */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 14px;
-            color: #007bff; /* Checkmark color */
-        }
-
-        /* Optional: Add a hover effect */
-        .checkbox-container:hover input[type="checkbox"] {
-            border-color: #ccc;
-        }
     </style>
 </head>
 <body>
+  
     <button class="back-btn" onclick="goBack()">&#8592;</button>
 
     <div class="container">
@@ -235,6 +192,9 @@
         </div>
         
         <div class="right-section">
+            <br>
+            <br>
+            <br>
             <h2>Welcome back Patient!</h2>
             <p>Please log in to your account and continue your journey</p>
 
@@ -250,13 +210,6 @@
                     <button type="button" class="password-toggle" onclick="togglePassword()">👁</button>
                 </div>
 
-                <p class="checkbox-container">
-                    <label for="rememberMe">Remember Me</label>
-                    <input type="checkbox" name="rememberMe" id="rememberMe">
-                </p>
-                <div class="actions">
-                    <a href="/forgot-password">Forgot Password?</a>
-                </div>
                 <button type="submit" class="login-btn">Login</button>
             </form>
             <br>

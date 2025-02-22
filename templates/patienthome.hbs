@@ -20,6 +20,34 @@
             font-family: 'Inter', sans-serif;
         }
 
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; / Ensure it's on top */
+        }
+.loader {
+            border: 16px solid #f3f3f3; 
+            border-top: 16px solid #db3f34; 
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite; / Spin the element */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        
+
         body {
             display: flex;
             height: 100vh;
@@ -251,6 +279,9 @@
 </head>
 
 <body>
+<div id="loading-overlay"> 
+        <div class="loader"></div>
+    </div>
 
     <!-- Sidebar -->
  <div class="sidebar" id="sidebar">
@@ -352,16 +383,21 @@
         }
 
         function loadPage(page) {
+
+            document.getElementById("loading-overlay").style.display = "flex";
+
     if (page === 'communityforum') {
         fetch('/communityforum')
             .then(response => response.text())
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
                 addForumEventListeners(); // Add event listeners for the forum
+                document.getElementById("loading-overlay").style.display = "none";
             })
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                document.getElementById("loading-overlay").style.display = "none";
             });
     } else {
         fetch(`/content/${page}`)
@@ -390,11 +426,13 @@
                 if (page === 'setappointment') {
                 generateTimeOptions("selectedTime", 15);
             }
+            document.getElementById("loading-overlay").style.display = "none";
             })
 
             .catch(error => {
                 console.error("Error loading page:", error);
                 document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                document.getElementById("loading-overlay").style.display = "none";
             });
     }
 }
@@ -863,7 +901,15 @@ function addForumEventListeners() {
       // Automatically load the patient's grades
       loadPatientGrades();
     });
-    
+
+    function hideLoading() {
+            document.getElementById("loading-overlay").style.display = "none";
+        }
+
+        // Hide the loading overlay after a 2-second delay
+        window.addEventListener('load', (event) => {
+            setTimeout(hideLoading, 500); 
+        });
     </script>
 
 </body>

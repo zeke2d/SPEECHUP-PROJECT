@@ -72,7 +72,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-      .back-btn {
+        .back-btn {
             position: absolute; /* Or fixed, depending on desired behavior */
             top: 20px;         /* Adjust as needed */
             left: 20px;        /* Adjust as needed */
@@ -109,16 +109,17 @@
             background-color: #df1645;
         }
 
-        #editProfile:hover {
+        #editProfile:hover{
             background-color: #ff003c;
         }
+
 
         #updateProfile {
             background-color: #df1645;
             display: none;
         }
 
-        #updateProfile:hover {
+        #updateProfile:hover{
             background-color: #ff003c;
         }
 
@@ -142,10 +143,64 @@
             color: #333;
         }
 
-    </style>
-    <link rel="icon" href="tabpic.png" type="image/png">    
-    <h2>Your Profile</h2>
+        /****************************************
+   * CUSTOM MODAL STYLES
+   ****************************************/
+  .custom-modal-overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      z-index: 999; /* on top of everything */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6); /* semi-transparent dark overlay */
+  }
+  .custom-modal {
+      background-color: #fff;
+      width: 300px; /* adjust as needed */
+      margin: 15% auto; /* center vertically */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+  }
+  .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+  }
+  .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+  }
+  .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  .modal-ok-button:hover {
+      background-color: #ff003c;
+  }
 
+    </style>
+
+    <h2>Your Profile</h2>
+    
     <div class="container">
         <div class="profile-header">
             <div class="profile-picture">
@@ -154,17 +209,17 @@
                 <label for="profileImageInput" class="custom-file-label">Choose File</label>
                     <input type="file" name="profileImage" id="profileImageInput" accept="image/*">
                     <span id="file-name">No file chosen</span> 
-                    <button type="button" onclick="uploadPatientProfileImage(event)" class="custom-file-label">Upload</button>
+                    <button type="button" class="custom-file-label" onclick="uploadPatientProfileImage(event)">Upload</button>
                 </form>
             </div>
             <br>
-            <h2 id="username">{{firstName}} {{lastName}}</h2>
+            <h2>{{firstName}} {{lastName}}</h2>
             <br>
-            <p id="displayBio">{{bio}}</p>
+            <p>{{bio}}</p>
         </div>
         
         <div class="profile-details">
-            <p><strong>First Name:</strong></p>
+        <p><strong>First Name:</strong></p>
         <input type="text" id="firstName" value="{{firstName}}" disabled>
         <br>
         <br>
@@ -183,33 +238,55 @@
         <!-- Password Verification Field -->
         <p><strong>Enter your password to view it:</strong></p>
         <input type="password" id="verifyPassword" placeholder="Enter your password">
-        <button onclick="verifyPatientPassword()" class="custom-file-label">Verify</button>
+        <button class="custom-file-label" onclick="verifyPatientPassword()">Verify</button>
         <br>
-        <br>
+        <br>  
         <!-- Password Display -->
         <p><strong>Your Password:</strong></p>
         <div class="password-container">
             <input type="password" id="passwordField" value="*******" readonly>
-            <button id="togglePassword" onclick="togglePassword()" class="custom-file-label" disabled>👁</button>
+            <button id="togglePassword" class="custom-file-label" onclick="togglePassword()" disabled>👁</button>
         </div>
         <br>
         <br>
-          <!-- New Bio Field (initially disabled) -->
-         <p><strong>Bio:</strong></p>
-         <textarea id="bio" class="bio-input">{{bio}}</textarea>
+         <!-- New Bio Field (initially disabled) -->
+        <p><strong>Bio:</strong></p>
+        <textarea id="bio" class="bio-input">{{bio}}</textarea>
         <br>
         <br>
+
         <button id="editProfile" onclick="enableEditing()">Edit Profile</button>
         <button id="updateProfile" onclick="updateProfile()">Update Profile</button>
         <button id="deleteAccount" onclick="deleteAccount()">Delete Account</button>
 
         </div>
 
-    </div>
+      </div>
 
-    <script>
+      <!-- Custom Modal (for styled alerts) -->
+<div id="customModalOverlay" class="custom-modal-overlay">
+  <div class="custom-modal">
+    <button class="close-button" onclick="closeModal()">&times;</button>
+    <h2 id="modalTitle">Modal Title</h2>
+    <br>
+    <p id="modalMessage">Modal message goes here.</p>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+  </div>
+</div>
 
-        document.addEventListener("DOMContentLoaded", function () {
+   <script>
+
+     // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
+
+    document.addEventListener("DOMContentLoaded", function () {
     function updateFileName() {
         let fileInput = document.getElementById("profileImageInput");
         let fileNameDisplay = document.getElementById("file-name");
@@ -231,19 +308,19 @@
 });
 
 function uploadPatientProfileImage(event) {
-    event.preventDefault(); // Prevent form from reloading the page
+    event.preventDefault(); // ✅ Prevent form submission from reloading the page
 
     let formData = new FormData();
     let fileInput = document.getElementById("profileImageInput").files[0];
 
     if (!fileInput) {
-        alert("Please select an image to upload.");
+        showModal("No Image to upload.", "Please select an image!");
         return;
     }
 
     formData.append("profileImage", fileInput);
 
-    fetch("/upload-patient-profile", {
+    fetch("/upload-therapist-profile", {
         method: "POST",
         body: formData
     })
@@ -252,23 +329,20 @@ function uploadPatientProfileImage(event) {
         if (data.success) {
 
             let profileImageElement = document.getElementById("profileImage");
-            if (profileImageElement) {
-                profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
-            }
-
+            profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Force refresh image cache
+            
             let homeProfileIcon = document.querySelector(".profile-icon");
             if (homeProfileIcon) {
-                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
+                homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Also refresh homepage icon
             }
-
-            alert("Profile image updated successfully!");
+            showModal("Success", "Profile image updated successfully!");
         } else {
-            alert("Error uploading image: " + (data.error || "Unknown error"));
+            showModal("Error uploading image: " + (data.error || "Unknown error"));
         }
     })
     .catch(error => {
         console.error("Upload error:", error);
-        alert("An error occurred while uploading.");
+        showModal("An error occurred while uploading.");
     });
 }
-    </script>
+</script>

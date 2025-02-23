@@ -5,51 +5,47 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>SPEECH UP</title>
   <link rel="icon" href="tabpic.png" type="image/png">
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
   <style>
-
+    /* Global Reset & Fonts */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Inter', sans-serif;
     }
-
+    /* Loading Overlay */
     #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999; / Ensure it's on top */
-        }
-.loader {
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #db3f34; 
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite; / Spin the element */
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999; /* Ensure it's on top */
+    }
+    .loader {
+      border: 16px solid #f3f3f3;
+      border-top: 16px solid #db3f34; 
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     body {
       display: flex;
       height: 100vh;
       background-color: #eef3fa;
     }
-
     /* Sidebar */
     .sidebar {
       width: 250px;
@@ -64,12 +60,10 @@
       top: 0;
       transition: transform 0.3s ease-in-out;
     }
-
     .sidebar h3 {
       margin-bottom: 20px;
       text-align: center;
     }
-
     .sidebar a {
       text-decoration: none;
       color: white;
@@ -79,16 +73,12 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     .sidebar a:hover {
       background-color: #df1645;
     }
-
-    /* Hidden Sidebar */
     .sidebar.hidden {
       transform: translateX(-100%);
     }
-
     /* Sidebar Toggle Button */
     .sidebar-toggle {
       position: fixed;
@@ -103,15 +93,12 @@
       border-radius: 50%;
       transition: left 0.3s ease-in-out;
     }
-
     .sidebar.hidden + .sidebar-toggle {
       left: 10px;
     }
-
-    .speechup-logo{
+    .speechup-logo {
       border-radius: 5px;
     }
-
     /* Main Content */
     .main-content {
       flex: 1;
@@ -120,11 +107,9 @@
       transition: margin-left 0.3s ease-in-out;
       width: 100%;
     }
-
     .sidebar.hidden ~ .main-content {
       margin-left: 20px;
     }
-
     /* Top Bar */
     .top-bar {
       background-color: #fff;
@@ -135,16 +120,12 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-
-    /* Welcome Text */
     .welcome-section {
       margin-top: 20px;
     }
-
     h2 {
       color: #333;
     }
-
     /* Profile Section */
     .profile-container {
       display: flex;
@@ -152,7 +133,6 @@
       cursor: pointer;
       margin-left: auto; 
     }
-
     .profile-icon {
       width: 40px;
       height: 40px;
@@ -166,7 +146,6 @@
       font-size: 18px;
       cursor: pointer;
     }
-
     .dropdown-menu {
       position: absolute;
       top: 70px;
@@ -178,7 +157,6 @@
       display: none;
       width: 150px;
     }
-
     .dropdown-menu a {
       display: block;
       padding: 10px;
@@ -186,15 +164,12 @@
       color: #ffffff;
       text-align: left;
     }
-
     .dropdown-menu a:hover {
       background-color: #df1645;
     }
-
     .dropdown-menu.active {
       display: block;
     }
-
     .logout-btn {
       display: block;
       padding: 10px;
@@ -204,11 +179,9 @@
       text-decoration: none;
       border-radius: 5px;
     }
-
     .logout-btn:hover {
       background-color: darkred;
     }
-
     /* Dynamic Content */
     .content-area {
       background-color: white;
@@ -217,7 +190,6 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
     }
-
     /* Therapist Home - Pending Appointments */
     table {
       width: 100%;
@@ -225,20 +197,17 @@
       border-radius: 5px;
       border: 4px solid #2c3e50;
     }
-
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
       border-radius: 5px;
     }
-
     th {
       background-color: #df1645;
       color: white;
       border-radius: 5px;
     }
-
     /* Action Buttons */
     td button {
       padding: 5px 10px;
@@ -246,30 +215,24 @@
       cursor: pointer;
       font-size: 14px;
     }
-
     td button:first-child {
       background-color: #28a745;
       color: white;
       border-radius: 5px;
     }
-
     td button:first-child:hover {
       background-color: #00ff62;
       color: white;
     }
-
     td button:last-child {
       background-color: #dc3545;
       color: white;
       border-radius: 5px;
     }
-
     td button:last-child:hover {
       background-color: #ff0000;
       color: white;
     }
-
-    /* Our custom .btn class (not Bootstrap) */
     .btn {
       display: inline-block;
       padding: 10px 10px;
@@ -281,21 +244,141 @@
       font-size: 15px;
       transition: background-color 0.3s ease;
     }
-
     .btn:hover {
       background-color: #ff003c;
     }
 
+    /* ------------------ Custom Modal for Alerts ------------------ */
+    .custom-modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .custom-modal {
+      background-color: #fff;
+      width: 300px;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+    .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .modal-ok-button:hover {
+      background-color: #ff003c;
+    }
+
+    /* ------------------ Custom Confirm Modal ------------------ */
+    .custom-confirm-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .custom-confirm {
+      background-color: #fff;
+      width: 300px;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .custom-confirm h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .custom-confirm p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .confirm-close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+    .confirm-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .confirm-ok-button:hover {
+      background-color: #ff003c;
+    }
+    .confirm-cancel-button {
+      background-color: #888;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .confirm-cancel-button:hover {
+      background-color: #666;
+    }
+
   </style>
+
 </head>
 <body>
 
- <div id="loading-overlay"> 
-        <div class="loader"></div>
-    </div>
+  <div id="loading-overlay"> 
+    <div class="loader"></div>
+  </div>
 
   <!-- Sidebar -->
- <div class="sidebar" id="sidebar">
+  <div class="sidebar" id="sidebar">
     <img src="speechuplogo.png" alt="SpeechUp Logo" class="speechup-logo">
     <br>
     <a href="/therapisthome" onclick="loadPage('home')">
@@ -320,7 +403,6 @@
 
   <!-- Main Content -->
   <div class="main-content" id="mainContent">
-
     <!-- Top Bar with Search and Profile -->
     <div class="top-bar">
       <div class="profile-container" onclick="toggleDropdown()">
@@ -354,7 +436,6 @@
 
       <!-- New "View Approved Appointments" section -->
       <button class="btn" onclick="loadTherapistApprovedAppointments()">View Approved Appointments</button>
-
       <table border="1" id="therapistApprovedAppointmentsTable">
         <thead>
           <tr>
@@ -367,11 +448,75 @@
           <tr><td colspan="3">Approved Appointments</td></tr>
         </tbody>
       </table>
-    </div>
 
+    </div>
+  </div>
+
+  <!-- Custom Alert Modal -->
+  <div id="customModalOverlay" class="custom-modal-overlay">
+    <div class="custom-modal">
+      <button class="close-button" onclick="closeModal()">&times;</button>
+      <h2 id="modalTitle">Alert</h2>
+      <br>
+      <p id="modalMessage">Modal message goes here.</p>
+      <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Modal -->
+  <div id="customConfirmOverlay" class="custom-confirm-overlay">
+    <div class="custom-confirm">
+      <button class="confirm-close-button" onclick="closeConfirmModal()">&times;</button>
+      <h2 id="confirmModalTitle">Confirm</h2>
+      <p id="confirmModalMessage">Are you sure?</p>
+      <div style="margin-top:20px;">
+        <button id="modalOkButton" class="confirm-ok-button">OK</button>
+        <button id="modalCancelButton" class="confirm-cancel-button">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <script>
+    /******** Custom Modal Functions with Callback ********/
+    function showModal(title, message, callback) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalMessage").innerText = message;
+      const overlay = document.getElementById("customModalOverlay");
+      overlay.style.display = "block";
+      const okButton = overlay.querySelector(".modal-ok-button");
+      okButton.onclick = function() {
+        closeModal();
+        if (callback) callback();
+      };
+    }
+    function closeModal() {
+      document.getElementById("customModalOverlay").style.display = "none";
+    }
+
+    /******** Custom Confirm Modal Functions ********/
+    function confirmModal(title, message) {
+      return new Promise((resolve) => {
+        document.getElementById("confirmModalTitle").innerText = title;
+        document.getElementById("confirmModalMessage").innerText = message;
+        const overlay = document.getElementById("customConfirmOverlay");
+        overlay.style.display = "block";
+        const okButton = document.getElementById("modalOkButton");
+        const cancelButton = document.getElementById("modalCancelButton");
+        okButton.onclick = function() {
+          closeConfirmModal();
+          resolve(true);
+        };
+        cancelButton.onclick = function() {
+          closeConfirmModal();
+          resolve(false);
+        };
+      });
+    }
+    function closeConfirmModal() {
+      document.getElementById("customConfirmOverlay").style.display = "none";
+    }
+
+    /******** Sidebar Toggle ********/
     function toggleSidebar() {
       document.getElementById("sidebar").classList.toggle("hidden");
       document.getElementById("sidebarToggle").innerHTML = 
@@ -380,75 +525,88 @@
 
     function loadPage(page) {
 
-       document.getElementById("loading-overlay").style.display = "flex";
+            document.getElementById("loading-overlay").style.display = "flex";
 
-      if (page === 'communityforum') {
+    if (page === 'communityforum') {
         fetch('/communityforum')
-          .then(response => response.text())
-          .then(html => {
-            document.getElementById("contentArea").innerHTML = html;
-            addForumEventListeners();
-            document.getElementById("loading-overlay").style.display = "none";
-          })
-          .catch(error => {
-            console.error("Error loading page:", error);
-            document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
-            document.getElementById("loading-overlay").style.display = "none";
-          });
-      } else {
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("contentArea").innerHTML = html;
+                addForumEventListeners(); // Add event listeners for the forum
+                document.getElementById("loading-overlay").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error loading page:", error);
+                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                document.getElementById("loading-overlay").style.display = "none";
+            });
+    } else {
         fetch(`/content/${page}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error("Page not found");
-            }
-            return response.text();
-          })
-          .then(html => {
-            document.getElementById("contentArea").innerHTML = html;
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Page not found");
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById("contentArea").innerHTML = html;
 
-            // Add event listeners AFTER the content is loaded
-            if (page === 'courses') {
-              addCoursesEventListeners();
+                // Add event listeners AFTER the content is loaded
+                if (page === 'courses') {
+                    addCoursesEventListeners();
+                }
+                if (page === 'apraxiagameselection') {
+                    addApraxiaEventListeners();
+                }
+                if (page === 'dysarthriagameselection') {
+                    addDysarthriaEventListeners();
+                }
+                if (page === 'aphasiagameselection') {
+                    addAphasiaEventListeners();
+                }
+                if (page === 'animalsounds') {
+                    startGameAnimalSounds();
+                }
+
+             // Execute inline scripts manually
+          const scripts = contentArea.querySelectorAll("script");
+          scripts.forEach(script => {
+            try {
+              eval(script.innerText);
+            } catch (e) {
+              console.error("Error executing script:", e);
             }
-            if (page === 'apraxiagameselection') {
-              addApraxiaEventListeners();
-            }
-            if (page === 'dysarthriagameselection') {
-              addDysarthriaEventListeners();
-            }
-            if (page === 'aphasiagameselection') {
-              addAphasiaEventListeners();
-            }
-            document.getElementById("loading-overlay").style.display = "none";
-          })
-          .catch(error => {
-            console.error("Error loading page:", error);
-            document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
-            document.getElementById("loading-overlay").style.display = "none";
           });
-      }
+          
+            document.getElementById("loading-overlay").style.display = "none";
+            })
+
+            .catch(error => {
+                console.error("Error loading page:", error);
+                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+                document.getElementById("loading-overlay").style.display = "none";
+            });
     }
+}
+
 
     function addForumEventListeners() {
       const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
       if (postForm) {
         postForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-
           const formData = new FormData(postForm);
           const data = Object.fromEntries(formData.entries());
-          console.log("Form Data:", data);
-
           try {
             const response = await fetch('/communityforum/post', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data),
             });
-
             if (response.ok) {
-              console.log("Post submitted successfully!");
-              loadPage('communityforum');
+              showModal("Success", "Post submitted successfully!", () => {
+                loadPage('communityforum');
+              });
             } else {
               console.error("Failed to submit post:", response.statusText);
             }
@@ -462,21 +620,18 @@
       replyForms.forEach(form => {
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
-
           const formData = new FormData(form);
           const data = Object.fromEntries(formData.entries());
-          console.log("Reply Form Data:", data);
-
           try {
             const response = await fetch(form.action, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data),
             });
-
             if (response.ok) {
-              console.log("Reply submitted successfully!");
-              loadPage('communityforum');
+              showModal("Success", "Reply submitted successfully!", () => {
+                loadPage('communityforum');
+              });
             } else {
               console.error("Failed to submit reply:", response.statusText);
             }
@@ -492,88 +647,89 @@
     }
 
     function searchFunction() {
-      alert("Searching: " + document.getElementById("searchInput").value);
+      showModal("Search", "Searching: " + document.getElementById("searchInput").value);
     }
 
     function addCoursesEventListeners() {
-      const apraxiaButton = document.querySelector('.button-group button:nth-child(1)');
-      if (apraxiaButton) {
+        const apraxiaButton = document.querySelector('.button-group button:nth-child(1)'); // Select Apraxia button
+    if (apraxiaButton) {
         apraxiaButton.addEventListener('click', () => {
-          loadPage('apraxiagameselection');
+            loadPage('apraxiagameselection');
         });
-      }
+    }
 
-      const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)');
-      if (dysarthriaButton) {
+        const dysarthriaButton = document.querySelector('.button-group button:nth-child(2)'); // Select Dysarthria button
+    if (dysarthriaButton) {
         dysarthriaButton.addEventListener('click', () => {
-          loadPage('dysarthriagameselection');
+            loadPage('dysarthriagameselection');
         });
-      }
+    }
 
-      const aphasiaButton = document.querySelector('.button-group button:nth-child(3)');
-      if (aphasiaButton) {
+        const aphasiaButton = document.querySelector('.button-group button:nth-child(3)'); // Select Aphasia button
+    if (aphasiaButton) {
         aphasiaButton.addEventListener('click', () => {
-          loadPage('aphasiagameselection');
+            loadPage('aphasiagameselection');
         });
-      }
     }
 
-    function addApraxiaEventListeners() {
-      const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
-      if (animalSoundsButton) {
+}
+
+        function addApraxiaEventListeners(){
+        const animalSoundsButton = document.querySelector('.button-group button:nth-child(1)');
+    if(animalSoundsButton){
         animalSoundsButton.addEventListener('click', () => {
-          loadPage('animalsounds');
+            loadPage('animalsounds'); // Load the animal sounds page
         });
-      }
+    }
 
-      const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
-      if (bookReadingButton) {
+        const bookReadingButton = document.querySelector('.button-group button:nth-child(2)');
+    if(bookReadingButton){
         bookReadingButton.addEventListener('click', () => {
-          loadPage('bookreading');
+            loadPage('bookreading'); // Load the book reading page
         });
-      }
     }
+}
 
-    function addDysarthriaEventListeners() {
-      const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
-      if (wordSearchButton) {
+        function addDysarthriaEventListeners(){
+        const wordSearchButton = document.querySelector('.button-group button:nth-child(1)');
+    if(wordSearchButton){
         wordSearchButton.addEventListener('click', () => {
-          loadPage('wordsearch');
+            loadPage('wordsearch'); 
         });
-      }
+    }
 
-      const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
-      if (wordFlipbookButton) {
+        const wordFlipbookButton = document.querySelector('.button-group button:nth-child(2)');
+    if(wordFlipbookButton){
         wordFlipbookButton.addEventListener('click', () => {
-          loadPage('wordflipbook');
+            loadPage('wordflipbook');
         });
-      }
     }
+}
 
-    function addAphasiaEventListeners() {
-      const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
-      if (matchingGamesButton) {
+        function addAphasiaEventListeners(){
+        const matchingGamesButton = document.querySelector('.button-group button:nth-child(1)');
+    if(matchingGamesButton){
         matchingGamesButton.addEventListener('click', () => {
-          loadPage('matchinggames');
+            loadPage('matchinggames');
         });
-      }
-
-      const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
-      if (tongueTwistersButton) {
-        tongueTwistersButton.addEventListener('click', () => {
-          loadPage('tonguetwisters');
-        });
-      }
     }
+
+        const tongueTwistersButton = document.querySelector('.button-group button:nth-child(2)');
+    if(tongueTwistersButton){
+        tongueTwistersButton.addEventListener('click', () => {
+            loadPage('tonguetwisters');
+        });
+    }
+}
+
 
     function enableEditing() {
       document.getElementById("firstName").disabled = false;
       document.getElementById("lastName").disabled = false;
       document.getElementById("password").disabled = false;
       document.getElementById("bio").disabled = false;
-
-      document.getElementById("editProfile").style.display = "none";
       document.getElementById("updateProfile").style.display = "inline-block";
+      document.getElementById("editProfile").style.display = "none";
     }
 
     async function updateProfile() {
@@ -581,70 +737,67 @@
       const lastName = document.getElementById("lastName").value;
       const password = document.getElementById("password").value;
       const bio = document.getElementById("bio").value;
-
       const response = await fetch("/update-profile-therapist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, password, bio })
       });
-
       const result = await response.json();
-
       if (result.success) {
-        alert("Profile updated successfully!");
-        window.location.reload();
+        showModal("Success", "Profile updated successfully!", () => {
+                loadPage('therapistprofile');
+              });
       } else {
-        alert("Error updating profile.");
+        showModal("Error", "Error updating profile.");
       }
     }
 
     async function deleteAccount() {
-      if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      const confirmed = await confirmModal(
+        "Delete Account",
+        "Are you sure you want to delete your account? This action cannot be undone."
+      );
+      if (confirmed) {
         const response = await fetch("/delete-account-therapist", { method: "POST" });
         const result = await response.json();
-
         if (result.success) {
-          alert("Account deleted successfully!");
-          window.location.href = "/";
+          showModal("Success", "Account deleted successfully!", () => {
+            window.location.href = "/";
+          });
         } else {
-          alert("Error deleting account.");
+          showModal("Error", "Error deleting account.");
         }
       }
     }
 
     async function verifyTherapistPassword() {
       const enteredPassword = document.getElementById("verifyPassword").value;
-      
+
       const response = await fetch("/verify-password-therapist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: enteredPassword })
       });
-
       const result = await response.json();
-
       if (result.success) {
         document.getElementById("passwordField").value = enteredPassword;
         document.getElementById("togglePassword").disabled = false;
-        alert("Password verified successfully!");
+        
+        showModal("Success", "Password verified successfully!");
       } else {
-        alert("Incorrect password!");
+        showModal("Error", "Incorrect password!");
       }
     }
 
     function uploadTherapistProfileImage(event) {
       event.preventDefault();
-
       let formData = new FormData();
       let fileInput = document.getElementById("profileImageInput").files[0];
-
       if (!fileInput) {
-        alert("Please select an image to upload.");
+        showModal("Upload Error", "Please select an image to upload.");
         return;
       }
-
       formData.append("profileImage", fileInput);
-
       fetch("/upload-therapist-profile", {
         method: "POST",
         body: formData
@@ -654,19 +807,18 @@
         if (data.success) {
           let profileImageElement = document.getElementById("profileImage");
           profileImageElement.src = `${data.profileImage}?t=${new Date().getTime()}`;
-          
           let homeProfileIcon = document.querySelector(".profile-icon");
           if (homeProfileIcon) {
             homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`;
           }
-          alert("Profile image updated successfully!");
+          showModal("Success", "Profile image updated successfully!");
         } else {
-          alert("Error uploading image: " + (data.error || "Unknown error"));
+          showModal("Error", "Error uploading image: " + (data.error || "Unknown error"));
         }
       })
       .catch(error => {
         console.error("Upload error:", error);
-        alert("An error occurred while uploading.");
+        showModal("Error", "An error occurred while uploading.");
       });
     }
 
@@ -674,7 +826,6 @@
       function updateFileName() {
         let fileInput = document.getElementById("profileImageInput");
         let fileNameDisplay = document.getElementById("file-name");
-
         if (fileInput && fileNameDisplay) {
           if (fileInput.files.length > 0) {
             fileNameDisplay.textContent = fileInput.files[0].name;
@@ -683,7 +834,6 @@
           }
         }
       }
-
       document.body.addEventListener("change", function (event) {
         if (event.target && event.target.id === "profileImageInput") {
           updateFileName();
@@ -694,7 +844,6 @@
     function togglePassword() {
       var passwordField = document.getElementById("passwordField");
       var toggleButton = document.getElementById("togglePassword");
-
       if (passwordField.type === "*******") {
         passwordField.type = "text";
         toggleButton.innerText = "🙈";
@@ -707,7 +856,6 @@
     document.addEventListener("click", function(event) {
       var dropdown = document.getElementById("dropdownMenu");
       var profileContainer = document.querySelector(".profile-container");
-
       if (!profileContainer.contains(event.target)) {
         dropdown.classList.remove("active");
       }
@@ -718,13 +866,11 @@
       .then(response => response.json())
       .then(data => {
         let tableBody = document.getElementById("appointmentsTable");
-        tableBody.innerHTML = ""; // Clear previous content
-
+        tableBody.innerHTML = "";
         if (data.length === 0) {
           tableBody.innerHTML = "<tr><td colspan='4'>No pending appointments</td></tr>";
           return;
         }
-
         data.forEach(appointment => {
           let row = `
             <tr>
@@ -752,10 +898,11 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert("Appointment approved!");
-          location.reload();
+          showModal("Success", "Appointment approved!", () => {
+            location.reload();
+          });
         } else {
-          alert("Error approving appointment." + data.error);
+          showModal("Error", "Error approving appointment: " + data.error);
         }
       });
     }
@@ -769,10 +916,11 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert("Appointment rejected.");
-          location.reload();
+          showModal("Success", "Appointment rejected.", () => {
+            location.reload();
+          });
         } else {
-          alert("Error rejecting appointment.");
+          showModal("Error", "Error rejecting appointment.");
         }
       });
     }
@@ -783,13 +931,11 @@
       .then(response => response.json())
       .then(data => {
         const tableBody = document.querySelector("#therapistApprovedAppointmentsTable tbody");
-        tableBody.innerHTML = ""; // Clear existing rows
-
+        tableBody.innerHTML = "";
         if (data.length === 0) {
           tableBody.innerHTML = "<tr><td colspan='3'>No approved appointments</td></tr>";
           return;
         }
-
         data.forEach(appointment => {
           const row = `
             <tr>
@@ -807,55 +953,110 @@
     }
 
     // Toggle visibility of the grade form for a specific patient
-  function toggleGradeForm(email) {
-    const form = document.getElementById(`gradeForm-${email}`);
-    if (form) {
-      form.style.display = (form.style.display === 'none' ? 'block' : 'none');
-    }
-  }
-
-  // Collect the grades and send them to the server
-  async function saveGrades(email) {
-    const games = ['animalSounds', 'bookReading', 'wordSearch', 'wordFlipbook', 'matchingGames', 'tongueTwisters'];
-    let grades = {};
-
-    for (let game of games) {
-      const input = document.getElementById(`grade-${game}-${email}`);
-      if (input) {
-        // Convert the grade to a number (or leave as string if preferred)
-        const value = input.value.trim();
-        grades[game] = value === "" ? null : Number(value);
+    function toggleGradeForm(email) {
+      const form = document.getElementById(`gradeForm-${email}`);
+      if (form) {
+        form.style.display = (form.style.display === 'none' ? 'block' : 'none');
       }
     }
 
-    try {
-      const response = await fetch("/add-grades", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, grades })
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert("Grades saved successfully!");
-        // Optionally, reload the page to update the display
-        window.location.reload();
-      } else {
-        alert("Error saving grades: " + (data.message || ""));
-      }
-    } catch (err) {
-      console.error("Error saving grades:", err);
-      alert("Server error saving grades.");
-    }
-  }
-
-  function hideLoading() {
-            document.getElementById("loading-overlay").style.display = "none";
+    // Save Grades without redirecting to the homepage
+    async function saveGrades(email) {
+      const games = ['animalSounds', 'bookReading', 'wordSearch', 'wordFlipbook', 'matchingGames', 'tongueTwisters'];
+      let grades = {};
+      for (let game of games) {
+        const input = document.getElementById(`grade-${game}-${email}`);
+        if (input) {
+          const value = input.value.trim();
+          grades[game] = value === "" ? null : Number(value);
         }
-
-        // Hide the loading overlay after a 2-second delay
-        window.addEventListener('load', (event) => {
-            setTimeout(hideLoading, 500); 
+      }
+      try {
+        const response = await fetch("/add-grades", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, grades })
         });
+        const data = await response.json();
+        if (data.success) {
+          showModal("Success", "Grades saved successfully!",() => {
+                loadPage('patients');
+              });
+          // Remain on the patients page (no reload)
+        } else {
+          showModal("Error", "Error saving grades: " + (data.message || ""));
+        }
+      } catch (err) {
+        console.error("Error saving grades:", err);
+        showModal("Error", "Server error saving grades.");
+      }
+    }
+
+    function hideLoading() {
+      document.getElementById("loading-overlay").style.display = "none";
+    }
+    window.addEventListener('load', () => { setTimeout(hideLoading, 500); });
+
+    function startGameAnimalSounds(){
+      console.log("animalsounds-script.js loaded!");
+      document.querySelectorAll(".play-sound").forEach((button) => {
+        button.addEventListener("click", () => {
+          const soundPath = button.dataset.sound;
+          console.log(`Attempting to play: ${soundPath}`);
+          const sound = new Audio(soundPath);
+          sound.play().then(() => {
+            console.log(`Playing sound: ${soundPath}`);
+          }).catch((error) => {
+            console.error(`Error playing sound: ${soundPath}`, error);
+            showModal("Error", `Error playing sound: ${soundPath}`);
+          });
+        });
+      });
+      const recordings = new Map();
+      document.querySelectorAll(".animal").forEach((animalDiv) => {
+        const recordButton = animalDiv.querySelector(".record-sound");
+        const playButton = animalDiv.querySelector(".play-recording");
+        const animal = recordButton.dataset.animal;
+        recordButton.addEventListener("click", async () => {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showModal("Error", "Microphone access is not supported in your browser.");
+            return;
+          }
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            const chunks = [];
+            mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+              const audioBlob = new Blob(chunks, { type: "audio/wav" });
+              const audioUrl = URL.createObjectURL(audioBlob);
+              recordings.set(animal, audioUrl);
+              playButton.disabled = false;
+              console.log(`Recording saved for ${animal}.`);
+            };
+            mediaRecorder.start();
+            showModal("Recording Started", `Recording started for ${animal}. Please wait 3 seconds.`);
+            setTimeout(() => {
+              mediaRecorder.stop();
+              stream.getTracks().forEach((track) => track.stop());
+              console.log(`Recording stopped for ${animal}.`);
+            }, 3000);
+          } catch (error) {
+            console.error(`Error recording for ${animal}:`, error);
+            showModal("Error", "Could not access your microphone. Please check permissions.");
+          }
+        });
+        playButton.addEventListener("click", () => {
+          if (recordings.has(animal)) {
+            const audio = new Audio(recordings.get(animal));
+            audio.play();
+            console.log(`Playing recording for ${animal}.`);
+          } else {
+            showModal("Notice", `No recording available for ${animal}.`);
+          }
+        });
+      });
+    }
   </script>
 
 </body>

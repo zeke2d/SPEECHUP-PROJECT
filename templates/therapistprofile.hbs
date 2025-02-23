@@ -143,6 +143,60 @@
             color: #333;
         }
 
+        /****************************************
+   * CUSTOM MODAL STYLES
+   ****************************************/
+  .custom-modal-overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      z-index: 999; /* on top of everything */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6); /* semi-transparent dark overlay */
+  }
+  .custom-modal {
+      background-color: #fff;
+      width: 300px; /* adjust as needed */
+      margin: 15% auto; /* center vertically */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+  }
+  .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+  }
+  .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+  }
+  .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  .modal-ok-button:hover {
+      background-color: #ff003c;
+  }
+
     </style>
 
     <h2>Your Profile</h2>
@@ -209,7 +263,28 @@
 
       </div>
 
+      <!-- Custom Modal (for styled alerts) -->
+<div id="customModalOverlay" class="custom-modal-overlay">
+  <div class="custom-modal">
+    <button class="close-button" onclick="closeModal()">&times;</button>
+    <h2 id="modalTitle">Modal Title</h2>
+    <br>
+    <p id="modalMessage">Modal message goes here.</p>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
    <script>
+
+     // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
 
     document.addEventListener("DOMContentLoaded", function () {
     function updateFileName() {
@@ -239,7 +314,7 @@ function uploadTherapistProfileImage(event) {
     let fileInput = document.getElementById("profileImageInput").files[0];
 
     if (!fileInput) {
-        alert("Please select an image to upload.");
+        showModal("Please select an image to upload.");
         return;
     }
 
@@ -260,14 +335,14 @@ function uploadTherapistProfileImage(event) {
             if (homeProfileIcon) {
                 homeProfileIcon.src = `${data.profileImage}?t=${new Date().getTime()}`; // ✅ Also refresh homepage icon
             }
-            alert("Profile image updated successfully!");
+            showModal("Success", "Profile image updated successfully!");
         } else {
-            alert("Error uploading image: " + (data.error || "Unknown error"));
+            showModal("Error uploading image: " + (data.error || "Unknown error"));
         }
     })
     .catch(error => {
         console.error("Upload error:", error);
-        alert("An error occurred while uploading.");
+        showModal("An error occurred while uploading.");
     });
 }
 </script>

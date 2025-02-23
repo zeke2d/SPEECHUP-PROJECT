@@ -159,6 +159,127 @@
   button:hover {
     background: #d65c5c;
   }
+
+   /* ------------------ Custom Modal for Alerts ------------------ */
+    .custom-modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .custom-modal {
+      background-color: #fff;
+      width: 300px;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+    .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .modal-ok-button:hover {
+      background-color: #ff003c;
+    }
+
+    /* ------------------ Custom Confirm Modal ------------------ */
+    .custom-confirm-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .custom-confirm {
+      background-color: #fff;
+      width: 300px;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .custom-confirm h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .custom-confirm p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .confirm-close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+    .confirm-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .confirm-ok-button:hover {
+      background-color: #ff003c;
+    }
+    .confirm-cancel-button {
+      background-color: #888;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .confirm-cancel-button:hover {
+      background-color: #666;
+    }
+
 </style>
 
 <!-- Back Button -->
@@ -186,7 +307,71 @@
   <div id="gameBoard" class="board"></div>
 </div>
 
+<!-- Custom Alert Modal -->
+  <div id="customModalOverlay" class="custom-modal-overlay">
+    <div class="custom-modal">
+      <button class="close-button" onclick="closeModal()">&times;</button>
+      <h2 id="modalTitle">Alert</h2>
+      <br>
+      <p id="modalMessage">Modal message goes here.</p>
+      <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Modal -->
+  <div id="customConfirmOverlay" class="custom-confirm-overlay">
+    <div class="custom-confirm">
+      <button class="confirm-close-button" onclick="closeConfirmModal()">&times;</button>
+      <h2 id="confirmModalTitle">Confirm</h2>
+      <p id="confirmModalMessage">Are you sure?</p>
+      <div style="margin-top:20px;">
+        <button id="modalOkButton" class="confirm-ok-button">OK</button>
+        <button id="modalCancelButton" class="confirm-cancel-button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 <script>
+
+  /******** Custom Modal Functions with Callback ********/
+    function showModal(title, message, callback) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalMessage").innerText = message;
+      const overlay = document.getElementById("customModalOverlay");
+      overlay.style.display = "block";
+      const okButton = overlay.querySelector(".modal-ok-button");
+      okButton.onclick = function() {
+        closeModal();
+        if (callback) callback();
+      };
+    }
+    function closeModal() {
+      document.getElementById("customModalOverlay").style.display = "none";
+    }
+
+    /******** Custom Confirm Modal Functions ********/
+    function confirmModal(title, message) {
+      return new Promise((resolve) => {
+        document.getElementById("confirmModalTitle").innerText = title;
+        document.getElementById("confirmModalMessage").innerText = message;
+        const overlay = document.getElementById("customConfirmOverlay");
+        overlay.style.display = "block";
+        const okButton = document.getElementById("modalOkButton");
+        const cancelButton = document.getElementById("modalCancelButton");
+        okButton.onclick = function() {
+          closeConfirmModal();
+          resolve(true);
+        };
+        cancelButton.onclick = function() {
+          closeConfirmModal();
+          resolve(false);
+        };
+      });
+    }
+    function closeConfirmModal() {
+      document.getElementById("customConfirmOverlay").style.display = "none";
+    }
+
   const images = [
     "apple.jpg", "kiwi.jpg", "orange.jpg", "watermelon.jpg",
     "blueberry.jpg", "grape.jpg", "dragonfruit.jpg", "peach.jpg"
@@ -252,7 +437,7 @@
       card2.classList.add("matched");
       matchedPairs++;
       if (matchedPairs === images.length) {
-        setTimeout(() => alert("🎉 Congratulations! You matched all pairs!"), 300);
+        setTimeout(() => showModal("🎉 Congratulations!", "You matched all pairs!"), 300);
       }
     } else {
       setTimeout(() => {

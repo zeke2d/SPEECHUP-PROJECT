@@ -1,34 +1,341 @@
+{{!-- templates/wordsearch.hbs --}}
+
 <style>
+  /* ---------------------------
+     BACK BUTTON (same as animalsounds.hbs)
+     --------------------------- */
+  .back-btn {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    color: #333;
+    border: none;
+    padding: 8px 8px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .back-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateX(-3px);
+  }
+  .back-btn::before {
+    content: "⮐";
+    margin-right: 8px;
+    font-size: 18px;
+  }
 
-    .back-btn {
-        display: flex;
-        align-items: center;
-        background-color: #f8f9fa;
-        color: #333;
-        border: none;
-        padding: 8px 8px;
-        font-size: 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-weight: bold;
-        margin-bottom: 20px; /* Space below the back button */
-    }
+  /* ---------------------------
+     HEADER CONTAINER (same as animalsounds.hbs)
+     --------------------------- */
+  .header-container {
+    background-color: #ff7878;
+    padding: 20px;
+    border-radius: 20px;
+    width: fit-content;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 330px; /* Adjust if needed, depending on sidebar layout */
+  }
+  .header-container h1 {
+    color: white;
+    margin: 0;
+  }
+  .header-container h6 {
+    color: white;
+    font-style: italic;
+    opacity: 0.75;
+    margin: 5px 0 0;
+  }
 
-    .back-btn:hover {
-        background-color: #e0e0e0;
-        transform: translateX(-3px);
-    }
+  /* ---------------------------
+     MAIN GAME CONTAINER (same as animalsounds.hbs)
+     --------------------------- */
+  .game-container {
+    max-width: 600px; /* or adjust as you see fit for your puzzle */
+    width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .back-btn::before {
-        content: "⮐";
-        margin-right: 8px;
-        font-size: 18px;
-    }
+  /* ---------------------------
+     WORD SEARCH-SPECIFIC STYLES
+     --------------------------- */
+  .wordsearch-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 20px;
+    /* You can remove margin-left/margin-right if you want it fully centered 
+       or tweak to your layout needs. */
+  }
 
+  .word-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    /* Make sure it fits within 600px total if you have large word lists. */
+  }
+
+  .word-list span {
+    color: #002769;
+    font-weight: bold;
+    font-size: 14px; /* Slightly smaller to fit better if needed */
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(24, 20px);
+    gap: 2px;
+  }
+
+  .cell {
+    width: 20px;
+    height: 20px;
+    font-size: 12px; 
+    line-height: 20px;  
+    text-align: center;
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    user-select: none;
+  }
+  .cell.highlight {
+    background-color: #FF7878;
+    color: #fff;
+  }
+  .word-list span.crossed {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+  .message {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
 </style>
 
 <!-- Back Button -->
-<button onclick="loadPage('dysarthriagameselection')" class="back-btn">Back to Dysarthria Unit</button>
+<button onclick="loadPage('dysarthriagameselection')" class="back-btn">
+  Back to Dysarthria Unit
+</button>
 
-<h2>WORD SEARCH</h2>
+<!-- Header Container (like animalsounds.hbs) -->
+<div class="header-container">
+  <h1>Dysarthria Unit - Word Search</h1>
+  <h6>Find the Words, Find the Voice.</h6>
+</div>
+
+<!-- Main game container -->
+<div class="game-container">
+
+  <!-- The puzzle + word list can be wrapped in a sub-container -->
+  <div class="wordsearch-container">
+    <!-- Left Word List -->
+    <div class="word-list" id="left-words">
+      <span id="Cognitivelinguistic">Cognitivelinguistic</span>
+      <span id="Speakingvalves">Speakingvalves</span>
+      <span id="Dysphagia">Dysphagia</span>
+      <span id="Apraxia">Apraxia</span>
+      <span id="Voice">Voice</span>
+      <span id="Speechpathologist">Speechpathologist</span>
+    </div>
+
+    <!-- Word Search Grid -->
+    <div class="grid" id="word-grid"></div>
+
+    <!-- Right Word List -->
+    <div class="word-list" id="right-words">
+      <span id="Aspiration">Aspiration</span>
+      <span id="Language">Language</span>
+      <span id="Aphonia">Aphonia</span>
+      <span id="Thickenedliquids">Thickenedliquids</span>
+      <span id="Dysarthria">Dysarthria</span>
+      <span id="Fluency">Fluency</span>
+      <span id="Aphasia">Aphasia</span>
+    </div>
+  </div>
+
+  <!-- Message -->
+  <div class="message" id="message">Find all the words!</div>
+
+</div> <!-- end .game-container -->
+
+<script>
+  /***** WORD SEARCH GAME CODE *****/
+  const words = [
+    "Cognitivelinguistic", "Speechpathologist", "Thickenedliquids", "Speakingvalves", "Aspiration", 
+    "Dysarthria", "Dysphagia", "Language", "Fluency", "Apraxia", "Aphonia", "Aphasia", "Voice"
+  ];
+  const gridSize = 24;
+  const wordGrid = document.getElementById("word-grid");
+  const message = document.getElementById("message");
+  const selectedCells = [];
+  const foundWords = new Set();
+  const cellElements = [];
+
+  const directions = [
+    [0, 1], [1, 0], [1, 1], [1, -1],
+    [0, -1], [-1, 0], [-1, -1], [-1, 1]
+  ];
+
+  const grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
+
+  function placeWord(word) {
+    let placed = false;
+    while (!placed) {
+      const dir = directions[Math.floor(Math.random() * directions.length)];
+      const startRow = Math.floor(Math.random() * gridSize);
+      const startCol = Math.floor(Math.random() * gridSize);
+      let row = startRow, col = startCol;
+      let fits = true;
+
+      for (const letter of word) {
+        if (
+          row < 0 || row >= gridSize || 
+          col < 0 || col >= gridSize ||
+          (grid[row][col] !== "" && grid[row][col] !== letter)
+        ) {
+          fits = false;
+          break;
+        }
+        row += dir[0];
+        col += dir[1];
+      }
+
+      if (fits) {
+        row = startRow;
+        col = startCol;
+        for (const letter of word) {
+          grid[row][col] = letter;
+          row += dir[0];
+          col += dir[1];
+        }
+        placed = true;
+      }
+    }
+  }
+
+  function fillGrid() {
+    for (const word of words) {
+      placeWord(word);
+    }
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
+        if (grid[row][col] === "") {
+          grid[row][col] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        }
+      }
+    }
+  }
+
+  function renderGrid() {
+    wordGrid.innerHTML = "";
+    wordGrid.style.display = "grid";
+    wordGrid.style.gridTemplateColumns = `repeat(${gridSize}, 28px)`;
+    wordGrid.style.gridGap = "4px";
+    for (let row = 0; row < gridSize; row++) {
+      cellElements[row] = [];
+      for (let col = 0; col < gridSize; col++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = grid[row][col];
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+        cell.addEventListener("mousedown", startSelection);
+        cell.addEventListener("mouseover", selectCell);
+        cell.addEventListener("mouseup", endSelection);
+        wordGrid.appendChild(cell);
+        cellElements[row][col] = cell;
+      }
+    }
+  }
+
+  let isSelecting = false;
+  let selectionDirection = null;
+
+  function startSelection(event) {
+    resetHighlight();
+    isSelecting = true;
+    selectedCells.length = 0;
+    selectionDirection = null;
+    selectCell(event);
+  }
+
+  function selectCell(event) {
+    if (!isSelecting) return;
+    const cell = event.target;
+    if (!selectedCells.includes(cell)) {
+      if (selectedCells.length === 1) {
+        const firstCell = selectedCells[0];
+        const rowDiff = cell.dataset.row - firstCell.dataset.row;
+        const colDiff = cell.dataset.col - firstCell.dataset.col;
+        if (rowDiff === 0) selectionDirection = "horizontal";
+        else if (colDiff === 0) selectionDirection = "vertical";
+        else selectionDirection = "diagonal";
+      }
+      if (selectionDirection) {
+        const firstCell = selectedCells[0];
+        const rowDiff = cell.dataset.row - firstCell.dataset.row;
+        const colDiff = cell.dataset.col - firstCell.dataset.col;
+        if (
+          (selectionDirection === "horizontal" && rowDiff !== 0) ||
+          (selectionDirection === "vertical" && colDiff !== 0) ||
+          (selectionDirection === "diagonal" && Math.abs(rowDiff) !== Math.abs(colDiff))
+        ) {
+          return;
+        }
+      }
+      selectedCells.push(cell);
+      if (!cell.classList.contains("found")) {
+        cell.style.backgroundColor = "#FF7878";
+      }
+    }
+  }
+
+  function endSelection() {
+    isSelecting = false;
+    checkSelection();
+  }
+
+  function checkSelection() {
+    const selectedWord = selectedCells.map(cell => cell.textContent).join("");
+    const reversedWord = selectedWord.split("").reverse().join("");
+    if (words.includes(selectedWord) || words.includes(reversedWord)) {
+      foundWords.add(selectedWord);
+      foundWords.add(reversedWord);
+      selectedCells.forEach(cell => cell.classList.add("found"));
+      document.querySelectorAll(".word-list span").forEach(wordElement => {
+        if (wordElement.textContent === selectedWord || wordElement.textContent === reversedWord) {
+          wordElement.style.backgroundColor = "#FF7878";
+        }
+      });
+      message.textContent = "Correct! Keep going!";
+    } else {
+      resetHighlight();
+      message.textContent = "Try again!";
+    }
+    selectedCells.length = 0;
+  }
+
+  function resetHighlight() {
+    selectedCells.forEach(cell => {
+      if (!cell.classList.contains("found")) {
+        cell.style.backgroundColor = "";
+      }
+    });
+    selectedCells.length = 0;
+  }
+
+  fillGrid();
+  renderGrid();
+</script>

@@ -794,7 +794,7 @@
       let formData = new FormData();
       let fileInput = document.getElementById("profileImageInput").files[0];
       if (!fileInput) {
-        showModal("Upload Error", "Please select an image to upload.");
+        showModal("Upload Error", "Please select an image to upload!");
         return;
       }
       formData.append("profileImage", fileInput);

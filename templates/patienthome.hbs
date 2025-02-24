@@ -393,6 +393,14 @@
     .confirm-cancel-button:hover {
       background-color: #666;
     }
+
+    .badge-circle {
+      width: 100px; 
+      height: 100px; 
+      border-radius: 50%; 
+      border: 5px solid #df1645; 
+      object-fit: cover;
+    }
         
     </style>
 
@@ -441,6 +449,8 @@
         <!-- Dynamic Content Area -->
         <div class="content-area" id="contentArea">
             <h2>Welcome back {{firstName}}!</h2>
+            <!-- Badge container to the right of the welcome text -->
+            <div id="badgeContainer" style="display: inline-block; margin-left: 1050px;"></div>
             <br>
             <br>
             <h3>Are you ready to start a therapy session with your therapist?</h3>
@@ -834,7 +844,7 @@ function addForumEventListeners() {
         let fileInput = document.getElementById("profileImageInput").files[0];
     
         if (!fileInput) {
-            showModal("No Image to upload.", "Please select an image!");
+            showModal("Upload Error", "Please select an image to upload!");
             return;
         }
     
@@ -1027,9 +1037,11 @@ function addForumEventListeners() {
         .then((response) => response.json())
         .then((data) => {
           const gradesTableBody = document.querySelector("#patientGradesTable tbody");
+          const badgeContainer = document.getElementById("badgeContainer");
 
           if (!data.success) {
             gradesTableBody.innerHTML = `<tr><td colspan='6'>Error loading grades</td></tr>`;
+            badgeContainer.innerHTML = "";
             return;
           }
 
@@ -1053,6 +1065,7 @@ function addForumEventListeners() {
 
           if (allNull) {
             gradesTableBody.innerHTML = `<tr><td colspan='6'>No grades found</td></tr>`;
+            badgeContainer.innerHTML = "";
           } else {
             gradesTableBody.innerHTML = `
               <tr>
@@ -1064,12 +1077,58 @@ function addForumEventListeners() {
                 <td>${tongueTwisters ?? ""}</td>
               </tr>
             `;
+             // --- NEW CODE: Compute the average ---
+        // Convert each grade to a number if it's not null.
+        // Filter out any null or undefined values.
+        const numericGrades = [
+          animalSounds,
+          bookReading,
+          wordSearch,
+          wordFlipbook,
+          matchingGames,
+          tongueTwisters
+        ]
+          .filter((g) => g != null)     // remove null/undefined
+          .map((g) => Number(g));       // convert to number
+
+        if (numericGrades.length > 0) {
+          const sum = numericGrades.reduce((acc, val) => acc + val, 0);
+          const avg = sum / numericGrades.length;
+
+          // Decide which badge to show based on the average
+          if (avg >= 90) {
+            badgeContainer.innerHTML = `
+              <img 
+                src="superherobadge90plus.png" 
+                alt="Badge"
+                class="badge-circle"
+              >
+            `;
+          } else if (avg >= 80) {
+            badgeContainer.innerHTML = `
+              <img 
+                src="superherobadge80plus.png" 
+                alt="Badge"
+                class="badge-circle"
+              >
+            `;
+          } else {
+            // If average is below 80, clear the badge or show nothing
+            badgeContainer.innerHTML = "";
+          }
+        } else {
+          // If for some reason we have 0 numeric grades
+          badgeContainer.innerHTML = "";
+        }
           }
         })
         .catch((error) => {
           console.error("Error fetching patient grades:", error);
           const gradesTableBody = document.querySelector("#patientGradesTable tbody");
           gradesTableBody.innerHTML = `<tr><td colspan='6'>Error loading grades</td></tr>`;
+          // Clear badge on error
+          const badgeContainer = document.getElementById("badgeContainer");
+          if (badgeContainer) badgeContainer.innerHTML = "";
         });
     }
 

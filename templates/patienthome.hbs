@@ -616,11 +616,13 @@
                 if (page === 'aphasiagameselection') {
                     addAphasiaEventListeners();
                 }
+                if (page === 'animalsounds') {
+                    startGameAnimalSounds();
+                }
                 if (page === 'setappointment') {
                 generateTimeOptions("selectedTime", 15);
             }
-
-            // Execute inline scripts manually
+             // Execute inline scripts manually
           const scripts = contentArea.querySelectorAll("script");
           scripts.forEach(script => {
             try {
@@ -1163,7 +1165,7 @@ function addForumEventListeners() {
 
 // Immediately attach event listeners
 document.querySelectorAll(".play-sound").forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", () => 
     const soundPath = button.dataset.sound;
     console.log(`Attempting to play: ${soundPath}`);
     const sound = new Audio(soundPath);
@@ -1176,7 +1178,6 @@ document.querySelectorAll(".play-sound").forEach((button) => {
         console.error(`Error playing sound: ${soundPath}`, error);
       });
   });
-});
 
 const recordings = new Map();
 
@@ -1228,8 +1229,8 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     }
   });
 });
-  
-}
+        }
+
     </script>
 
 </body>

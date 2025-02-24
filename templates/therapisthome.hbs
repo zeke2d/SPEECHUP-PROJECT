@@ -576,6 +576,34 @@
             } catch (e) {
               console.error("Error executing script:", e);
             }
+            if (page === 'apraxiagameselection') {
+              addApraxiaEventListeners();
+            }
+            if (page === 'dysarthriagameselection') {
+              addDysarthriaEventListeners();
+            }
+            if (page === 'aphasiagameselection') {
+              addAphasiaEventListeners();
+            }
+            if (page === 'animalsounds') {
+              startGameAnimalSounds();
+            }
+                 // Execute inline scripts manually
+          const scripts = contentArea.querySelectorAll("script");
+          scripts.forEach(script => {
+            try {
+              eval(script.innerText);
+            } catch (e) {
+              console.error("Error executing script:", e);
+            }
+          });
+          
+            document.getElementById("loading-overlay").style.display = "none";
+          })
+          .catch(error => {
+            console.error("Error loading page:", error);
+            document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+            document.getElementById("loading-overlay").style.display = "none";
           });
           
             document.getElementById("loading-overlay").style.display = "none";
@@ -996,7 +1024,7 @@
       document.getElementById("loading-overlay").style.display = "none";
     }
     window.addEventListener('load', () => { setTimeout(hideLoading, 500); });
-
+  
     function startGameAnimalSounds(){
 
   console.log("animalsounds-script.js loaded!");

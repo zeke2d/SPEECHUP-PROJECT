@@ -525,56 +525,35 @@
 
     function loadPage(page) {
 
-            document.getElementById("loading-overlay").style.display = "flex";
+       document.getElementById("loading-overlay").style.display = "flex";
 
-    if (page === 'communityforum') {
+      if (page === 'communityforum') {
         fetch('/communityforum')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("contentArea").innerHTML = html;
-                addForumEventListeners(); // Add event listeners for the forum
-                document.getElementById("loading-overlay").style.display = "none";
-            })
-            .catch(error => {
-                console.error("Error loading page:", error);
-                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
-                document.getElementById("loading-overlay").style.display = "none";
-            });
-    } else {
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById("contentArea").innerHTML = html;
+            addForumEventListeners();
+            document.getElementById("loading-overlay").style.display = "none";
+          })
+          .catch(error => {
+            console.error("Error loading page:", error);
+            document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
+            document.getElementById("loading-overlay").style.display = "none";
+          });
+      } else {
         fetch(`/content/${page}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Page not found");
-                }
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById("contentArea").innerHTML = html;
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Page not found");
+            }
+            return response.text();
+          })
+          .then(html => {
+            document.getElementById("contentArea").innerHTML = html;
 
-                // Add event listeners AFTER the content is loaded
-                if (page === 'courses') {
-                    addCoursesEventListeners();
-                }
-                if (page === 'apraxiagameselection') {
-                    addApraxiaEventListeners();
-                }
-                if (page === 'dysarthriagameselection') {
-                    addDysarthriaEventListeners();
-                }
-                if (page === 'aphasiagameselection') {
-                    addAphasiaEventListeners();
-                }
-                if (page === 'animalsounds') {
-                    startGameAnimalSounds();
-                }
-
-             // Execute inline scripts manually
-          const scripts = contentArea.querySelectorAll("script");
-          scripts.forEach(script => {
-            try {
-              eval(script.innerText);
-            } catch (e) {
-              console.error("Error executing script:", e);
+            // Add event listeners AFTER the content is loaded
+            if (page === 'courses') {
+              addCoursesEventListeners();
             }
             if (page === 'apraxiagameselection') {
               addApraxiaEventListeners();
@@ -605,17 +584,8 @@
             document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
             document.getElementById("loading-overlay").style.display = "none";
           });
-          
-            document.getElementById("loading-overlay").style.display = "none";
-            })
-
-            .catch(error => {
-                console.error("Error loading page:", error);
-                document.getElementById("contentArea").innerHTML = "<h2>Error loading content</h2>";
-                document.getElementById("loading-overlay").style.display = "none";
-            });
+      }
     }
-}
 
 
     function addForumEventListeners() {

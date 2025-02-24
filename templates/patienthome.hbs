@@ -989,7 +989,7 @@ function addForumEventListeners() {
         
           // Validate inputs
           if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
-            showModal("Cannot request an appointment.", "Please fill in all fields!" );
+            showModal("Cannot request an appointment", "Please fill in all fields!" );
             return;
           }
         
@@ -1007,11 +1007,11 @@ function addForumEventListeners() {
             .then(res => res.json())
             .then(data => {
               if (data.success) {
-                showModal("Appointment request sent!", "Waiting for therapist approval.",() => {
+                showModal("Appointment request sent!", "Waiting for therapist approval",() => {
                 loadPage('setappointment');
               });
               } else {
-                showModal("Error submitting appointment: " + data.error);
+                showModal("Error submitting appointment", "Therapist not found!");
               }
             })
             .catch(error => console.error("❌ Error:", error));
@@ -1159,13 +1159,13 @@ function addForumEventListeners() {
             setTimeout(hideLoading, 500); 
         });
 
-    function startGameAnimalSounds(){
+     function startGameAnimalSounds(){
 
   console.log("animalsounds-script.js loaded!");
 
 // Immediately attach event listeners
 document.querySelectorAll(".play-sound").forEach((button) => {
-  button.addEventListener("click", () => 
+  button.addEventListener("click", () => {
     const soundPath = button.dataset.sound;
     console.log(`Attempting to play: ${soundPath}`);
     const sound = new Audio(soundPath);
@@ -1178,6 +1178,7 @@ document.querySelectorAll(".play-sound").forEach((button) => {
         console.error(`Error playing sound: ${soundPath}`, error);
       });
   });
+});
 
 const recordings = new Map();
 
@@ -1229,7 +1230,8 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     }
   });
 });
-        }
+  
+}
 
     </script>
 

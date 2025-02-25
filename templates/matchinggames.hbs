@@ -305,6 +305,9 @@
 
   <!-- Game Board -->
   <div id="gameBoard" class="board"></div>
+  <audio id="correctSound" src="sfx-correctAnswer.mp3"></audio>
+    <audio id="incorrectSound" src="sfx-incorrectAnswer.mp3"></audio>
+
 </div>
 
 <!-- Custom Alert Modal -->
@@ -377,6 +380,10 @@
     "blueberry.jpg", "grape.jpg", "dragonfruit.jpg", "peach.jpg"
   ];
 
+  // Get the audio elements
+const correctSound = document.getElementById("correctSound");
+const incorrectSound = document.getElementById("incorrectSound");
+
   let cards = [...images, ...images]; // Duplicate to make pairs
   let flippedCards = [];
   let matchedPairs = 0;
@@ -430,26 +437,87 @@
     }
   }
 
-  function checkMatch() {
-    const [card1, card2] = flippedCards;
-    if (card1.querySelector("img").src === card2.querySelector("img").src) {
-      card1.classList.add("matched");
-      card2.classList.add("matched");
-      matchedPairs++;
-      if (matchedPairs === images.length) {
-        setTimeout(() => showModal("🎉 Congratulations!", "You matched all pairs!"), 300);
-      }
-    } else {
-      setTimeout(() => {
-        card1.querySelector("img").classList.remove("visible");
-        card1.querySelector("img").classList.add("hidden");
-        card2.querySelector("img").classList.remove("visible");
-        card2.querySelector("img").classList.add("hidden");
-      }, 800);
+  //debugging, locating audio elements
+function playSound(sound, callback) {
+    if (!sound) {
+        console.error("Audio element not found! Check if the script runs after the HTML loads.");
+        return;
     }
-    flippedCards = [];
-    canFlip = true;
-  }
+
+    if (!sound.src) {
+        console.error("Audio source is missing! Check the file path.");
+        return;
+    }
+
+    canFlip = false; // Prevent further clicks while sound is playing
+
+    sound.play().then(() => {
+        sound.onended = () => {
+            canFlip = true; // Re-enable clicking after sound ends
+            if (callback) callback(); // Execute any follow-up logic
+        };
+    }).catch(error => {
+        console.error("Error playing audio:", error);
+        canFlip = true; // Ensure game is not stuck if sound fails
+    });
+}
+
+  // Check if two flipped cards match
+function checkMatch() {
+    if (flippedCards.length < 2) {
+        console.error("checkMatch called with less than 2 cards!", flippedCards);
+        return;
+    }
+
+    const [card1, card2] = flippedCards;
+
+    if (!card1 || !card2) {
+        console.error("Undefined card detected!", card1, card2);
+        flippedCards = [];
+        canFlip = true;
+        return;
+    }
+
+    const img1 = card1.querySelector("img");
+    const img2 = card2.querySelector("img");
+
+    if (!img1 || !img2) {
+        console.error("Image element not found!", img1, img2);
+        flippedCards = [];
+        canFlip = true;
+        return;
+    }
+
+    if (img1.src === img2.src) {
+        // ✅ Highlight matched cards immediately
+        card1.classList.add("matched");
+        card2.classList.add("matched");
+
+        // ✅ Play sound in parallel with highlighting
+        playSound(correctSound, () => {
+            matchedPairs++;
+
+            if (matchedPairs === images.length) {
+                setTimeout(() => showModal("🎉 Congratulations!", " You matched all pairs!"), 300);
+            }
+
+            flippedCards = [];
+            canFlip = true;
+        });
+
+    } else {
+        playSound(incorrectSound, () => {
+            img1.classList.remove("visible");
+            img1.classList.add("hidden");
+
+            img2.classList.remove("visible");
+            img2.classList.add("hidden");
+
+            flippedCards = [];
+            canFlip = true;
+        });
+    }
+}
 
   // Start Game button inside the modal
   document.getElementById("startGame").addEventListener("click", () => {

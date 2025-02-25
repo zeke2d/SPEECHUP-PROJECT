@@ -108,20 +108,48 @@
     border: 1px solid #ccc;
     user-select: none;
   }
+
   .cell.highlight {
     background-color: #FF7878;
     color: #fff;
   }
+
   .word-list span.crossed {
     text-decoration: line-through;
     color: #aaa;
   }
+
   .message {
     margin-top: 20px;
     font-size: 18px;
     font-weight: bold;
     color: #333;
   }
+
+  .hint-button {
+    background: url('showHint-button.png') no-repeat center center;
+    background-size: contain;
+    width: 120px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    position: relative;
+}
+
+/* Tooltip */
+.hint-button:hover::after {
+    content: "Need Help?";
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
 </style>
 
 <!-- Back Button -->
@@ -167,6 +195,9 @@
 
   <!-- Message -->
   <div class="message" id="message">Find all the words!</div>
+
+  <!-- Hint Button -->
+    <button class="hint-button" id="hint-button"></button>
 
 </div> <!-- end .game-container -->
 
@@ -243,6 +274,7 @@
     wordGrid.style.display = "grid";
     wordGrid.style.gridTemplateColumns = `repeat(${gridSize}, 28px)`;
     wordGrid.style.gridGap = "4px";
+    wordGrid.style.gridRowGap = "4px";
     for (let row = 0; row < gridSize; row++) {
       cellElements[row] = [];
       for (let col = 0; col < gridSize; col++) {
@@ -251,6 +283,12 @@
         cell.textContent = grid[row][col];
         cell.dataset.row = row;
         cell.dataset.col = col;
+        cell.style.width = "26px";
+        cell.style.height = "26px";
+        cell.style.textAlign = "center";
+        cell.style.lineHeight = "26px";
+        cell.style.letterSpacing = "2px";
+        cell.style.fontSize = "16px";
         cell.addEventListener("mousedown", startSelection);
         cell.addEventListener("mouseover", selectCell);
         cell.addEventListener("mouseup", endSelection);
@@ -264,6 +302,8 @@
   let selectionDirection = null;
 
   function startSelection(event) {
+    if (wordGrid.classList.contains("locked")) return; // Stop selection if game is over
+
     resetHighlight();
     isSelecting = true;
     selectedCells.length = 0;
@@ -308,34 +348,116 @@
   }
 
   function checkSelection() {
+    if (wordGrid.classList.contains("locked")) return; // Prevent highlighting if locked
+
     const selectedWord = selectedCells.map(cell => cell.textContent).join("");
     const reversedWord = selectedWord.split("").reverse().join("");
     if (words.includes(selectedWord) || words.includes(reversedWord)) {
       foundWords.add(selectedWord);
       foundWords.add(reversedWord);
-      selectedCells.forEach(cell => cell.classList.add("found"));
+      selectedCells.forEach(cell => {
+            cell.classList.add("found");
+            cell.style.backgroundColor = "#FF7878"; // Correct highlight
+        });
+
       document.querySelectorAll(".word-list span").forEach(wordElement => {
         if (wordElement.textContent === selectedWord || wordElement.textContent === reversedWord) {
           wordElement.style.backgroundColor = "#FF7878";
         }
       });
-      message.textContent = "Correct! Keep going!";
+
+    // Check if all words are highlighted
+        const allWordsHighlighted = [...document.querySelectorAll(".word-list span")]
+            .every(wordElement => wordElement.style.backgroundColor === "rgb(255, 120, 120)");
+
+        if (allWordsHighlighted) {
+            message.textContent = "Well done! You found them all!";
+            message.style.color = "#FF4B4B";
+            
+            wordGrid.classList.add("locked"); //lock word grid (disble future selections)
+            hintButton.disabled = true; // Disable hint button
+            hintButton.style.opacity = "0.5"; // visual marker: make it look disabled
+            hintButton.style.cursor = "not-allowed";
+        }
+        else {
+            message.textContent = "Correct! Keep going!";
+            message.style.color = ""; // Reset to default
+        }
     } else {
-      resetHighlight();
-      message.textContent = "Try again!";
+        resetHighlight();
+        message.textContent = "Try again!";
+        message.style.color = ""; // Reset to default
     }
+
     selectedCells.length = 0;
-  }
+}
 
   function resetHighlight() {
-    selectedCells.forEach(cell => {
-      if (!cell.classList.contains("found")) {
-        cell.style.backgroundColor = "";
-      }
+    cellElements.forEach(row => {
+        row.forEach(cell => {
+            if (!cell.classList.contains("found")) {
+                cell.style.backgroundColor = ""; // Reset only non-found words
+            }
+        });
     });
-    selectedCells.length = 0;
-  }
+}
 
   fillGrid();
   renderGrid();
+
+  //show hint
+const hintButton = document.getElementById("hint-button");
+let hintActive = false;
+
+hintButton.addEventListener("click", () => {
+    if (wordGrid.classList.contains("locked")) return; // locks hint when game is over
+
+    hintActive = !hintActive; // Toggle hint mode
+
+    if (hintActive) {
+        words.forEach(word => {
+            if (!foundWords.has(word)) {
+                highlightWord(word, "yellow"); // Highlight remaining words
+            }
+        });
+        message.textContent = "We’re here to help.";
+        message.style.color = "#FF7878"; 
+    } else {
+        resetHighlight();
+        message.textContent = "Find all the words!";
+        message.style.color = ""; // Reset color to default
+    }
+});
+
+function highlightWord(word, color) {
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            let selectedWord = "";
+            let cells = [];
+
+            for (const [dx, dy] of directions) {
+                let r = row, c = col;
+                selectedWord = "";
+                cells = [];
+
+                for (let i = 0; i < word.length; i++) {
+                    if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) break;
+                    selectedWord += grid[r][c];
+                    cells.push(cellElements[r][c]);
+                    r += dx;
+                    c += dy;
+                }
+
+                if (selectedWord === word) {
+                    cells.forEach(cell => {
+                        // Only highlight in yellow if it is NOT already a found word
+                        if (!cell.classList.contains("found")) {
+                            cell.style.backgroundColor = color;
+                        }
+                    });
+                }
+            }
+        }
+    }
+}
 </script>

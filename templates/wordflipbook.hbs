@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Word Flipbook</title>
-  <style>
+ <style>
     /* Basic resets */
     body {
       margin: 0;
@@ -67,10 +62,10 @@
 
     /* Each "page" is wrapped in .flipbook-page so we can toggle them */
     .flipbook-page {
-      display: none; /* hidden by default; we'll show the first page via JS or inline style */
+      display: none; /* hidden by default */
     }
     .flipbook-page.active {
-      display: block; /* or 'flex' if preferred, but block is usually enough since .word-row is flex */
+      display: block;
     }
 
     /* The row that shows the open-book background */
@@ -110,34 +105,35 @@
     }
 
     .play-sound:hover {
-    background-color: #e0e0e0;
-  }
-  .record-sound:hover {
-    background-color: #e0e0e0;
-  }
+      background-color: #e0e0e0;
+    }
+    .record-sound:hover {
+      background-color: #e0e0e0;
+    }
     .play-recording:hover {
-    background-color: #e0e0e0;
-  }
+      background-color: #e0e0e0;
+    }
 
     .right-arrow {
-    position: relative;
-    display: block;
-    margin-top: 25px;
-    margin-left: auto;
-    margin-right: auto;
-}
+      display: block;
+      margin-top: 25px;
+      margin-left: auto;
+      margin-right: auto;
+      cursor: pointer;
+    }
 
-.left-arrow {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
+    .left-arrow {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      cursor: pointer;
+    }
 
-.left-arrow-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .left-arrow-container{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   </style>
 
   <!-- Back Button -->
@@ -187,7 +183,7 @@
           </div>
           <h4 class="phonetics" id="nee-phonetics" title="Phonetics">/niː/</h4>
           <!-- Right arrow to go to the next page -->
-          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow">
+          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" id="right-arrow-page1">
         </div>
       </div>
     </div>
@@ -205,7 +201,7 @@
           </div>
           <h4 class="phonetics" id="bye-phonetics" title="Phonetics">/baɪ/</h4>
           <!-- Left arrow to go back to Page 1 -->
-          <img src="leftArrow-button.png" alt="Left Arrow" class="left-arrow">
+          <img src="leftArrow-button.png" alt="Left Arrow" class="left-arrow" id="left-arrow-page2">
         </div>
 
         <!-- Column 2 -->
@@ -228,8 +224,8 @@
             <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="key">
           </div>
           <h4 class="phonetics" id="key-phonetics" title="Phonetics">/kiː/</h4>
-          
-          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" onclick="goToPage(3)">
+          <!-- Right arrow (if you want a page 3, uncomment the goToPage(3) line, etc.) -->
+          <!-- <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" onclick="goToPage(3)"> -->
         </div>
       </div>
     </div>
@@ -237,129 +233,154 @@
   </div>
 
 
-<script>
-
+  <script>
+    // --------------------------------
+    // 1. AUDIO PLAY/RECORD FUNCTIONALITY
+    // --------------------------------
     const playSounds = document.querySelectorAll('.play-sound');
-const recordSounds = document.querySelectorAll('.record-sound');
-const playRecordings = document.querySelectorAll('.play-recording');
-const rightArrow = document.querySelector('.right-arrow');
-const leftArrow = document.querySelector('.left-arrow');
-const wordRow1 = document.getElementById('word-row-1');
-const wordRow2 = document.getElementById('word-row-2');
+    const recordSounds = document.querySelectorAll('.record-sound');
+    const playRecordings = document.querySelectorAll('.play-recording');
 
-let mediaRecorder;
-let audioChunks = [];
-let audioURLs = {};
-let recordingTimeout;
-let isRecording = false;
-let currentWordRow = 1;  // 1 for Ma/Pa/Nee, 2 for Bye/Toe/Key
+    let mediaRecorder;
+    let audioChunks = [];
+    let audioURLs = {};
+    let recordingTimeout;
+    let isRecording = false;
 
-playSounds.forEach(button => {
-    button.addEventListener('click', () => {
+    playSounds.forEach(button => {
+      button.addEventListener('click', () => {
         const word = button.dataset.word;
         let audioSrc = '';
 
         if (word === 'ma') {
-            audioSrc = 'ma-wordFlipbookSound.mp3';
+          audioSrc = 'ma-wordFlipbookSound.mp3';
         } else if (word === 'pa') {
-            audioSrc = 'pa-wordFlipbookSound.mp3';
+          audioSrc = 'pa-wordFlipbookSound.mp3';
         } else if (word === 'nee') {
-            audioSrc = 'nee-wordFlipbookSound.mp3';
+          audioSrc = 'nee-wordFlipbookSound.mp3';
         } else if (word === 'bye') {
-            audioSrc = 'bye-wordFlipbookSound.mp3';
+          audioSrc = 'bye-wordFlipbookSound.mp3';
         } else if (word === 'toe') {
-            audioSrc = 'toe-wordFlipbookSound.mp3';
+          audioSrc = 'toe-wordFlipbookSound.mp3';
         } else if (word === 'key') {
-            audioSrc = 'key-wordFlipbookSound.mp3';
+          audioSrc = 'key-wordFlipbookSound.mp3';
         }
 
         if (audioSrc) {
-            console.log(`Playing sound: ${word}`);
-            const audio = new Audio(audioSrc);
-            audio.play();
+          console.log(`Playing sound: ${word}`);
+          const audio = new Audio(audioSrc);
+          audio.play();
         } else {
-            console.error(`Audio source not found for ${word}`);
+          console.error(`Audio source not found for ${word}`);
         }
+      });
     });
-});
 
-recordSounds.forEach(button => {
-    button.addEventListener('click', async () => {
+    recordSounds.forEach(button => {
+      button.addEventListener('click', async () => {
         const word = button.dataset.word;
 
+        // If currently recording, stop it:
         if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.stop();
-            isRecording = false;
-            return;
+          mediaRecorder.stop();
+          isRecording = false;
+          return;
         }
 
         console.log(`Start Recording for: ${word}`);
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
 
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
+          mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+          };
 
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioURLs[word] = audioUrl;
-                console.log(`Finish Recording for: ${word}`);
-                clearTimeout(recordingTimeout);
-                isRecording = false;
-            };
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioURLs[word] = audioUrl;
+            console.log(`Finish Recording for: ${word}`);
+            clearTimeout(recordingTimeout);
+            isRecording = false;
+          };
 
-            mediaRecorder.start();
-            isRecording = true;
+          mediaRecorder.start();
+          isRecording = true;
 
-            recordingTimeout = setTimeout(() => {
-                if (mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                }
-            }, 3000);
+          // Auto-stop after 3 seconds
+          recordingTimeout = setTimeout(() => {
+            if (mediaRecorder.state === "recording") {
+              mediaRecorder.stop();
+            }
+          }, 3000);
 
         } catch (error) {
-            console.error('Error accessing microphone:', error);
-            isRecording = false;
+          console.error('Error accessing microphone:', error);
+          isRecording = false;
         }
+      });
     });
-});
 
-playRecordings.forEach(button => {
-    button.addEventListener('click', () => {
+    playRecordings.forEach(button => {
+      button.addEventListener('click', () => {
         const word = button.dataset.word;
         const audioUrl = audioURLs[word];
 
         if (audioUrl) {
-            console.log(`Playing recording for: ${word}`);
-            const audio = new Audio(audioUrl);
-            audio.play();
+          console.log(`Playing recording for: ${word}`);
+          const audio = new Audio(audioUrl);
+          audio.play();
         } else {
-            console.error(`No recording found for ${word}`);
+          console.error(`No recording found for ${word}`);
         }
+      });
     });
-});
 
-rightArrow.addEventListener('click', () => {
-    if (currentWordRow === 1) {
-        wordRow1.style.display = 'none';
-        wordRow2.style.display = 'flex';
-        currentWordRow = 2;
-    } else {
-        wordRow1.style.display = 'flex';
-        wordRow2.style.display = 'none';
-        currentWordRow = 1;
+    // --------------------------------
+    // 2. PAGE FLIP FUNCTIONALITY
+    // --------------------------------
+
+    // Helper function to show a specific page by ID
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.flipbook-page').forEach(page => {
+        page.classList.remove('active');
+      });
+      // Show the desired page
+      const target = document.getElementById(pageId);
+      if (target) target.classList.add('active');
     }
-});
 
-leftArrow.addEventListener('click', () => {
-    wordRow1.style.display = 'flex';
-    wordRow2.style.display = 'none';
-    currentWordRow = 1;
-});
+    // Arrow on Page 1 (go to Page 2)
+    const rightArrowPage1 = document.getElementById('right-arrow-page1');
+    rightArrowPage1.addEventListener('click', () => {
+      showPage('page-2');
+    });
 
-</script>
+    // Arrow on Page 2 (go back to Page 1)
+    const leftArrowPage2 = document.getElementById('left-arrow-page2');
+    leftArrowPage2.addEventListener('click', () => {
+      showPage('page-1');
+    });
+
+    // If you eventually want a third page, you can do something like:
+    // function goToPage(pageNumber) {
+    //   document.querySelectorAll('.flipbook-page').forEach((page) => {
+    //     page.classList.remove('active');
+    //   });
+    //   const pageToShow = document.getElementById(`page-${pageNumber}`);
+    //   if (pageToShow) {
+    //     pageToShow.classList.add('active');
+    //   }
+    // }
+    // Then in your HTML, do: onclick="goToPage(3)" on the arrow for page 2, etc.
+
+    // For your "Back to Dysarthria Unit" button:
+    function loadPage(pageName) {
+      // Insert your own routing logic here (window.location, or any other method)
+      window.location.href = pageName + '.html';
+    }
+  </script

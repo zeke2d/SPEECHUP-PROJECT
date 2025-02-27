@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 require('dotenv').config()
 
-mongoose.connect(process.env.MONGO_DB_URL)
+mongoose.connect('mongodb+srv://speechupapp:iGCGBicyOitvr7BH@cluster0.t69fb.mongodb.net/SPEECHUP')
 .then(() => {
     console.log("MONGODB CONNECTED")
 })

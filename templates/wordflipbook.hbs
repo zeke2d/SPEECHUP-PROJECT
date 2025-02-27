@@ -366,21 +366,9 @@
       showPage('page-1');
     });
 
-    // If you eventually want a third page, you can do something like:
-    // function goToPage(pageNumber) {
-    //   document.querySelectorAll('.flipbook-page').forEach((page) => {
-    //     page.classList.remove('active');
-    //   });
-    //   const pageToShow = document.getElementById(`page-${pageNumber}`);
-    //   if (pageToShow) {
-    //     pageToShow.classList.add('active');
-    //   }
-    // }
-    // Then in your HTML, do: onclick="goToPage(3)" on the arrow for page 2, etc.
-
     // For your "Back to Dysarthria Unit" button:
     function loadPage(pageName) {
       // Insert your own routing logic here (window.location, or any other method)
       window.location.href = pageName + '.html';
     }
-  </script
+  </script>

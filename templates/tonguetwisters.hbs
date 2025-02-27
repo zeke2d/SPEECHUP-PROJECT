@@ -26,9 +26,330 @@
     font-size: 18px;
   }
 
+  /****************************************
+   * HEADER CONTAINER
+   ****************************************/
+  .header-container {
+    background-color: #FF7878;
+    padding: 20px;
+    border-radius: 20px;
+    width: fit-content;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 330px; /* adjust or remove if not needed */
+  }
+  .header-container h1 {
+    color: white;
+    margin: 0;
+  }
+  .header-container h6 {
+    color: white;
+    font-style: italic;
+    opacity: 0.75;
+    margin-top: 5px;
+  }
+
+  /****************************************
+   * MAIN (GAME) CONTAINER
+   ****************************************/
+  .game-container {
+    position: relative;
+    /* Increase max-width if you want more space */
+    max-width: 900px;
+    width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+    background: white;
+    /* Switch to a row layout so the avatar is on the left and content on the right */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  /* Left side area with the avatar and quote */
+  .left-side {
+    width: 300px; /* adjust as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+  }
+  .avatar {
+    width: 250px;
+    height: auto;
+  }
+  .twist-quote {
+    color: #002769;
+    font-style: italic;
+    font-size: 15px;
+    text-align: center;
+    margin-top: 5px;
+  }
+
+  /* The right side where the tongue twisters themselves go */
+  .twister-content {
+    flex: 1;
+  }
+
+  /****************************************
+   * TONGUE TWISTER CARDS
+   ****************************************/
+  .twister {
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #fff;
+  }
+  .twister-text {
+    color: #002769;
+    font-style: italic;
+    font-size: large;
+  }
+
+  .button-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /****************************************
+   * DISTINCT BUTTON CLASSES
+   ****************************************/
+  /* Record button: a deeper, vibrant red */
+  .record-btn {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .record-btn:hover {
+    background-color: #e0e0e0; /* darker on hover */
+  }
+
+  /* Play button: a lighter pinkish red */
+  .play-btn {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .play-btn:hover {
+    background-color: #e0e0e0; /* darker on hover */
+  }
 </style>
 
 <!-- Back Button -->
 <button onclick="loadPage('aphasiagameselection')" class="back-btn">Back to Aphasia Unit</button>
 
-<h2>TONGUE TWISTERS</h2>
+<!-- Header Section -->
+<div class="header-container">
+  <h1>Tongue Twisters Game</h1>
+  <h6>Sharpen your Tongue</h6>
+</div>
+
+<!-- Main Container for the Tongue Twisters -->
+<div class="game-container">
+  <!-- Left Side with Avatar -->
+  <div class="left-side">
+    <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
+    <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
+  </div>
+
+  <!-- Right Side: Actual Twister Content -->
+  <div class="twister-content">
+    <div id="twisters-container"></div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Check for SpeechRecognition API support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.error("Speech recognition API not supported in this browser. Please use a supported browser like Chrome.");
+    }
+    
+    // Data for the tongue twisters
+    const tongueTwisters = [
+      "She sells sea shells by the seashore.",
+      "How can a clam cram in a clean cream can?",
+      "Peter Piper picked a peck of pickled peppers.",
+      "Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair.",
+      "A tutor who tooted the flute tried to tutor two tooters to toot."
+    ];
+
+    const twistersContainer = document.getElementById("twisters-container");
+    const recordings = {};
+    let mediaRecorder;
+    let audioChunks = {};
+    let isRecording = {}; // Track recording state per sentence
+    let recognition;
+    let audioStream; // Store the audio stream to prevent multiple permission prompts
+
+    // Initialize the game and add tongue twister cards
+    function initGame() {
+      tongueTwisters.forEach((twister, index) => {
+        const div = document.createElement("div");
+        div.classList.add("twister");
+        div.innerHTML = `
+          <p class="twister-text">"${twister}"</p>
+          <div class="button-container">
+            <button class="record-btn" onclick="analyzeSpeech(${index})" id="record-btn-${index}">
+              <img src="recordsound-button.png" alt="Record" width="30">
+            </button>
+            <button class="play-btn" onclick="playSpeech(${index})">
+              <img src="playrecording-button.png" alt="Play" width="30">
+            </button>
+          </div>
+        `;
+        twistersContainer.appendChild(div);
+        isRecording[index] = false;
+      });
+
+      // Request microphone access once at the beginning
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          audioStream = stream;
+        })
+        .catch(error => console.error("Error accessing microphone:", error));
+    }
+
+    // Function to analyze speech and record the user's attempt
+    window.analyzeSpeech = function(index) {
+      if (isRecording[index]) {
+        // If already recording, stop both media recorder and recognition
+        mediaRecorder.stop();
+        if (recognition) {
+          recognition.stop();
+        }
+        return;
+      }
+
+      if (!audioStream) {
+        console.error("Microphone access not granted.");
+        return;
+      }
+      
+      // Initialize SpeechRecognition if available
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.continuous = false;
+      } else {
+        console.error("Speech recognition not supported in this browser.");
+        return;
+      }
+      
+      mediaRecorder = new MediaRecorder(audioStream);
+      audioChunks[index] = [];
+      isRecording[index] = true;
+
+      let userSpeech = "";
+
+      recognition.onresult = event => {
+        userSpeech = event.results[0][0].transcript.toLowerCase();
+        console.log(`User said: "${userSpeech}"`);
+      };
+
+      recognition.onerror = event => {
+        console.error("Speech recognition error:", event.error);
+      };
+
+      mediaRecorder.ondataavailable = event => {
+        audioChunks[index].push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        saveRecording(index);
+        isRecording[index] = false;
+        if (recognition) {
+          recognition.stop();
+        }
+        processSpeech(index, userSpeech);
+      };
+
+      // Start both recording and recognition
+      mediaRecorder.start();
+      recognition.start();
+      console.log(`Recording started for: ${tongueTwisters[index]}`);
+
+      // Automatically stop recording after 10 seconds
+      setTimeout(() => {
+        if (isRecording[index]) {
+          mediaRecorder.stop();
+          if (recognition) {
+            recognition.stop();
+          }
+        }
+      }, 10000);
+    };
+
+    // Function to play back the recorded audio
+    window.playSpeech = function(index) {
+      if (!recordings[index]) {
+        console.log("No recording found.");
+        return;
+      }
+      console.log(`Playing recorded speech for: ${tongueTwisters[index]}`);
+      const audio = new Audio(recordings[index]);
+      audio.play();
+    };
+
+    // Save the audio recording for playback
+    function saveRecording(index) {
+      const audioBlob = new Blob(audioChunks[index], { type: 'audio/wav' });
+      recordings[index] = URL.createObjectURL(audioBlob);
+      console.log(`Finished recording for: ${tongueTwisters[index]}`);
+    }
+
+    // Process the recognized speech against the original tongue twister
+    function processSpeech(index, userSpeech) {
+      const originalTwister = tongueTwisters[index].toLowerCase();
+      const accuracy = compareSpeech(userSpeech, originalTwister);
+      const twistQuote = document.querySelector(".twist-quote");
+      const message = accuracy < 50 ? "Keep going!" : "Nicely done!";
+
+      twistQuote.innerHTML = `
+        <span style="color: #FF4B4B; font-weight: bold;">
+          ${message}
+        </span><br>
+        '${tongueTwisters[index]}'<br>
+        is ${accuracy}% accurate.
+      `;
+      console.log(`Analysis complete: Accuracy score for '${tongueTwisters[index]}' is ${accuracy}%`);
+    }
+
+    // Compare user's spoken words with the original text
+    function compareSpeech(userSpeech, originalTwister) {
+      const userWords = userSpeech.split(" ");
+      const originalWords = originalTwister.split(" ");
+      let matchCount = 0;
+      userWords.forEach((word, i) => {
+        if (originalWords[i] && word === originalWords[i]) {
+          matchCount++;
+        }
+      });
+      return Math.round((matchCount / originalWords.length) * 100);
+    }
+
+    // Initialize the game once the page loads
+    initGame();
+
+    // Expose functions to the global scope for inline onclick attributes
+    window.analyzeSpeech = analyzeSpeech;
+    window.playSpeech = playSpeech;
+  })();
+</script>

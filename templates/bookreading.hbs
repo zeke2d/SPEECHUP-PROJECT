@@ -1,34 +1,288 @@
-<style>
+ <style>
+    /* Reset basic body styling */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+    }
 
+    /* Back Button styling */
     .back-btn {
-        display: flex;
-        align-items: center;
-        background-color: #f8f9fa;
-        color: #333;
-        border: none;
-        padding: 8px 8px;
-        font-size: 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-weight: bold;
-        margin-bottom: 20px; /* Space below the back button */
+      display: flex;
+      align-items: center;
+      background-color: #f8f9fa;
+      color: #333;
+      border: none;
+      padding: 8px 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
 
     .back-btn:hover {
-        background-color: #e0e0e0;
-        transform: translateX(-3px);
+      background-color: #e0e0e0;
+      transform: translateX(-3px);
     }
 
     .back-btn::before {
-        content: "⮐";
-        margin-right: 8px;
-        font-size: 18px;
+      content: "⮐";
+      margin-right: 8px;
+      font-size: 18px;
     }
 
-</style>
+    /* Page Header styling */
+    .page-header {
+      background-color: #FF7878;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      border-radius: 25px;
+      width: fit-content;
+      margin: 0 auto;
+    }
 
-<!-- Back Button -->
-<button onclick="loadPage('apraxiagameselection')" class="back-btn">Back to Apraxia Unit</button>
+    .page-header h1 {
+      margin: 0;
+      font-weight: bold;
+    }
 
-<h2>BOOK READING</h2>
+    .page-header p {
+      margin: 5px 0 0;
+      font-style: italic;
+      opacity: 0.75;
+    }
+
+    /* Main content container */
+    .content {
+      margin: 20px auto;
+      text-align: center;
+      max-width: 600px; /* Adjust as needed */
+      width: 90%;
+    }
+
+    /* Book Selector */
+    .custom-select {
+      margin-bottom: 20px;
+    }
+
+    #bookSelector {
+      width: 100%;
+      max-width: 310px;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    /* Book image and text */
+    .book-image {
+      width: 310px;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .book-text {
+      font-style: italic;
+      font-size: 20px;
+      line-height: 1.5;
+      color: #002769;
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+
+    /* Audio Buttons */
+    .audio-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .audio-button {
+      width: 50px;
+      height: auto;
+      cursor: pointer;
+    }
+  </style>
+
+  <!-- Back Button -->
+  <button onclick="loadPage('apraxiagameselection')" class="back-btn">Back to Apraxia Unit</button>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Apraxia Unit - Book Reading</h1>
+    <p>Stories for your Speech Journey</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <h2 id="readingTitle">Reading Time!</h2>
+
+    <div class="custom-select">
+      <select id="bookSelector" aria-label="Select a Story">
+        <option value="" disabled selected hidden>Select a Story</option>
+        <option value="loveyouforever">Love You Forever</option>
+        <option value="threeblindmice">Three Blind Mice</option>
+      </select>
+    </div>
+
+    <img id="bookImage" src="placeholder-bookreading.png" class="book-image" alt="Book Cover">
+    <p id="bookText" class="book-text"></p>
+
+    <div class="audio-buttons" id="audioButtons" style="display: none;">
+      <img src="recordsound-button.png" class="audio-button" alt="Record Sound">
+      <img src="playrecording-button.png" class="audio-button" alt="Play Recording">
+    </div>
+  </div>
+
+
+<script>
+        let bookSelector = document.getElementById("bookSelector");
+let bookImage = document.getElementById("bookImage");
+let bookText = document.getElementById("bookText");
+let audioButtons = document.getElementById("audioButtons");
+let recordButton = document.querySelector(".audio-buttons img[alt='Record Sound']");
+let playButton = document.querySelector(".audio-buttons img[alt='Play Recording']");
+
+let mediaRecorder;
+let audioChunks = [];
+let recordings = {}; // Store recordings per book
+let isRecording = false;
+let transcript = "";
+
+// Speech Recognition
+let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.continuous = false;
+recognition.lang = "en-US";
+recognition.interimResults = false;
+recognition.maxAlternatives = 1;
+
+// Request microphone access on page load
+navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    mediaRecorder = new MediaRecorder(stream);
+    console.log("Microphone access granted.");
+}).catch((error) => {
+    console.error("Microphone access denied: ", error);
+});
+
+bookSelector.addEventListener("change", function() {
+    if (bookSelector.value === "loveyouforever") {
+        bookImage.src = "book-loveyouforever.png";
+        bookText.innerHTML = `“ I’ll love you forever,<br>
+                                I’ll like you for always,<br>
+                                As long as I’m living<br>
+                                my baby you’ll be. “`;
+        audioButtons.style.display = "flex";
+    } else if (bookSelector.value === "threeblindmice") {
+        bookImage.src = "book-threeblindmice.png";
+        bookText.innerHTML = `“ Three Blind Mice<br>
+                                Three Blind Mice<br>
+                                See how they run<br>
+                                See how they run<br>
+                                They all ran after the farmer’s wife<br>
+                                She cut off their tails with a carving knife<br>
+                                Did you ever see such a sight in your life<br>
+                                as THREE BLIND MICE. ”`;
+        audioButtons.style.display = "flex";
+    } else {
+        audioButtons.style.display = "none";
+    }
+});
+
+// Recording Audio & Speech Recognition Together
+recordButton.addEventListener("click", () => {
+    if (!mediaRecorder) {
+        console.error("Microphone access not available.");
+        return;
+    }
+    let bookName = bookSelector.options[bookSelector.selectedIndex].text;
+    
+    if (isRecording) {
+        mediaRecorder.stop();
+        recognition.stop();
+        return;
+    }
+    
+    console.log(`Recording started for: ${bookName}`);
+    
+    audioChunks = [];
+    isRecording = true;
+    transcript = "";
+    mediaRecorder.start();
+
+    mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = () => {
+        let audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        let audioUrl = URL.createObjectURL(audioBlob);
+        recordings[bookName] = audioUrl; // Store recording by book name
+        isRecording = false;
+        console.log(`Finished recording for: ${bookName}`);
+        
+        // Log User said after recording is finished
+        console.log(`User said: ${transcript}`);
+        
+        // Analyze accuracy only after recording is fully stopped
+        analyzeAccuracy(transcript, bookText.innerText, bookName);
+    };
+    
+    recognition.start();
+    recognition.onresult = (event) => {
+        transcript = event.results[0][0].transcript;
+    };
+    
+    setTimeout(() => {
+        if (isRecording) {
+            mediaRecorder.stop();
+            recognition.stop();
+        }
+    }, 25000); // Stop after 25 seconds
+});
+
+// Playing back the recorded audio
+playButton.addEventListener("click", () => {
+    let bookName = bookSelector.options[bookSelector.selectedIndex].text;
+    if (isRecording) {
+        mediaRecorder.stop();
+        recognition.stop();
+    }
+    if (recordings[bookName]) {
+        let recordedAudio = new Audio(recordings[bookName]);
+        recordedAudio.play();
+    } else {
+        alert("No recording available for this book. Please record first.");
+    }
+});
+
+// Analyzing speech accuracy
+function analyzeAccuracy(userSpeech, referenceText, bookName) {
+    if (!userSpeech) {
+        console.log(`Analysis skipped: No speech detected for ${bookName}`);
+        return;
+    }
+    let userWords = userSpeech.toLowerCase().split(" ");
+    let referenceWords = referenceText.toLowerCase().split(" ");
+    let correctCount = 0;
+    
+    userWords.forEach((word, index) => {
+        if (word === referenceWords[index]) {
+            correctCount++;
+        }
+    });
+    
+    let accuracy = (correctCount / referenceWords.length) * 100;
+    console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
+    alert(`Your accuracy: ${accuracy.toFixed(2)}%`);
+}
+
+</script>
+    

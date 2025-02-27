@@ -1,34 +1,352 @@
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Word Flipbook</title>
+  <style>
+    /* Basic resets */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+    }
 
+    /* Back button */
     .back-btn {
-        display: flex;
-        align-items: center;
-        background-color: #f8f9fa;
-        color: #333;
-        border: none;
-        padding: 8px 8px;
-        font-size: 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-weight: bold;
-        margin-bottom: 20px; /* Space below the back button */
+      display: inline-flex;
+      align-items: center;
+      background-color: #f8f9fa;
+      color: #333;
+      border: none;
+      padding: 8px 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
-
     .back-btn:hover {
-        background-color: #e0e0e0;
-        transform: translateX(-3px);
+      background-color: #e0e0e0;
+      transform: translateX(-3px);
     }
-
     .back-btn::before {
-        content: "⮐";
-        margin-right: 8px;
-        font-size: 18px;
+      content: "⮐";
+      margin-right: 8px;
+      font-size: 18px;
     }
 
-</style>
+    /* Header */
+    .page-header {
+      background-color: #FF7878;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      border-radius: 25px;
+      width: fit-content;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      margin: 0;
+      font-weight: bold;
+    }
+    .page-header h6 {
+      margin: 5px 0 0;
+      font-style: italic;
+      opacity: 0.75;
+    }
 
-<!-- Back Button -->
-<button onclick="loadPage('dysarthriagameselection')" class="back-btn">Back to Dysarthria Unit</button>
+    /* Main container */
+    .flipbook-container {
+      margin: 20px auto;
+      text-align: center;
+      max-width: 800px; /* Adjust if needed */
+      width: 90%;
+    }
 
-<h2>WORD FLIPBOOK</h2>
+    /* Each "page" is wrapped in .flipbook-page so we can toggle them */
+    .flipbook-page {
+      display: none; /* hidden by default; we'll show the first page via JS or inline style */
+    }
+    .flipbook-page.active {
+      display: block; /* or 'flex' if preferred, but block is usually enough since .word-row is flex */
+    }
+
+    /* The row that shows the open-book background */
+    .word-row {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 40px 0;
+      padding: 120px 20px 60px;
+      background: url("wordflipbook-Background.png") no-repeat center top;
+      background-size: contain;
+    }
+
+    .word-column {
+      text-align: center;
+      margin: 0 30px; /* spacing between columns */
+    }
+
+    .button-container {
+      margin: 10px 0;
+    }
+
+    .phonetics {
+      color: #002769;
+      font-style: italic;
+    }
+
+    .play-sound,
+    .record-sound,
+    .play-recording {
+      cursor: pointer;
+      margin: 0 5px;
+    }
+
+    .right-arrow {
+    position: relative;
+    display: block;
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.left-arrow {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.left-arrow-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  </style>
+
+  <!-- Back Button -->
+  <button onclick="loadPage('dysarthriagameselection')" class="back-btn">Back to Dysarthria Unit</button>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Dysarthria Unit - Word Flipbook</h1>
+    <h6><i>Practice Sound Daily!</i></h6>
+  </div>
+
+  <!-- Flipbook Container -->
+  <div class="flipbook-container">
+
+    <!-- PAGE 1 -->
+    <div class="flipbook-page active" id="page-1">
+      <div class="word-row">
+        <!-- Column 1 -->
+        <div class="word-column">
+          <h1 id="ma-word">"Ma"</h1>
+          <div class="button-container">
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="ma">
+            <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="ma">
+            <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="ma">
+          </div>
+          <h4 class="phonetics" id="ma-phonetics" title="Phonetics">/mɑː/</h4>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="word-column">
+          <h1 id="pa-word">"Pa"</h1>
+          <div class="button-container">
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="pa">
+            <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="pa">
+            <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="pa">
+          </div>
+          <h4 class="phonetics" id="pa-phonetics" title="Phonetics">/pɑː/</h4>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="word-column">
+          <h1 id="nee-word">"Nee"</h1>
+          <div class="button-container">
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="nee">
+            <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="nee">
+            <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="nee">
+          </div>
+          <h4 class="phonetics" id="nee-phonetics" title="Phonetics">/niː/</h4>
+          <!-- Right arrow to go to the next page -->
+          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow">
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="flipbook-page" id="page-2">
+      <div class="word-row">
+        <!-- Column 1 -->
+        <div class="word-column">
+          <h1 id="bye-word">"Bye"</h1>
+          <div class="button-container">
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="bye">
+            <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="bye">
+            <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="bye">
+          </div>
+          <h4 class="phonetics" id="bye-phonetics" title="Phonetics">/baɪ/</h4>
+          <!-- Left arrow to go back to Page 1 -->
+          <img src="leftArrow-button.png" alt="Left Arrow" class="left-arrow">
+        </div>
+
+        <!-- Column 2 -->
+        <div class="word-column">
+          <h1 id="toe-word">"Toe"</h1>
+          <div class="button-container">
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="toe">
+            <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="toe">
+            <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="toe">
+          </div>
+          <h4 class="phonetics" id="toe-phonetics" title="Phonetics">/toʊ/</h4>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="word-column">
+          <h1 id="key-word">"Key"</h1>
+          <div class="button-container">
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="key">
+            <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="key">
+            <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="key">
+          </div>
+          <h4 class="phonetics" id="key-phonetics" title="Phonetics">/kiː/</h4>
+          
+          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" onclick="goToPage(3)">
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+
+<script>
+
+    const playSounds = document.querySelectorAll('.play-sound');
+const recordSounds = document.querySelectorAll('.record-sound');
+const playRecordings = document.querySelectorAll('.play-recording');
+const rightArrow = document.querySelector('.right-arrow');
+const leftArrow = document.querySelector('.left-arrow');
+const wordRow1 = document.getElementById('word-row-1');
+const wordRow2 = document.getElementById('word-row-2');
+
+let mediaRecorder;
+let audioChunks = [];
+let audioURLs = {};
+let recordingTimeout;
+let isRecording = false;
+let currentWordRow = 1;  // 1 for Ma/Pa/Nee, 2 for Bye/Toe/Key
+
+playSounds.forEach(button => {
+    button.addEventListener('click', () => {
+        const word = button.dataset.word;
+        let audioSrc = '';
+
+        if (word === 'ma') {
+            audioSrc = 'ma-wordFlipbookSound.mp3';
+        } else if (word === 'pa') {
+            audioSrc = 'pa-wordFlipbookSound.mp3';
+        } else if (word === 'nee') {
+            audioSrc = 'nee-wordFlipbookSound.mp3';
+        } else if (word === 'bye') {
+            audioSrc = 'bye-wordFlipbookSound.mp3';
+        } else if (word === 'toe') {
+            audioSrc = 'toe-wordFlipbookSound.mp3';
+        } else if (word === 'key') {
+            audioSrc = 'key-wordFlipbookSound.mp3';
+        }
+
+        if (audioSrc) {
+            console.log(`Playing sound: ${word}`);
+            const audio = new Audio(audioSrc);
+            audio.play();
+        } else {
+            console.error(`Audio source not found for ${word}`);
+        }
+    });
+});
+
+recordSounds.forEach(button => {
+    button.addEventListener('click', async () => {
+        const word = button.dataset.word;
+
+        if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            isRecording = false;
+            return;
+        }
+
+        console.log(`Start Recording for: ${word}`);
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                audioURLs[word] = audioUrl;
+                console.log(`Finish Recording for: ${word}`);
+                clearTimeout(recordingTimeout);
+                isRecording = false;
+            };
+
+            mediaRecorder.start();
+            isRecording = true;
+
+            recordingTimeout = setTimeout(() => {
+                if (mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            isRecording = false;
+        }
+    });
+});
+
+playRecordings.forEach(button => {
+    button.addEventListener('click', () => {
+        const word = button.dataset.word;
+        const audioUrl = audioURLs[word];
+
+        if (audioUrl) {
+            console.log(`Playing recording for: ${word}`);
+            const audio = new Audio(audioUrl);
+            audio.play();
+        } else {
+            console.error(`No recording found for ${word}`);
+        }
+    });
+});
+
+rightArrow.addEventListener('click', () => {
+    if (currentWordRow === 1) {
+        wordRow1.style.display = 'none';
+        wordRow2.style.display = 'flex';
+        currentWordRow = 2;
+    } else {
+        wordRow1.style.display = 'flex';
+        wordRow2.style.display = 'none';
+        currentWordRow = 1;
+    }
+});
+
+leftArrow.addEventListener('click', () => {
+    wordRow1.style.display = 'flex';
+    wordRow2.style.display = 'none';
+    currentWordRow = 1;
+});
+
+</script>

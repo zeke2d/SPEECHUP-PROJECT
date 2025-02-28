@@ -230,7 +230,7 @@
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeModal()">STOP</button>
   </div>
 </div>
 
@@ -356,7 +356,7 @@
       // Start both recording and recognition
       mediaRecorder.start();
       recognition.start();
-      console.log(`Recording started for: ${tongueTwisters[index]}`);
+      showModal(`Recording started for: ${tongueTwisters[index]}`, "Click STOP to finish recording.");
 
       // Automatically stop recording after 10 seconds
       setTimeout(() => {

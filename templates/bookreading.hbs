@@ -210,7 +210,7 @@
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeModal()">STOP</button>
   </div>
 </div>
 
@@ -291,7 +291,7 @@ recordButton.addEventListener("click", () => {
         return;
     }
     
-    showModal(`Recording started for: ${bookName}`);
+    showModal(`Recording started for: ${bookName}`, "Click STOP to finish recording.");
     
     audioChunks = [];
     isRecording = true;

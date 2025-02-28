@@ -402,65 +402,57 @@
     }
 
     @media (max-width: 768px) {
-  /* Sidebar adjustments */
+  /* Sidebar: Force visible on mobile */
   .sidebar {
-    width: 200px;               /* Reduce width for mobile */
-    left: -200px;               /* Hide sidebar off-canvas by default */
-    transition: transform 0.3s ease-in-out;
-  }
-  /* When the sidebar is activated (toggle it open), add a class like "active" */
-  .sidebar.active {
-    transform: translateX(200px);
+    position: fixed;
+    width: 200px;          /* Reduce width for mobile */
+    height: 100vh;
+    left: 0;
+    top: 0;
+    transform: translateX(0);  /* Always visible */
+    transition: none;      /* Remove any slide animations for simplicity */
+    z-index: 1000;
   }
   
-  /* Sidebar toggle button */
+  /* Hide the sidebar toggle button on mobile if not needed */
   .sidebar-toggle {
-    top: 10px;                  /* Position near top */
-    left: 10px;                 /* Ensure it's accessible */
-    font-size: 16px;            /* Increase font-size for tap targets */
-    padding: 8px;
-  }
-
-  /* Main content takes full width when sidebar is hidden */
-  .main-content {
-    margin-left: 0;             /* Remove left margin */
-    padding: 10px;              /* Reduce padding for smaller screens */
-    width: 100%;
+    display: none;
   }
   
-  /* Top bar adjustments */
+  /* Main Content: Adjust margin to account for sidebar */
+  .main-content {
+    margin-left: 200px;   /* Same as sidebar width */
+    padding: 10px;
+    width: calc(100% - 200px);
+  }
+  
+  /* Top Bar: Stack elements vertically for easier access */
   .top-bar {
-    flex-direction: column;     /* Stack elements vertically */
-    align-items: flex-start;    /* Align items to the start */
+    flex-direction: column;
+    align-items: flex-start;
     padding: 10px;
   }
   
-  /* Responsive tables: allow horizontal scrolling if needed */
+  /* Tables: Enable horizontal scrolling if table content overflows */
   table {
     display: block;
     width: 100%;
     overflow-x: auto;
   }
   
-  /* Adjust any dynamic content areas for better spacing */
-  .content-area {
+  /* For patient home page badge: Center the badge inside its container */
+  .badge-circle {
+    display: block;
+    margin: 10px auto;  /* Auto horizontal margins center the badge */
+  }
+  
+  /* Additional spacing adjustments */
+  .content-area, .appointment-form {
     padding: 15px;
     margin-top: 15px;
   }
-  
-  /* Optionally, adjust buttons and fonts */
-  .btn {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  
-  /* For appointment forms on the patient home page */
-  .appointment-form {
-    margin: 20px 10px;
-    padding: 15px;
-  }
 }
-        
+
     </style>
 
 </head>
@@ -1266,7 +1258,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       };
 
       mediaRecorder.start();
-      alert(`Recording started for ${animal}. Click OK to stop.`);
+      showModal(`Recording started for ${animal}.`, "Click OK to stop.");
 
       setTimeout(() => {
         mediaRecorder.stop();
@@ -1285,7 +1277,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       audio.play();
       console.log(`Playing recording for ${animal}.`);
     } else {
-      alert(`No recording available for ${animal}.`);
+      showModal(`No recording available for ${animal}.`, "Please record first!");
     }
   });
 });

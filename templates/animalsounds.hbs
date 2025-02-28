@@ -315,7 +315,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       };
 
       mediaRecorder.start();
-      showModal(`Recording started for ${animal}. Click OK to stop.`);
+      showModal(`Recording started for ${animal}.`, "Click OK to stop.");
 
       setTimeout(() => {
         mediaRecorder.stop();
@@ -334,7 +334,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       audio.play();
       console.log(`Playing recording for ${animal}.`);
     } else {
-      alert(`No recording available for ${animal}.`);
+      showModal(`No recording available for ${animal}.`, "Please record first!");
     }
   });
 });

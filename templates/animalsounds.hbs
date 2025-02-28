@@ -251,7 +251,7 @@
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">STOP</button>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
   </div>
 </div>
 
@@ -315,7 +315,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       };
 
       mediaRecorder.start();
-      showModal(`Recording started for ${animal}.`, "Click STOP to finish recording.");
+      showModal(`Recording started for ${animal}.`, "Click OK to stop recording.");
 
       setTimeout(() => {
         mediaRecorder.stop();

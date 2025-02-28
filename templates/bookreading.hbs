@@ -210,7 +210,7 @@
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">STOP</button>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
   </div>
 </div>
 
@@ -291,8 +291,6 @@ recordButton.addEventListener("click", () => {
         return;
     }
     
-    showModal(`Recording started for: ${bookName}`, "Click STOP to finish recording.");
-    
     audioChunks = [];
     isRecording = true;
     transcript = "";
@@ -307,6 +305,8 @@ recordButton.addEventListener("click", () => {
         let audioUrl = URL.createObjectURL(audioBlob);
         recordings[bookName] = audioUrl; // Store recording by book name
         isRecording = false;
+        showModal(`Recording started for: ${bookName}`, "Click OK to stop recording.");
+    
         console.log(`Finished recording for: ${bookName}`);
         
         // Log User said after recording is finished

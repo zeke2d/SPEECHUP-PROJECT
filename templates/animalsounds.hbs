@@ -332,7 +332,6 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     if (recordings.has(animal)) {
       const audio = new Audio(recordings.get(animal));
       audio.play();
-      console.log(`Playing recording for ${animal}.`);
     } else {
       showModal(`No recording available for ${animal}.`, "Please record first!");
     }

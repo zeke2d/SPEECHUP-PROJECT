@@ -1134,7 +1134,6 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     if (recordings.has(animal)) {
       const audio = new Audio(recordings.get(animal));
       audio.play();
-      console.log(`Playing recording for ${animal}.`);
     } else {
       showModal(`No recording available for ${animal}.`, "Please record first!");
     }
@@ -1143,7 +1142,21 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
 
   }
 
-playSounds.forEach(button => {
+
+    // --------------------------------
+    // 1. AUDIO PLAY/RECORD FUNCTIONALITY
+    // --------------------------------
+    const playSounds = document.querySelectorAll('.play-sound');
+    const recordSounds = document.querySelectorAll('.record-sound');
+    const playRecordings = document.querySelectorAll('.play-recording');
+
+    let mediaRecorder;
+    let audioChunks = [];
+    let audioURLs = {};
+    let recordingTimeout;
+    let isRecording = false;
+
+    playSounds.forEach(button => {
       button.addEventListener('click', () => {
         const word = button.dataset.word;
         let audioSrc = '';
@@ -1171,7 +1184,102 @@ playSounds.forEach(button => {
         }
       });
     });
-  
+
+    recordSounds.forEach(button => {
+      button.addEventListener('click', async () => {
+        const word = button.dataset.word;
+
+        // If currently recording, stop it:
+        if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+          isRecording = false;
+          return;
+        }
+
+        showModal(`Start Recording for: ${word}`, "You can now speak to record your voice!");
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioURLs[word] = audioUrl;
+            console.log(`Finish Recording for: ${word}`);
+            clearTimeout(recordingTimeout);
+            isRecording = false;
+          };
+
+          mediaRecorder.start();
+          isRecording = true;
+
+          // Auto-stop after 3 seconds
+          recordingTimeout = setTimeout(() => {
+            if (mediaRecorder.state === "recording") {
+              mediaRecorder.stop();
+            }
+          }, 3000);
+
+        } catch (error) {
+          console.error('Error accessing microphone:', error);
+          isRecording = false;
+        }
+      });
+    });
+
+    playRecordings.forEach(button => {
+      button.addEventListener('click', () => {
+        const word = button.dataset.word;
+        const audioUrl = audioURLs[word];
+
+        if (audioUrl) {
+          console.log(`Playing recording for: ${word}`);
+          const audio = new Audio(audioUrl);
+          audio.play();
+        } else {
+          showModal(`No recording found for ${word}`, "Please record first!");
+        }
+      });
+    });
+
+    // --------------------------------
+    // 2. PAGE FLIP FUNCTIONALITY
+    // --------------------------------
+
+    // Helper function to show a specific page by ID
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.flipbook-page').forEach(page => {
+        page.classList.remove('active');
+      });
+      // Show the desired page
+      const target = document.getElementById(pageId);
+      if (target) target.classList.add('active');
+    }
+
+    // Arrow on Page 1 (go to Page 2)
+    const rightArrowPage1 = document.getElementById('right-arrow-page1');
+    rightArrowPage1.addEventListener('click', () => {
+      showPage('page-2');
+    });
+
+    // Arrow on Page 2 (go back to Page 1)
+    const leftArrowPage2 = document.getElementById('left-arrow-page2');
+    leftArrowPage2.addEventListener('click', () => {
+      showPage('page-1');
+    });
+
+    // For your "Back to Dysarthria Unit" button:
+    function loadPage(pageName) {
+      // Insert your own routing logic here (window.location, or any other method)
+      window.location.href = pageName + '.html';
+    }
   </script>
 
 </body>

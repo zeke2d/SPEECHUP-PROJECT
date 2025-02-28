@@ -215,6 +215,16 @@
 </div>
 
 <script>
+   // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
+  
 let bookSelector = document.getElementById("bookSelector");
 let bookImage = document.getElementById("bookImage");
 let bookText = document.getElementById("bookText");
@@ -330,7 +340,7 @@ playButton.addEventListener("click", () => {
         let recordedAudio = new Audio(recordings[bookName]);
         recordedAudio.play();
     } else {
-        alert("No recording available for this book. Please record first.");
+        ("No recording available for this book. Please record first.");
     }
 });
 

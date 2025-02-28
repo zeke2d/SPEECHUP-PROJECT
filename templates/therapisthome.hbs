@@ -368,6 +368,66 @@
       background-color: #666;
     }
 
+    @media (max-width: 768px) {
+  /* Sidebar adjustments */
+  .sidebar {
+    width: 200px;               /* Reduce width for mobile */
+    left: -200px;               /* Hide sidebar off-canvas by default */
+    transition: transform 0.3s ease-in-out;
+  }
+  /* When the sidebar is activated (toggle it open), add a class like "active" */
+  .sidebar.active {
+    transform: translateX(200px);
+  }
+  
+  /* Sidebar toggle button */
+  .sidebar-toggle {
+    top: 10px;                  /* Position near top */
+    left: 10px;                 /* Ensure it's accessible */
+    font-size: 16px;            /* Increase font-size for tap targets */
+    padding: 8px;
+  }
+
+  /* Main content takes full width when sidebar is hidden */
+  .main-content {
+    margin-left: 0;             /* Remove left margin */
+    padding: 10px;              /* Reduce padding for smaller screens */
+    width: 100%;
+  }
+  
+  /* Top bar adjustments */
+  .top-bar {
+    flex-direction: column;     /* Stack elements vertically */
+    align-items: flex-start;    /* Align items to the start */
+    padding: 10px;
+  }
+  
+  /* Responsive tables: allow horizontal scrolling if needed */
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Adjust any dynamic content areas for better spacing */
+  .content-area {
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  /* Optionally, adjust buttons and fonts */
+  .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  /* For appointment forms on the patient home page */
+  .appointment-form {
+    margin: 20px 10px;
+    padding: 15px;
+  }
+}
+
   </style>
 
 </head>

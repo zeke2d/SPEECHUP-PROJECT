@@ -361,7 +361,7 @@
     // Function to play back the recorded audio
     window.playSpeech = function(index) {
       if (!recordings[index]) {
-        console.log("No recording found.");
+        alert("No recording found.");
         return;
       }
       console.log(`Playing recorded speech for: ${tongueTwisters[index]}`);

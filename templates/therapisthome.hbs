@@ -663,96 +663,57 @@
     }
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-  addForumEventListeners();
-});
-
-function addForumEventListeners() {
-  // Handle new post submissions
-  const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
-  if (postForm) {
-    postForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(postForm);
-      const data = Object.fromEntries(formData.entries());
-      try {
-        const response = await fetch('/communityforum/post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (response.ok) {
-          // Expecting new post data in JSON format from the server
-          const newPost = await response.json();
-          // Create a new post element
-          const newPostElement = document.createElement('div');
-          newPostElement.classList.add('post-item');
-          newPostElement.innerHTML = `
-            <h3>${newPost.author}</h3>
-            <p>${newPost.content}</p>
-            <span>${new Date(newPost.createdAt).toLocaleString()}</span>
-            <div class="replies-container"></div>
-            <form action="/communityforum/reply/${newPost.id}" method="post">
-              <input type="text" name="reply" placeholder="Your reply" required>
-              <button type="submit">Reply</button>
-            </form>
-          `;
-          // Insert the new post at the top of the posts list
-          const postsContainer = document.querySelector('.posts-container');
-          if (postsContainer) {
-            postsContainer.prepend(newPostElement);
-          } else {
-            console.error("Posts container not found.");
-          }
-          // Optionally display a success modal and reset the form
-          showModal("Success", "Post submitted successfully!");
-          postForm.reset();
-
-          // Attach event listener for the reply form in the new post
-          const newReplyForm = newPostElement.querySelector('form[action^="/communityforum/reply/"]');
-          if (newReplyForm) {
-            newReplyForm.addEventListener('submit', async (e) => {
-              e.preventDefault();
-              const replyFormData = new FormData(newReplyForm);
-              const replyData = Object.fromEntries(replyFormData.entries());
-              try {
-                const replyResponse = await fetch(newReplyForm.action, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(replyData),
-                });
-                if (replyResponse.ok) {
-                  const newReply = await replyResponse.json();
-                  const replyElement = document.createElement('div');
-                  replyElement.classList.add('reply-item');
-                  replyElement.innerHTML = `
-                    <p>${newReply.content}</p>
-                    <span>${new Date(newReply.createdAt).toLocaleString()}</span>
-                  `;
-                  const repliesContainer = newPostElement.querySelector('.replies-container');
-                  if (repliesContainer) {
-                    repliesContainer.prepend(replyElement);
-                  } else {
-                    console.error("Replies container not found in new post.");
-                  }
-                  showModal("Success", "Reply submitted successfully!");
-                  newReplyForm.reset();
-                } else {
-                  console.error("Failed to submit reply:", replyResponse.statusText);
-                }
-              } catch (error) {
-                console.error("Error submitting reply:", error);
-              }
+    function addForumEventListeners() {
+      const postForm = document.querySelector('.forum-container form[action="/communityforum/post"]');
+      if (postForm) {
+        postForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(postForm);
+          const data = Object.fromEntries(formData.entries());
+          try {
+            const response = await fetch('/communityforum/post', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
             });
+            if (response.ok) {
+              showModal("Success", "Post submitted successfully!", () => {
+                loadPage('communityforum');
+              });
+            } else {
+              console.error("Failed to submit post:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Error submitting post:", error);
           }
-        } else {
-          console.error("Failed to submit post:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error submitting post:", error);
+        });
       }
-    });
-  }
+
+    const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');
+      replyForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+          try {
+            const response = await fetch(form.action, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
+            if (response.ok) {
+              showModal("Success", "Reply submitted successfully!", () => {
+                loadPage('communityforum');
+              });
+            } else {
+              console.error("Failed to submit reply:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Error submitting reply:", error);
+          }
+        });
+      });
+    }
 
   // Attach event listeners for all existing reply forms on the page
   const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');

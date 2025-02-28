@@ -235,6 +235,17 @@
 </div>
 
 <script>
+
+    // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
+
   (function() {
     // Check for SpeechRecognition API support
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -361,7 +372,7 @@
     // Function to play back the recorded audio
     window.playSpeech = function(index) {
       if (!recordings[index]) {
-        alert("No recording found.");
+        showModal("No recording found.");
         return;
       }
       console.log(`Playing recorded speech for: ${tongueTwisters[index]}`);

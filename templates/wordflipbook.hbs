@@ -300,6 +300,16 @@
 
 
   <script>
+      // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
+
     // --------------------------------
     // 1. AUDIO PLAY/RECORD FUNCTIONALITY
     // --------------------------------
@@ -400,7 +410,7 @@
           const audio = new Audio(audioUrl);
           audio.play();
         } else {
-          alert(`No recording found for ${word}`);
+          showModal(`No recording found for ${word}`);
         }
       });
     });

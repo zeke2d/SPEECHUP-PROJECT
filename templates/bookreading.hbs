@@ -118,6 +118,58 @@
     .audio-button:hover {
     background-color: #e0e0e0;
   }
+
+  .custom-modal-overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      z-index: 999; /* on top of everything */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6); /* semi-transparent dark overlay */
+  }
+  .custom-modal {
+      background-color: #fff;
+      width: 300px; /* adjust as needed */
+      margin: 15% auto; /* center vertically */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+  }
+  .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+  }
+  .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+  }
+  .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  .modal-ok-button:hover {
+      background-color: #ff003c;
+  }
+
   </style>
 
   <!-- Back Button -->
@@ -151,9 +203,19 @@
     </div>
   </div>
 
+      <!-- Custom Modal (for styled alerts) -->
+<div id="customModalOverlay" class="custom-modal-overlay">
+  <div class="custom-modal">
+    <button class="close-button" onclick="closeModal()">&times;</button>
+    <h2 id="modalTitle">Modal Title</h2>
+    <br>
+    <p id="modalMessage">Modal message goes here.</p>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+  </div>
+</div>
 
 <script>
-        let bookSelector = document.getElementById("bookSelector");
+let bookSelector = document.getElementById("bookSelector");
 let bookImage = document.getElementById("bookImage");
 let bookText = document.getElementById("bookText");
 let audioButtons = document.getElementById("audioButtons");

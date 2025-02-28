@@ -173,6 +173,58 @@
             color: #df1645;
         }
 
+        @media (max-width: 768px) {
+  /* Stack sections vertically for mobile */
+  .container {
+    flex-direction: column;
+    max-width: 100%;
+    margin: 20px; /* some margin for spacing on small devices */
+  }
+
+  /* Option 1: Hide the left section if it's just decorative */
+  .left-section {
+    display: none;
+  }
+
+  /* Option 2: If you want to show both sections stacked, comment out the above rule */
+  /*
+  .left-section, .right-section {
+    width: 100%;
+    padding: 20px;
+  }
+  */
+
+  /* Adjust right-section padding for a comfortable mobile view */
+  .right-section {
+    padding: 20px;
+  }
+
+  /* Scale down the logo image */
+  .speechup-logo {
+    width: 80%;
+    max-width: 300px;
+    display: block;
+    margin: 0 auto 20px;
+  }
+
+  /* Adjust typography sizes for better readability */
+  .left-section h1,
+  .right-section h2 {
+    font-size: 1.8rem; /* Adjust as needed */
+  }
+
+  .right-section p {
+    font-size: 0.9rem;
+  }
+
+  /* Adjust input padding and font-size if needed */
+  input {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+
     </style>
 </head>
 

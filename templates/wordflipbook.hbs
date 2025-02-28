@@ -363,7 +363,7 @@
           return;
         }
 
-        showModal(`Start Recording for: ${word}`, "Click OK to stop recording.");
+        showModal(`Start Recording for: ${word}`, "You can now speak to record your voice!");
 
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

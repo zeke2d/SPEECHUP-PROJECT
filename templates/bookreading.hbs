@@ -296,6 +296,8 @@ recordButton.addEventListener("click", () => {
     transcript = "";
     mediaRecorder.start();
 
+    showModal(`Recording started for: ${bookName}`, "You can now speak to record your voice!");
+
     mediaRecorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
     };
@@ -305,7 +307,6 @@ recordButton.addEventListener("click", () => {
         let audioUrl = URL.createObjectURL(audioBlob);
         recordings[bookName] = audioUrl; // Store recording by book name
         isRecording = false;
-        showModal(`Recording started for: ${bookName}`, "Click OK to stop recording.");
     
         console.log(`Finished recording for: ${bookName}`);
         

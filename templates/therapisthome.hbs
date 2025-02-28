@@ -715,51 +715,6 @@
       });
     }
 
-  // Attach event listeners for all existing reply forms on the page
-  const replyForms = document.querySelectorAll('.forum-container form[action^="/communityforum/reply/"]');
-  replyForms.forEach(form => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-      try {
-        const response = await fetch(form.action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (response.ok) {
-          const newReply = await response.json();
-          const replyElement = document.createElement('div');
-          replyElement.classList.add('reply-item');
-          replyElement.innerHTML = `
-            <p>${newReply.content}</p>
-            <span>${new Date(newReply.createdAt).toLocaleString()}</span>
-          `;
-          // Find the closest post container and then its replies container
-          const postItem = form.closest('.post-item');
-          if (postItem) {
-            const repliesContainer = postItem.querySelector('.replies-container');
-            if (repliesContainer) {
-              repliesContainer.prepend(replyElement);
-            } else {
-              console.error("Replies container not found in post.");
-            }
-          }
-          showModal("Success", "Reply submitted successfully!");
-          form.reset();
-        } else {
-          console.error("Failed to submit reply:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error submitting reply:", error);
-      }
-    });
-  });
-}
-
-
-
     function toggleDropdown() {
       document.getElementById("dropdownMenu").classList.toggle("active");
     }

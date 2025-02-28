@@ -368,55 +368,85 @@
       background-color: #666;
     }
 
-    @media (max-width: 768px) {
-  /* Sidebar: Force visible on mobile */
+   @media (max-width: 768px) {
+  /* Sidebar: Hidden by default via .hidden class */
   .sidebar {
+    width: 200px;
     position: fixed;
-    width: 200px;          /* Reduce width for mobile */
-    height: 100vh;
     left: 0;
     top: 0;
-    transform: translateX(0);  /* Always visible */
-    transition: none;      /* Remove any slide animations for simplicity */
+    height: 100vh;
+    transition: transform 0.3s ease-in-out;
     z-index: 1000;
   }
-  
-  /* Hide the sidebar toggle button on mobile if not needed */
+  /* When sidebar has .hidden, slide it off-canvas */
+  .sidebar.hidden {
+    transform: translateX(-100%);
+  }
+  /* When sidebar is visible (i.e. not .hidden) */
+  .sidebar:not(.hidden) {
+    transform: translateX(0);
+  }
+
+  /* Sidebar Toggle Button */
   .sidebar-toggle {
-    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 50%;
+    z-index: 1100;
   }
-  
-  /* Main Content: Adjust margin to account for sidebar */
+
+  /* Main Content: Occupies full width when sidebar is hidden */
   .main-content {
-    margin-left: 200px;   /* Same as sidebar width */
+    margin-left: 0;
     padding: 10px;
-    width: calc(100% - 200px);
+    transition: margin-left 0.3s ease-in-out;
   }
-  
-  /* Top Bar: Stack elements vertically for easier access */
+  /* When sidebar is visible, push main content over */
+  .sidebar:not(.hidden) ~ .main-content {
+    margin-left: 200px;
+  }
+
+  /* Top Bar adjustments for mobile */
   .top-bar {
     flex-direction: column;
     align-items: flex-start;
     padding: 10px;
   }
-  
-  /* Tables: Enable horizontal scrolling if table content overflows */
+
+  /* Responsive table adjustments */
   table {
     display: block;
     width: 100%;
     overflow-x: auto;
   }
-  
-  /* For patient home page badge: Center the badge inside its container */
+
+  /* For Patient Home: Ensure badge stays within the content area */
   .badge-circle {
+    position: relative;
     display: block;
-    margin: 10px auto;  /* Auto horizontal margins center the badge */
+    margin: 10px auto;
+    max-width: 100%;
   }
-  
-  /* Additional spacing adjustments */
-  .content-area, .appointment-form {
+
+  /* Content area adjustments for spacing */
+  .content-area,
+  .appointment-form {
     padding: 15px;
     margin-top: 15px;
+  }
+
+   /* Optionally, adjust buttons and fonts */
+  .btn {
+    padding: 8px 12px;
+    font-size: 14px;
   }
 }
 
@@ -1119,6 +1149,35 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     }
   });
 });
+
+playSounds.forEach(button => {
+      button.addEventListener('click', () => {
+        const word = button.dataset.word;
+        let audioSrc = '';
+
+        if (word === 'ma') {
+          audioSrc = 'ma-wordFlipbookSound.mp3';
+        } else if (word === 'pa') {
+          audioSrc = 'pa-wordFlipbookSound.mp3';
+        } else if (word === 'nee') {
+          audioSrc = 'nee-wordFlipbookSound.mp3';
+        } else if (word === 'bye') {
+          audioSrc = 'bye-wordFlipbookSound.mp3';
+        } else if (word === 'toe') {
+          audioSrc = 'toe-wordFlipbookSound.mp3';
+        } else if (word === 'key') {
+          audioSrc = 'key-wordFlipbookSound.mp3';
+        }
+
+        if (audioSrc) {
+          console.log(`Playing sound: ${word}`);
+          const audio = new Audio(audioSrc);
+          audio.play();
+        } else {
+          console.error(`Audio source not found for ${word}`);
+        }
+      });
+    });
   
 }
   </script>

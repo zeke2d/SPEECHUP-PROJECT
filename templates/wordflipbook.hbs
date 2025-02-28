@@ -208,9 +208,7 @@
         <div class="word-column">
           <h1 id="ma-word">"Ma"</h1>
           <div class="button-container">
-            <button class="play-sound" data-sound="ma-wordflipbookSound.mp3">
-            <img src="playsound-button.png" alt="Play Sound">
-            </button>
+            <img src="playsound-button.png" alt="Play Sound" class="play-sound" data-word="ma">
             <img src="recordsound-button.png" alt="Record Sound" class="record-sound" data-word="ma">
             <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="ma">
           </div>
@@ -329,17 +327,17 @@
         let audioSrc = '';
 
         if (word === 'ma') {
-          audioSrc = 'ma-wordFlipbookSound.mp3';
+          audioSrc = 'ma-wordflipbookSound.mp3';
         } else if (word === 'pa') {
-          audioSrc = 'pa-wordFlipbookSound.mp3';
+          audioSrc = 'pa-wordflipbookSound.mp3';
         } else if (word === 'nee') {
-          audioSrc = 'nee-wordFlipbookSound.mp3';
+          audioSrc = 'nee-wordflipbookSound.mp3';
         } else if (word === 'bye') {
-          audioSrc = 'bye-wordFlipbookSound.mp3';
+          audioSrc = 'bye-wordflipbookSound.mp3';
         } else if (word === 'toe') {
-          audioSrc = 'toe-wordFlipbookSound.mp3';
+          audioSrc = 'toe-wordflipbookSound.mp3';
         } else if (word === 'key') {
-          audioSrc = 'key-wordFlipbookSound.mp3';
+          audioSrc = 'key-wordflipbookSound.mp3';
         }
 
         if (audioSrc) {

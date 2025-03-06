@@ -440,6 +440,110 @@
     padding: 8px 12px;
     font-size: 14px;
   }
+
+  /* Adjust header container to align items */
+.header-container {
+  background-color: #FF7878;
+  padding: 20px;
+  border-radius: 20px;
+  width: fit-content;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Wrap h6 and button together */
+.header-text {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Space between h6 and button */
+}
+
+/* Ensure the button is aligned properly */
+#info-button {
+  background: none;
+  border: none;
+  width: 20px;  /* Adjust size */
+  height: 20px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Resize the button image */
+#info-button img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Modal Styling */
+/* Ensure modal is hidden by default */
+.modal {
+  display: none; /* Hide modal initially */
+  position: fixed; /* Stay in place */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FF7878; /* Set modal background color */
+  color: white; /* White text */
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px; /* Set modal width */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+/* Close button styling */
+.modal .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-content {
+  background-color: #FF7878;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%; /* Ensure it takes full width inside modal */
+  max-width: 400px; /* Limit max width */
+  text-align: center;
+  position: relative;
+  box-sizing: border-box; /* Prevents padding from affecting width */
+}
+
+/* Close button */
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+}
+
+.modal-content .close:hover {
+  color: #fff2f2;
+}
+
+h1 {
+  color: white;
+  margin: 0;
+}
+
+h6 {
+  color: white;
+  font-style: italic;
+  opacity: 0.75;
+  margin: 5px 0 0;
+}
 }
 
   </style>

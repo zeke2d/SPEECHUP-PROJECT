@@ -32,25 +32,117 @@
       font-size: 18px;
     }
 
-    /* Header */
-    .page-header {
-      background-color: #FF7878;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      border-radius: 25px;
-      width: fit-content;
-      margin: 0 auto;
-    }
-    .page-header h1 {
-      margin: 0;
-      font-weight: bold;
-    }
-    .page-header p {
-      margin: 5px 0 0;
-      font-style: italic;
-      opacity: 0.75;
-    }
+    .header-container {
+    background-color: #FF7878;
+    padding: 20px;
+    border-radius: 20px;
+    width: fit-content;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Wrap h6 and button together */
+  .header-text {
+    display: flex;
+    align-items: center;
+    gap: 2px; /* Space between h6 and button */
+  }
+  
+  /* Ensure the button is aligned properly */
+  #info-button {
+    background: none;
+    border: none;
+    width: 20px;  /* Adjust size */
+    height: 20px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Resize the button image */
+  #info-button img {
+    width: 100%;
+    height: 100%;
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+  
+  /* Modal Styling */
+  /* Ensure modal is hidden by default */
+  .modal {
+    display: none; /* Hide modal initially */
+    position: fixed; /* Stay in place */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FF7878; /* Set modal background color */
+    color: white; /* White text */
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px; /* Set modal width */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+    z-index: 1000; /* Ensure it's above other content */
+  }
+  
+  /* Close button styling */
+  .modal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .modal-content {
+    background-color: #FF7878;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%; /* Ensure it takes full width inside modal */
+    max-width: 400px; /* Limit max width */
+    text-align: center;
+    position: relative;
+    box-sizing: border-box; /* Prevents padding from affecting width */
+  }
+  
+  /* Close button */
+  .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .modal-content .close:hover {
+    color: #fff2f2;
+  }
+
+.header-container h1 {
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.header-container h6 {
+    font-style: italic;
+    opacity: 0.75;
+    margin: 5px 0 0;
+    color: white;
+}
+
+.modal-content h6 {
+  color: white;
+  font-style: italic;
+  opacity: 0.75;
+}
 
     /* Main container */
     .flipbook-container {
@@ -192,11 +284,15 @@
   <!-- Back Button -->
   <button onclick="loadPage('dysarthriagameselection')" class="back-btn">Back to Dysarthria Unit</button>
 
-  <!-- Page Header -->
-  <div class="page-header">
+  <div class="header-container">
     <h1>Dysarthria Unit - Word Flipbook</h1>
-    <p><i>Practice Sound Daily!</i></p>
-  </div>
+    <div class="header-text">
+        <h6><i>Practice Sound Daily!</i></h6>
+        <button id="info-button">
+            <img src="information-button.png" alt="Info">
+        </button>
+    </div>
+</div>
 
   <!-- Flipbook Container -->
   <div class="flipbook-container">
@@ -295,6 +391,24 @@
     <button class="modal-ok-button" onclick="closeModal()">OK</button>
   </div>
 </div>
+
+<!-- Info Modal -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p><em>
+            Listen closely to your own speech as you turn the pages in this Word Flibook, 
+            say each word carefully and try to improve your clarity with each repetition. 
+            Self-monitoring and articulation are helpful for a debilitating condition such as Dysarthria.
+          </em></p>
+          <h6>
+            Click the speaker to hear how each word is pronounced<br>
+            Click the microphone to practice each chosen word<br>
+            Click the playback to play back <strong>your</strong> spoken word
+          </h6>
+        </div>
+      </div>
+
 
 
   <script>
@@ -445,4 +559,26 @@
       // Insert your own routing logic here (window.location, or any other method)
       window.location.href = pageName + '.html';
     }
+
+    const modal = document.getElementById("info-modal");
+    const btn = document.getElementById("info-button");
+    const close = document.querySelector(".modal .close");
+  
+    // Make sure modal is hidden initially
+    modal.style.display = "none";
+  
+    btn.addEventListener("click", () => {
+      modal.style.display = "block"; // Show modal when button is clicked
+    });
+  
+    close.addEventListener("click", () => {
+      modal.style.display = "none"; // Close modal when X is clicked
+    });
+  
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none"; // Close modal if user clicks outside of it
+      }
+    });
+
   </script>

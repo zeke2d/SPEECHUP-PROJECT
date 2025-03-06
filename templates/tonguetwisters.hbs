@@ -200,11 +200,16 @@
 <!-- Back Button -->
 <button onclick="loadPage('aphasiagameselection')" class="back-btn">Back to Aphasia Unit</button>
 
-<!-- Header Section -->
-<div class="page-header">
-  <h1>Tongue Twisters Game</h1>
-  <p>Sharpen your Tongue</p>
-</div>
+ <div class="container">
+        <div class="title-box">
+            <h1>Aphasia Unit - Tongue Twisters</h1>
+            <div class="title-container">
+                <h5>Sharpen your Tongue</h5>
+                <img src="information-button.png" alt="Info" id="info-button" class="info-button">
+            </div>
+            </div>
+        <div id="twisters-container"></div>
+    </div>
 
 <!-- Main Container for the Tongue Twisters -->
 <div class="game-container">
@@ -231,194 +236,201 @@
   </div>
 </div>
 
+<!-- Modal Structure -->
+<div id="info-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p><em>Articulation exercises such as Tongue Twisters can help improve the clarity of speech hindered by Aphasia. <br>
+            Practicing these various Tongue Twisters will help build muscle memory for speech production!</em></p>
+        <h6><i>Click the microphone and give a tongue twister a go! <br>
+            Click the playback to play back your tongue twister <br>
+            Practice is key ;</i></h6>
+    </div>
+</div>
+
 <script>
 
-    // ====== Show & Hide Custom Modal ======
-  function showModal(title, message) {
-    document.getElementById("modalTitle").innerText = title;
-    document.getElementById("modalMessage").innerText = message;
-    document.getElementById("customModalOverlay").style.display = "block";
-  }
-  function closeModal() {
-    document.getElementById("customModalOverlay").style.display = "none";
-  }
-
-  (function() {
-    // Check for SpeechRecognition API support
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error("Speech recognition API not supported in this browser. Please use a supported browser like Chrome.");
-    }
-    
-    // Data for the tongue twisters
     const tongueTwisters = [
-      "She sells sea shells by the seashore.",
-      "How can a clam cram in a clean cream can?",
-      "Peter Piper picked a peck of pickled peppers.",
-      "Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair.",
-      "A tutor who tooted the flute tried to tutor two tooters to toot."
-    ];
+    "She sells sea shells by the seashore.",
+    "How can a clam cram in a clean cream can?",
+    "Peter Piper picked a peck of pickled peppers.",
+    "Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair.",
+    "A tutor who tooted the flute tried to tutor two tooters to toot."
+];
 
-    const twistersContainer = document.getElementById("twisters-container");
-    const recordings = {};
-    let mediaRecorder;
-    let audioChunks = {};
-    let isRecording = {}; // Track recording state per sentence
-    let recognition;
-    let audioStream; // Store the audio stream to prevent multiple permission prompts
+const twistersContainer = document.getElementById("twisters-container");
+const recordings = {};
+let mediaRecorder;
+let audioChunks = {};
+let isRecording = {}; // Track recording state per sentence
+let recognition;
+let audioStream; // Store the audio stream to prevent multiple permission prompts
 
-    // Initialize the game and add tongue twister cards
-    function initGame() {
-      tongueTwisters.forEach((twister, index) => {
+// Create elements for each tongue twister
+function initGame() {
+    tongueTwisters.forEach((twister, index) => {
         const div = document.createElement("div");
         div.classList.add("twister");
         div.innerHTML = `
-          <p class="twister-text">"${twister}"</p>
-          <div class="button-container">
-            <button class="record-btn" onclick="analyzeSpeech(${index})" id="record-btn-${index}">
-              <img src="recordsound-button.png" alt="Record" width="30">
-            </button>
-            <button class="play-btn" onclick="playSpeech(${index})">
-              <img src="playrecording-button.png" alt="Play" width="30">
-            </button>
-          </div>
+            <p class="twister-text">"${twister}"</p>
+            <div class="button-container">
+                <button onclick="analyzeSpeech(${index})" id="record-btn-${index}">
+                    <img src="images/recordsound-button.png" alt="Record" width="30">
+                </button>
+                <button onclick="playSpeech(${index})">
+                    <img src="images/playrecording-button.png" alt="Play" width="30">
+                </button>
+            </div>
         `;
         twistersContainer.appendChild(div);
         isRecording[index] = false;
-      });
+    });
 
-      // Request microphone access once at the beginning
-      navigator.mediaDevices.getUserMedia({ audio: true })
+    // Request microphone access once at the beginning
+    navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-          audioStream = stream;
+            audioStream = stream;
         })
         .catch(error => console.error("Error accessing microphone:", error));
-    }
+}
 
-    // Function to analyze speech and record the user's attempt
-    window.analyzeSpeech = function(index) {
-      if (isRecording[index]) {
-        // If already recording, stop both media recorder and recognition
+initGame();
+
+function analyzeSpeech(index) {
+    if (isRecording[index]) {
         mediaRecorder.stop();
         if (recognition) {
-          recognition.stop();
+            recognition.stop();
         }
         return;
-      }
-
-      if (!audioStream) {
+    }
+    
+    if (!audioStream) {
         console.error("Microphone access not granted.");
         return;
-      }
-      
-      // Initialize SpeechRecognition if available
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.continuous = false;
-      } else {
-        console.error("Speech recognition not supported in this browser.");
-        return;
-      }
-      
-      mediaRecorder = new MediaRecorder(audioStream);
-      audioChunks[index] = [];
-      isRecording[index] = true;
-
-      let userSpeech = "";
-
-      recognition.onresult = event => {
+    }
+    
+    mediaRecorder = new MediaRecorder(audioStream);
+    audioChunks[index] = [];
+    isRecording[index] = true;
+    
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    
+    let userSpeech = "";
+    
+    recognition.onresult = event => {
         userSpeech = event.results[0][0].transcript.toLowerCase();
         console.log(`User said: "${userSpeech}"`);
-      };
-
-      recognition.onerror = event => {
+    };
+    
+    recognition.onerror = event => {
         console.error("Speech recognition error:", event.error);
-      };
-
-      mediaRecorder.ondataavailable = event => {
+    };
+    
+    mediaRecorder.ondataavailable = event => {
         audioChunks[index].push(event.data);
-      };
+    };
 
-      mediaRecorder.onstop = () => {
+    mediaRecorder.onstop = () => {
         saveRecording(index);
         isRecording[index] = false;
-        if (recognition) {
-          recognition.stop();
-        }
+        recognition.stop();
         processSpeech(index, userSpeech);
-      };
-
-      // Start both recording and recognition
-      mediaRecorder.start();
-      recognition.start();
-      showModal(`Recording started for: ${tongueTwisters[index]}`, "You can now speak to record your voice!");
-
-      // Automatically stop recording after 10 seconds
-      setTimeout(() => {
+    };
+    
+    mediaRecorder.start();
+    recognition.start();
+    console.log(`Recording started for: ${tongueTwisters[index]}`);
+    
+    setTimeout(() => {
         if (isRecording[index]) {
-          mediaRecorder.stop();
-          if (recognition) {
+            mediaRecorder.stop();
             recognition.stop();
-          }
         }
-      }, 10000);
-    };
+    }, 10000); // Automatically stop recording after 10 sec
+}
 
-    // Function to play back the recorded audio
-    window.playSpeech = function(index) {
-      if (!recordings[index]) {
-        showModal("No recording found.", "Please record first!");
+function saveRecording(index) {
+    const audioBlob = new Blob(audioChunks[index], { type: 'audio/wav' });
+    recordings[index] = URL.createObjectURL(audioBlob);
+    console.log(`Finished recording for: ${tongueTwisters[index]}`);
+}
+
+function playSpeech(index) {
+    if (!recordings[index]) {
+        console.log("No recording found.");
         return;
-      }
-      console.log(`Playing recorded speech for: ${tongueTwisters[index]}`);
-      const audio = new Audio(recordings[index]);
-      audio.play();
-    };
-
-    // Save the audio recording for playback
-    function saveRecording(index) {
-      const audioBlob = new Blob(audioChunks[index], { type: 'audio/wav' });
-      recordings[index] = URL.createObjectURL(audioBlob);
-      console.log(`Finished recording for: ${tongueTwisters[index]}`);
     }
+    console.log(`Playing recorded speech for: ${tongueTwisters[index]}`);
+    const audio = new Audio(recordings[index]);
+    audio.play();
+}
 
-    // Process the recognized speech against the original tongue twister
-    function processSpeech(index, userSpeech) {
-      const originalTwister = tongueTwisters[index].toLowerCase();
-      const accuracy = compareSpeech(userSpeech, originalTwister);
-      const twistQuote = document.querySelector(".twist-quote");
-      const message = accuracy < 50 ? "Keep going!" : "Nicely done!";
+function processSpeech(index, userSpeech) {
+    const originalTwister = tongueTwisters[index].toLowerCase();
+    const accuracy = compareSpeech(userSpeech, originalTwister);
 
-      twistQuote.innerHTML = `
-        <span style="color: #FF4B4B; font-weight: bold;">
-          ${message}
-        </span><br>
-        '${tongueTwisters[index]}'<br>
-        is ${accuracy}% accurate.
-      `;
-      console.log(`Analysis complete: Accuracy score for '${tongueTwisters[index]}' is ${accuracy}%`);
-    }
+    // Update the twist-quote with the analysis result
+    const twistQuote = document.querySelector(".twist-quote");
 
-    // Compare user's spoken words with the original text
-    function compareSpeech(userSpeech, originalTwister) {
-      const userWords = userSpeech.split(" ");
-      const originalWords = originalTwister.split(" ");
-      let matchCount = 0;
-      userWords.forEach((word, i) => {
-        if (originalWords[i] && word === originalWords[i]) {
-          matchCount++;
+    // Choose message based on accuracy
+    const message = accuracy < 50 ? "Keep going!" : "Nicely done!";
+
+    // Update the quote with styled message
+    twistQuote.innerHTML = `<span style="color: #FF4B4B; font-weight: bold;">
+                            ${message}</span> <br> '${tongueTwisters[index]}'<br> is ${accuracy}% accurate.`;
+
+    console.log(`Analysis complete: Accuracy score for '${tongueTwisters[index]}' is ${accuracy}%`);
+}
+
+function compareSpeech(userSpeech, originalTwister) {
+    function levenshteinDistance(s1, s2) {
+        const dp = Array(s1.length + 1).fill(null).map(() => Array(s2.length + 1).fill(0));
+        for (let i = 0; i <= s1.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= s2.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= s1.length; i++) {
+            for (let j = 1; j <= s2.length; j++) {
+                if (s1[i - 1] === s2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1]; // No change needed
+                } else {
+                    dp[i][j] = Math.min(
+                        dp[i - 1][j] + 1,    // Deletion
+                        dp[i][j - 1] + 1,    // Insertion
+                        dp[i - 1][j - 1] + 1 // Substitution
+                    );
+                }
+            }
         }
-      });
-      return Math.round((matchCount / originalWords.length) * 100);
+        return dp[s1.length][s2.length];
     }
 
-    // Initialize the game once the page loads
-    initGame();
+    const distance = levenshteinDistance(userSpeech, originalTwister);
+    const maxLen = Math.max(userSpeech.length, originalTwister.length);
+    const similarity = ((maxLen - distance) / maxLen) * 100;
+    
+    return Math.round(similarity);
+}
 
-    // Expose functions to the global scope for inline onclick attributes
-    window.analyzeSpeech = analyzeSpeech;
-    window.playSpeech = playSpeech;
-  })();
+//modal
+document.getElementById("info-button").addEventListener("click", function () {
+    document.getElementById("info-modal").style.display = "flex";
+});
+
+document.querySelector(".close").addEventListener("click", function () {
+    document.getElementById("info-modal").style.display = "none";
+});
+
+// Close modal when clicking outside of it
+window.addEventListener("click", function (event) {
+    const modal = document.getElementById("info-modal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+
 </script>

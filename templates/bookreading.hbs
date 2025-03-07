@@ -522,7 +522,7 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
 
     let accuracy = (correctCount / totalWords) * 100;
     console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
-    showModal(`Your accuracy: ${accuracy.toFixed(2)}%`);
+    showModal(`Your accuracy:`, `${accuracy.toFixed(2)}%`);
 }
 
     const modal = document.getElementById("info-modal");

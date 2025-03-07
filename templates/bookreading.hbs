@@ -34,27 +34,112 @@
       font-size: 18px;
     }
 
-    /* Page Header styling */
-    .page-header {
-      background-color: #FF7878;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      border-radius: 25px;
-      width: fit-content;
-      margin: 0 auto;
-    }
-
-    .page-header h1 {
-      margin: 0;
-      font-weight: bold;
-    }
-
-    .page-header p {
-      margin: 5px 0 0;
-      font-style: italic;
-      opacity: 0.75;
-    }
+    /* Adjust header container to align items */
+.header-container {
+    background-color: #FF7878;
+    padding: 20px;
+    border-radius: 20px;
+    width: fit-content;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Wrap h6 and button together */
+  .header-text {
+    display: flex;
+    align-items: center;
+    gap: 2px; /* Space between h6 and button */
+  }
+  
+  /* Ensure the button is aligned properly */
+  #info-button {
+    background: none;
+    border: none;
+    width: 20px;  /* Adjust size */
+    height: 20px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 3px;
+    margin-top: 2.5px;
+  }
+  
+  /* Resize the button image */
+  #info-button img {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Modal Styling */
+  /* Ensure modal is hidden by default */
+  .modal {
+    display: none; /* Hide modal initially */
+    position: fixed; /* Stay in place */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FF7878; /* Set modal background color */
+    color: white; /* White text */
+    padding: 20px;
+    border-radius: 10px;
+    width: 370px; /* Set modal width */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+    z-index: 1000; /* Ensure it's above other content */
+  }
+  
+  /* Close button styling */
+  .modal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .modal-content {
+    background-color: #FF7878;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%; /* Ensure it takes full width inside modal */
+    max-width: 400px; /* Limit max width */
+    text-align: center;
+    position: relative;
+    box-sizing: border-box; /* Prevents padding from affecting width */
+  }
+  
+  /* Close button */
+  .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .modal-content .close:hover {
+    color: #fff2f2;
+  }
+  
+  
+  h1 {
+    color: white;
+    margin: 0;
+  }
+  
+  h6 {
+    color: white;
+    font-style: italic;
+    opacity: 0.75;
+    margin: 5px 0 0;
+  }
 
     /* Main content container */
     .content {
@@ -175,11 +260,15 @@
   <!-- Back Button -->
   <button onclick="loadPage('apraxiagameselection')" class="back-btn">Back to Apraxia Unit</button>
 
-  <!-- Page Header -->
-  <div class="page-header">
-    <h1>Apraxia Unit - Book Reading</h1>
-    <p>Stories for your Speech Journey</p>
-  </div>
+ <div class="header-container">
+        <h1>Apraxia Unit - Book Reading</h1>
+        <div class="header-text">
+          <h6>Stories for your Speech Journey</h6>
+          <button id="info-button">
+            <img src="information-button.png" alt="Info">
+          </button>
+        </div>
+      </div> 
 
   <!-- Main Content -->
   <div class="content">
@@ -214,6 +303,24 @@
   </div>
 </div>
 
+<!-- Info Modal -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p><em>
+            Book Reading by itself is one of the most valuable tools for engaging learning and development. 
+            As Apraxia is not a muscle problem but a motor coordination problem, Book Reading is great practice for Motor Planning. <br>
+            These books are especially curated for their predictable patterns to help it's readers develop Phonemic Awareness with Repetitive Practice. 
+            With all these benefits, one must also take into account that Book Reading is just plain ol' fun!            
+          </em></p>
+          <h6>
+            Select a Story using the dropdown menu <br>
+            Click the microphone to record your Book Reading <br>
+            Click the playback to play back <strong>your</strong> Book Reading recording            
+          </h6>
+        </div>
+      </div>
+
 <script>
    // ====== Show & Hide Custom Modal ======
   function showModal(title, message) {
@@ -238,6 +345,9 @@ let recordings = {}; // Store recordings per book
 let isRecording = false;
 let transcript = "";
 
+// Ignore stop words
+const stopWords = new Set(["the", "and", "is", "as", "a", "an", "for", "of", "to", "in", "on", "at", "with"]);
+
 // Speech Recognition
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.continuous = false;
@@ -255,21 +365,21 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
 
 bookSelector.addEventListener("change", function() {
     if (bookSelector.value === "loveyouforever") {
-        bookImage.src = "book-loveyouforever.png";
-        bookText.innerHTML = `“ I’ll love you forever,<br>
-                                I’ll like you for always,<br>
-                                As long as I’m living<br>
-                                my baby you’ll be. “`;
+        bookImage.src = "images/book-loveyouforever.png";
+        bookText.innerText = `I'll love you forever, 
+                              I'll like you for always, 
+                              As long as I'm living 
+                              my baby you'll be.`;
         audioButtons.style.display = "flex";
     } else if (bookSelector.value === "threeblindmice") {
-        bookImage.src = "book-threeblindmice.png";
-        bookText.innerHTML = `“ Three Blind Mice<br>
-                                Three Blind Mice<br>
-                                See how they run<br>
-                                See how they run<br>
-                                They all ran after the farmer’s wife<br>
-                                She cut off their tails with a carving knife<br>
-                                Did you ever see such a sight in your life<br>
+        bookImage.src = "images/book-threeblindmice.png";
+        bookText.innerText = `“ Three Blind Mice
+                                Three Blind Mice
+                                See how they run
+                                See how they run
+                                They all ran after the farmer’s wife
+                                She cut off their tails with a carving knife
+                                Did you ever see such a sight in your life
                                 as THREE BLIND MICE. ”`;
         audioButtons.style.display = "flex";
     } else {
@@ -291,43 +401,52 @@ recordButton.addEventListener("click", () => {
         return;
     }
     
+    console.log(`Recording started for: ${bookName}`);
     audioChunks = [];
     isRecording = true;
     transcript = "";
+
+    // Create a promise that resolves when recording stops
+    let recordingPromise = new Promise(resolve => {
+        mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+        };
+        mediaRecorder.onstop = () => {
+            let audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            let audioUrl = URL.createObjectURL(audioBlob);
+            recordings[bookName] = audioUrl; // Store recording by book name
+            isRecording = false;
+            console.log(`Finished recording for: ${bookName}`);
+            resolve();
+        };
+    });
+    
+    // Create a promise that resolves when recognition ends
+    let recognitionPromise = new Promise(resolve => {
+        recognition.onresult = (event) => {
+            transcript = event.results[0][0].transcript.trim().toLowerCase();
+        };
+        recognition.onend = () => {
+            resolve();
+        };
+    });
+
     mediaRecorder.start();
-
-    showModal(`Recording started for: ${bookName}`, "You can now speak to record your voice!");
-
-    mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
-    };
-
-    mediaRecorder.onstop = () => {
-        let audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-        let audioUrl = URL.createObjectURL(audioBlob);
-        recordings[bookName] = audioUrl; // Store recording by book name
-        isRecording = false;
-    
-        console.log(`Finished recording for: ${bookName}`);
-        
-        // Log User said after recording is finished
-        console.log(`User said: ${transcript}`);
-        
-        // Analyze accuracy only after recording is fully stopped
-        analyzeAccuracy(transcript, bookText.innerText, bookName);
-    };
-    
     recognition.start();
-    recognition.onresult = (event) => {
-        transcript = event.results[0][0].transcript;
-    };
-    
+
+    // Stop both after 25 seconds if not already stopped
     setTimeout(() => {
         if (isRecording) {
             mediaRecorder.stop();
             recognition.stop();
         }
-    }, 25000); // Stop after 25 seconds
+    }, 25000);
+
+    // When both promises resolve, run the analysis
+    Promise.all([recordingPromise, recognitionPromise]).then(() => {
+        console.log(`User said: ${transcript}`);
+        analyzeAccuracy(transcript, bookText.innerText, bookName);
+    });
 });
 
 // Playing back the recorded audio
@@ -341,9 +460,33 @@ playButton.addEventListener("click", () => {
         let recordedAudio = new Audio(recordings[bookName]);
         recordedAudio.play();
     } else {
-        showModal("No recording available for this book.", "Please record first!");
+        alert("No recording available for this book. Please record first.");
     }
 });
+
+function levenshteinDistance(a, b) {
+    let matrix = [];
+    for (let i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+    }
+    for (let j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+    }
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1, // Substitution
+                    matrix[i][j - 1] + 1,     // Insertion
+                    matrix[i - 1][j] + 1      // Deletion
+                );
+            }
+        }
+    }
+    return matrix[b.length][a.length];
+}
 
 // Analyzing speech accuracy
 function analyzeAccuracy(userSpeech, referenceText, bookName) {
@@ -351,20 +494,56 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
         console.log(`Analysis skipped: No speech detected for ${bookName}`);
         return;
     }
-    let userWords = userSpeech.toLowerCase().split(" ");
-    let referenceWords = referenceText.toLowerCase().split(" ");
+
+    // Normalize text (convert to lowercase, remove punctuation)
+    let cleanText = (text) => text.toLowerCase().replace(/[^\w\s]/g, '');
+    
+    // Use regex to split on one or more whitespace characters and filter out empties
+    let userWords = cleanText(userSpeech).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
+    let referenceWords = cleanText(referenceText.replace(/<br>/g, " ")).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
+
     let correctCount = 0;
-    
-    userWords.forEach((word, index) => {
-        if (word === referenceWords[index]) {
-            correctCount++;
+    let totalWords = referenceWords.length;
+
+    for (let i = 0; i < totalWords; i++) {
+        if (i < userWords.length) {
+            let distance = levenshteinDistance(userWords[i], referenceWords[i]);
+            let maxLen = Math.max(userWords[i].length, referenceWords[i].length);
+            let similarity = (maxLen - distance) / maxLen; // Similarity percentage
+
+            if (similarity > 0.8) {
+                correctCount++; // High similarity counts as correct
+            } else if (similarity > 0.5) {
+                correctCount += 0.5; // Partial credit for close words
+            }
         }
-    });
-    
-    let accuracy = (correctCount / referenceWords.length) * 100;
-    console.log(`Analysis complete: Accuracy score for ${bookName} is`, `${accuracy.toFixed(2)}%`);
-    showModal(`Your accuracy: ${accuracy.toFixed(2)}%`);
+    }
+
+    let accuracy = (correctCount / totalWords) * 100;
+    console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
+    alert(`Your accuracy: ${accuracy.toFixed(2)}%`);
 }
+
+    const modal = document.getElementById("info-modal");
+    const btn = document.getElementById("info-button");
+    const close = document.querySelector(".modal .close");
+  
+    // Make sure modal is hidden initially
+    modal.style.display = "none";
+  
+    btn.addEventListener("click", () => {
+      modal.style.display = "block"; // Show modal when button is clicked
+    });
+  
+    close.addEventListener("click", () => {
+      modal.style.display = "none"; // Close modal when X is clicked
+    });
+  
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none"; // Close modal if user clicks outside of it
+      }
+    });
 
 </script>
     

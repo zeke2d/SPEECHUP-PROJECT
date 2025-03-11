@@ -181,7 +181,8 @@ app.get("/content/therapistprofile", async (req, res) => {
                 lastName: user.lastName,
                 email: user.email,
                 profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
-                bio: user.bio
+                bio: user.bio,
+                workingHours: user.workingHours
             });
         } else {
             res.redirect("/therapistlogin"); // Redirect if user not found
@@ -328,7 +329,8 @@ app.post("/therapistsignup", async (req, res) => {
             firstName : req.body.firstName,
             lastName : req.body.lastName,    
             email : req.body.email,
-            password : hashedPassword
+            password : hashedPassword,
+            workingHours: req.body.workingHours
 
         }; 
 
@@ -462,7 +464,8 @@ app.post("/update-profile-therapist", async (req, res) => {
         let updatedFields = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            bio: req.body.bio
+            bio: req.body.bio,
+            workingHours: req.body.workingHours
         };
 
         if (req.body.password) {
@@ -477,6 +480,7 @@ app.post("/update-profile-therapist", async (req, res) => {
         req.session.user.firstName = req.body.firstName;
         req.session.user.lastName = req.body.lastName;
         req.session.user.bio = req.body.bio;
+        req.session.user.workingHours = req.body.workingHours;
 
         res.json({ success: true });
 
@@ -666,6 +670,45 @@ app.get("/content/setappointment", (req, res) => {
     });
   });
 
+    // ➜ Get All Therapists
+app.get("/get-therapists", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - Please log in" });
+    }
+
+    try {
+        console.log("📢 Fetching therapists...");
+        const therapists = await therapistUsersCollection.find({}, 'name email workingHours');
+        res.json(therapists);
+    } catch (err) {
+        console.error("❌ Error fetching therapists:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// ➜ Get Therapist Details (including working hours)
+app.get("/get-therapist/:email", async (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized - Please log in" });
+    }
+
+    try {
+        const therapist = await therapistUsersCollection.findOne(
+            { email: req.params.email },
+            'workingHours'
+        );
+
+        if (!therapist) {
+            return res.status(404).json({ error: "Therapist not found" });
+        }
+
+        res.json(therapist);
+    } catch (err) {
+        console.error("❌ Error fetching therapist details:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
 // ➜ Get Appointments for a Patient
 app.get("/get-patient-appointments", async (req, res) => {
     if (!req.session.user) {
@@ -765,6 +808,17 @@ app.post("/add-appointment", async (req, res) => {
         if (!patient) {
             return res.status(400).json({ error: "Patient email not found. Please try logging in again." });
         }
+
+        // Validate if the selected time is within the therapist's working hours
+        const selectedTime = new Date(`1970-01-01T${time}`);
+        const [startTime, endTime] = therapist.workingHours.split(' - ');
+        const start = new Date(`1970-01-01T${startTime}`);
+        const end = new Date(`1970-01-01T${endTime}`);
+
+        if (selectedTime < start || selectedTime > end) {
+            return res.status(400).json({ error: "Selected time is outside the therapist's working hours." });
+        }
+
 
         // Create appointment
         const newAppointment = new appointmentCollection({

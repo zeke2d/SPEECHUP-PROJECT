@@ -678,7 +678,7 @@ app.get("/get-therapists", async (req, res) => {
 
     try {
         console.log("📢 Fetching therapists...");
-        const therapists = await therapistUsersCollection.find({}, 'name email workingHours');
+        const therapists = await therapistUsersCollection.find({}, 'firstName lastName email workingHours');
         res.json(therapists);
     } catch (err) {
         console.error("❌ Error fetching therapists:", err);
@@ -694,6 +694,8 @@ app.get("/get-therapist/:email", async (req, res) => {
 
     try {
         const therapist = await therapistUsersCollection.findOne(
+            'firstName',
+            'lastName',
             { email: req.params.email },
             'workingHours'
         );

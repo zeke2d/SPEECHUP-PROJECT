@@ -1116,15 +1116,6 @@ function addForumEventListeners() {
         }
     }
 
-        document.addEventListener("click", function(event) {
-        var dropdown = document.getElementById("dropdownMenu");
-        var profileContainer = document.querySelector(".profile-container");
-
-        if (!profileContainer.contains(event.target)) {
-            dropdown.classList.remove("active");
-        }
-    });
-
     document.addEventListener("DOMContentLoaded", function() {
     // Fetch all therapists when the page loads
     fetchTherapists();

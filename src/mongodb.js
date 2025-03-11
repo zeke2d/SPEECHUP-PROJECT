@@ -38,6 +38,10 @@ const therapistUsersSchema = new mongoose.Schema({
       type: String,
       default: "", // Initialize empty by default
     },
+    workingHours: {             // <-- New field added
+      type: String,
+      required: true
+    }
 });
 
 //define the collection and specify the schema for the collection

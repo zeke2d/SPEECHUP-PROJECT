@@ -904,6 +904,7 @@ h6 {
       document.getElementById("lastName").disabled = false;
       document.getElementById("password").disabled = false;
       document.getElementById("bio").disabled = false;
+      document.getElementById("workingHours").disabled = false;
       document.getElementById("updateProfile").style.display = "inline-block";
       document.getElementById("editProfile").style.display = "none";
     }
@@ -913,10 +914,11 @@ h6 {
       const lastName = document.getElementById("lastName").value;
       const password = document.getElementById("password").value;
       const bio = document.getElementById("bio").value;
+      const workingHours= document.getElementById("workingHours").value;
       const response = await fetch("/update-profile-therapist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, password, bio })
+        body: JSON.stringify({ firstName, lastName, password, bio, workingHours })
       });
       const result = await response.json();
       if (result.success) {

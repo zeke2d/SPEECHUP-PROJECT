@@ -68,10 +68,28 @@
 .therapist-bio {
   font-size: 14px;
   color: #807171;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   white-space: normal; /* If you want a single line with ellipsis */
   word-wrap: break-word;
 }
+
+.therapist-sched {
+  font-weight: bold;
+  font-size: 14px;
+  color: #807171;
+  margin-bottom: 10px;
+
+@@ -73,6 +82,13 @@
+  word-wrap: break-word;
+}
+
+.therapist-sched h1 {
+  font-weight: bold;
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
 
 </style>
 
@@ -100,6 +118,9 @@
           </div>
           <div class="therapist-bio">
             {{this.bio}}
+          </div>
+          <div class="therapist-sched">
+          <h1>Working Hours:</h1> {{this.workingHours}}
           </div>
         </div>
       </div>

@@ -428,6 +428,7 @@
                 }
                 if (page === 'setappointment') {
                 generateTimeOptions("selectedTime", 15);
+                fetchTherapists();
             }
 
              // Execute inline scripts manually
@@ -742,95 +743,154 @@ function addForumEventListeners() {
         }
     }
 
-        document.addEventListener("click", function(event) {
-        var dropdown = document.getElementById("dropdownMenu");
-        var profileContainer = document.querySelector(".profile-container");
-
-        if (!profileContainer.contains(event.target)) {
-            dropdown.classList.remove("active");
-        }
+    document.addEventListener("DOMContentLoaded", function() {
+    // Fetch all therapists when the page loads
+    fetchTherapists();
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('selectedDate').min = today;
+    
+    // Add event listener for therapist selection
+    document.getElementById('therapistDropdown').addEventListener('change', function() {
+      const selectedTherapistEmail = this.value;
+      if (selectedTherapistEmail) {
+        fetchTherapistWorkingHours(selectedTherapistEmail);
+      } else {
+        // Clear working hours display if no therapist selected
+        document.getElementById('therapistWorkingHours').innerHTML = '';
+        // Reset time dropdown
+        document.getElementById('selectedTime').innerHTML = '<option value="">Select a time</option>';
+      }
     });
-
-    // Function to generate time options dynamically in 15-minute intervals
-        function generateTimeOptions(selectElementId, intervalMinutes) {
-          const select = document.getElementById(selectElementId);
-          // Start at midnight
-          let current = new Date();
-          current.setHours(0, 0, 0, 0);
-          
-          // End at 11:45 PM
-          const end = new Date();
-          end.setHours(23, 59, 59, 999);
+  });
+  
+  // Fetch all therapists and populate the dropdown
+  function fetchTherapists() {
+    fetch("/get-therapists")
+      .then(response => response.json())
+      .then(therapists => {
+        const dropdown = document.getElementById('therapistDropdown');
         
-          while (current <= end) {
-            // Calculate hours and minutes
-            let hours = current.getHours();
-            let minutes = current.getMinutes();
-            // Determine AM/PM and convert to 12-hour format
-            const suffix = hours >= 12 ? 'PM' : 'AM';
-            let displayHour = hours % 12;
-            if (displayHour === 0) displayHour = 12;
-            // Format minutes with leading zero if needed
-            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-            const timeString = `${displayHour}:${formattedMinutes} ${suffix}`;
-        
-            // Create and append an option
-            const option = document.createElement('option');
-            option.value = timeString;
-            option.textContent = timeString;
-            select.appendChild(option);
-        
-            // Increase current time by the interval
-            current.setMinutes(current.getMinutes() + intervalMinutes);
-          }
+        // Clear any existing options (except the first one)
+        while (dropdown.options.length > 1) {
+          dropdown.remove(1);
         }
         
-        // Generate options on page load (using 15-minute intervals)
-        document.addEventListener("DOMContentLoaded", function () {
-          generateTimeOptions("selectedTime", 15);
+        // Add each therapist to the dropdown
+        therapists.forEach(therapist => {
+          const option = document.createElement('option');
+          option.value = therapist.email;
+          option.textContent = `${therapist.firstName} ${therapist.lastName} (${therapist.email}) - ${therapist.workingHours}`;
+          dropdown.appendChild(option);
         });
+      })
+      .catch(error => {
+        console.error("❌ Error fetching therapists:", error);
+      });
+  }
+  
+  // Fetch working hours for a specific therapist
+  function fetchTherapistWorkingHours(therapistEmail) {
+    fetch(`/get-therapist/${therapistEmail}`)
+      .then(response => response.json())
+      .then(therapist => {
+        // Display working hours
+        document.getElementById('therapistWorkingHours').innerHTML = 
+          `<p>Working Hours: ${therapist.workingHours}</p>`;
         
-        function requestAppointment() {
-          const therapistEmail = document.getElementById("therapistEmail").value.trim();
-          const selectedDate   = document.getElementById("selectedDate").value.trim();
-          const selectedTime   = document.getElementById("selectedTime").value.trim();
-          const patientEmail   = document.getElementById("patientEmail").value.trim();
+        // Clear current time options
+        const timeSelect = document.getElementById('selectedTime');
+        timeSelect.innerHTML = '<option value="">Select a time</option>';
         
-          console.log("📢 Sending Appointment Request:", {
-            therapistEmail,
-            patientEmail,
-            date: selectedDate,
-            time: selectedTime
-          });
-        
-          // Validate inputs
-          if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
-            alert("Please fill in all fields before requesting an appointment.");
-            return;
+        // Generate time options based on therapist's working hours
+        generateTimeOptionsForTherapist(therapist.workingHours);
+      })
+      .catch(error => {
+        console.error("❌ Error fetching therapist details:", error);
+      });
+  }
+  
+// Function to generate time options dynamically in 15-minute intervals
+    function generateTimeOptions(selectElementId, intervalMinutes) {
+      const select = document.getElementById(selectElementId);
+      // Start at midnight
+      let current = new Date();
+      current.setHours(0, 0, 0, 0);
+      
+      // End at 11:45 PM
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+    
+      while (current <= end) {
+        // Calculate hours and minutes
+        let hours = current.getHours();
+        let minutes = current.getMinutes();
+        // Determine AM/PM and convert to 12-hour format
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        let displayHour = hours % 12;
+        if (displayHour === 0) displayHour = 12;
+        // Format minutes with leading zero if needed
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        const timeString = `${displayHour}:${formattedMinutes} ${suffix}`;
+    
+        // Create and append an option
+        const option = document.createElement('option');
+        option.value = timeString;
+        option.textContent = timeString;
+        select.appendChild(option);
+    
+        // Increase current time by the interval
+        current.setMinutes(current.getMinutes() + intervalMinutes);
+      }
+    }
+    
+    // Generate options on page load (using 15-minute intervals)
+    document.addEventListener("DOMContentLoaded", function () {
+      generateTimeOptions("selectedTime", 15);
+    });
+    
+    function requestAppointment() {
+      const therapistEmail = document.getElementById("therapistDropdown").value.trim();
+      const selectedDate   = document.getElementById("selectedDate").value.trim();
+      const selectedTime   = document.getElementById("selectedTime").value.trim();
+      const patientEmail   = document.getElementById("patientEmail").value.trim();
+    
+      console.log("📢 Sending Appointment Request:", {
+        therapistEmail,
+        patientEmail,
+        date: selectedDate,
+        time: selectedTime
+      });
+    
+      // Validate inputs
+      if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
+        alert("Please fill in all fields before requesting an appointment.");
+        return;
+      }
+    
+      fetch("/add-appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          therapistEmail,
+          patientEmail,
+          date: selectedDate,
+          time: selectedTime, // now includes AM/PM, e.g. "3:15 PM"
+          status: "Pending"
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert("Appointment request sent! Waiting for therapist approval.");
+            location.reload();
+          } else {
+            alert("Error submitting appointment: " + data.error);
           }
-        
-          fetch("/add-appointment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              therapistEmail,
-              patientEmail,
-              date: selectedDate,
-              time: selectedTime, // now includes AM/PM, e.g. "3:15 PM"
-              status: "Pending"
-            })
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (data.success) {
-                alert("Appointment request sent! Waiting for therapist approval.");
-                location.reload();
-              } else {
-                alert("Error submitting appointment: " + data.error);
-              }
-            })
-            .catch(error => console.error("❌ Error:", error));
-        }
+        })
+        .catch(error => console.error("❌ Error:", error));
+    }
         
         function loadApprovedAppointments() {
           fetch("/get-patient-approved-appointments")

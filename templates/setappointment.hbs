@@ -17,6 +17,12 @@
     color: #2d3e50;
 }
 
+.content-area h3 {
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: #2d3e50;
+}
+
 
 /* Appointment Form */
 .appointment-form {
@@ -33,7 +39,8 @@
     margin-bottom: 5px;
 }
 
-.appointment-form input {
+.appointment-form input, 
+.appointment-form select {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -41,10 +48,17 @@
     border: 2px solid #2c3e50;
 }
 
-/* Readonly Input */
-#therapistEmail {
-    background-color: #e9f0ff;
-    cursor: not-allowed;
+/* Dropdown styling */
+#therapistDropdown, 
+#selectedTime {
+    background-color: #ffffff;
+    cursor: pointer;
+    appearance: none; /* Removes default dropdown arrow in some browsers */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right .7em top 50%;
+    background-size: .65em auto;
+    padding-right: 1.3em;
 }
 
 .btn-time {
@@ -86,8 +100,12 @@
     <!-- Hidden input for patient email -->
     <input type="hidden" id="patientEmail" value="{{patientEmail}}" >
 
-    <label>Therapist Email:</label>
-    <input type="email" id="therapistEmail" placeholder="Enter therapist's email" required >
+    <label>Select Therapist:</label>
+    <h3>*Kindly check the therapist's working hours before setting an appointment. </h3>
+    <select id="therapistDropdown" required>
+      <option value="">Select a therapist</option>
+    </select>
+    <div id="therapistWorkingHours"></div>
 
     <label>Select Date:</label>
     <input type="date" id="selectedDate" required >
@@ -104,6 +122,74 @@
 </div>
 
 <script>
+   document.addEventListener("DOMContentLoaded", function() {
+    // Fetch all therapists when the page loads
+    fetchTherapists();
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('selectedDate').min = today;
+    
+    // Add event listener for therapist selection
+    document.getElementById('therapistDropdown').addEventListener('change', function() {
+      const selectedTherapistEmail = this.value;
+      if (selectedTherapistEmail) {
+        fetchTherapistWorkingHours(selectedTherapistEmail);
+      } else {
+        // Clear working hours display if no therapist selected
+        document.getElementById('therapistWorkingHours').innerHTML = '';
+        // Reset time dropdown
+        document.getElementById('selectedTime').innerHTML = '<option value="">Select a time</option>';
+      }
+    });
+  });
+  
+  // Fetch all therapists and populate the dropdown
+  function fetchTherapists() {
+    fetch("/get-therapists")
+      .then(response => response.json())
+      .then(therapists => {
+        const dropdown = document.getElementById('therapistDropdown');
+        
+        // Clear any existing options (except the first one)
+        while (dropdown.options.length > 1) {
+          dropdown.remove(1);
+        }
+        
+        // Add each therapist to the dropdown
+        therapists.forEach(therapist => {
+          const option = document.createElement('option');
+          option.value = therapist.email;
+          option.textContent = `${therapist.firstName} ${therapist.lastName} (${therapist.email}) - ${therapist.workingHours}`;
+          dropdown.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error("❌ Error fetching therapists:", error);
+      });
+  }
+  
+  // Fetch working hours for a specific therapist
+  function fetchTherapistWorkingHours(therapistEmail) {
+    fetch(`/get-therapist/${therapistEmail}`)
+      .then(response => response.json())
+      .then(therapist => {
+        // Display working hours
+        document.getElementById('therapistWorkingHours').innerHTML = 
+          `<p>Working Hours: ${therapist.workingHours}</p>`;
+        
+        // Clear current time options
+        const timeSelect = document.getElementById('selectedTime');
+        timeSelect.innerHTML = '<option value="">Select a time</option>';
+        
+        // Generate time options based on therapist's working hours
+        generateTimeOptionsForTherapist(therapist.workingHours);
+      })
+      .catch(error => {
+        console.error("❌ Error fetching therapist details:", error);
+      });
+  }
+  
 // Function to generate time options dynamically in 15-minute intervals
     function generateTimeOptions(selectElementId, intervalMinutes) {
       const select = document.getElementById(selectElementId);
@@ -144,7 +230,7 @@
     });
     
     function requestAppointment() {
-      const therapistEmail = document.getElementById("therapistEmail").value.trim();
+      const therapistEmail = document.getElementById("therapistDropdown").value.trim();
       const selectedDate   = document.getElementById("selectedDate").value.trim();
       const selectedTime   = document.getElementById("selectedTime").value.trim();
       const patientEmail   = document.getElementById("patientEmail").value.trim();

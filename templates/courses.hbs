@@ -1,73 +1,128 @@
 <div id="contentPage">
 
     <style>
-         #contentPage { /* Target the specific container */
+         #contentPage { 
             display: flex;
             flex-direction: column;
-            align-items: center; /* Center horizontally */
-            min-height: 100%; /* Ensure it takes up full height if needed */
-            width: 100%; /* Or a specific width */
+            align-items: center;
+            min-height: 100%;
+            width: 100%;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 10px; /* Adjust as needed */
+            margin-bottom: 10px;
+            color: #FF4B4B;
         }
 
         h3 {
             text-align: center;
-            margin-bottom: 20px; /* Adjust as needed */
+            margin-bottom: 20px;
+            color: #002A73
         }
 
         .button-group {
             display: flex;
-            flex-direction: column; /* Stack buttons vertically */
-            gap: 15px; /* Space between buttons */
-            width: 80%; /* Or a specific width, or max-width */
-            max-width: 500px; /* Example max width */
+            flex-direction: column;
+            gap: 30px;
+            width: 30%;
+            max-width: 600px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            margin-left: 60px;
         }
 
-        .button-group button {
-            padding: 15px; /* Increased padding */
-            font-size: 18px; /* Increased font size */
+        .button-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .button-group button:not(.info-button) {
+            padding: 20px;
+            font-size: 18px;
             border: none;
-            border-radius: 8px;
-            background-color: #df1645;
+            border-radius: 20px;
+            background-color: #FF7878;
             color: white;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            text-align: center; /* Center text in button */
-            font-weight: bold; /* Make the text bold */
+            text-align: center;
+            font-weight: bold;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
-        .button-group button:hover {
-            background-color: #ff003c;
+        .button-group button:not(.info-button):hover {
+            background-color: #FF4B4B;
+        }
+
+        .info-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .info-button img {
+            width: 90px;
+            height: 90px;
+            background-color: transparent;
+        }
+
+        .subheading {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.75);
+            text-align: center;
+            margin-top: 5px;
         }
     </style>
 
     <h2>COURSES</h2>
     <br>
-    <h3>To start your Speech Therapy Session please select a disorder below:</h3>
+    <h3>To begin your Speech Therapy Session please select a Speech Disorder Unit below:</h3>
 
     <div class="button-group">
-        <button onclick="loadPage('apraxiagameselection')">APRAXIA</button>
-        <button onclick="loadPage('dysarthriagameselection')">DYSARTHRIA</button>
-        <button onclick="loadPage('aphasiagameselection')">APHASIA</button>
+        <div class="button-row">
+            <button onclick="loadPage('apraxiagameselection')">
+                APRAXIA
+                <h6 class="subheading">Strengthen those Oral Muscles</h6>
+            </button>
+            <button class="info-button" onclick="loadPage('apraxiaInfo')">
+                <img src="apraxiaInformation-button.png" alt="Apraxia Info">
+            </button>
+        </div>
+        <div class="button-row">
+            <button onclick="loadPage('dysarthriagameselection')">
+                DYSARTHRIA
+                <h6 class="subheading">Improve Word Recognition and Pronounciation</h6>
+            </button>
+            <button class="info-button" onclick="loadPage('dysarthriaInfo')">
+                <img src="dysarthriaInformation-button.png" alt="Dysarthria Info">
+            </button>
+        </div>
+        <div class="button-row">
+            <button onclick="loadPage('aphasiagameselection')">
+                APHASIA
+                <h6 class="subheading">Communicate with Confidence</h6>
+            </button>
+            <button class="info-button" onclick="loadPage('aphasiaInfo')">
+                <img src="aphasiaInformation-button.png" alt="Aphasia Info">
+            </button>
+        </div>
     </div>
-
 </div>
 
 <script>
 function loadPage(pageName) {
-    fetch(`/${pageName}`)  // Request the page dynamically
+    fetch(`/${pageName}`)
     .then(response => response.text())
     .then(data => {
-        document.getElementById("dynamicContent").innerHTML = data; // Replace content
+        document.getElementById("dynamicContent").innerHTML = data;
     })
     .catch(error => {
         console.error("Error loading page:", error);
         document.getElementById("dynamicContent").innerHTML = "<h3>Error loading page.</h3>";
     });
 }
-
 </script>

@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
 const router = express.Router();
 const app = express() //starting ExpressJS
 require('dotenv').config();
@@ -40,46 +39,18 @@ const upload = multer({
     }
 });
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
-
-// Create an OAuth2 client
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-// Function to generate an access token
-async function getAccessToken() {
-    try {
-        const { token } = await oAuth2Client.getAccessToken();
-        if (!token) {
-            throw new Error('Access token is undefined');
-        }
-        return token;
-    } catch (error) {
-        console.error('Error generating access token:', error);
-        throw error;
-    }
-}
-
-// Function to send an email
-async function sendEmail(to, subject, text) {
+async function sendEmail(senderEmail, senderPassword, to, subject, text) {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                type: 'OAuth2',
-                user: process.env.GMAIL_USER, // Use environment variable
-                clientId: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                refreshToken: REFRESH_TOKEN,
-                accessToken: await getAccessToken(), // Call getAccessToken() here
+                user: senderEmail, // User's Gmail address
+                pass: senderPassword, // User's Gmail password
             },
         });
 
         const mailOptions = {
-            from: process.env.GMAIL_USER, // Use environment variable
+            from: senderEmail, // User's Gmail address
             to: to,
             subject: subject,
             text: text,
@@ -169,40 +140,6 @@ app.get("/matchinggames", (req, res) => {
 app.get("/tonguetwisters", (req, res) => {
     res.render("tonguetwisters")
 })
-
-app.get('/auth', (req, res) => {
-    const authUrl = oAuth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: ['https://www.googleapis.com/auth/gmail.send'],
-    });
-    res.redirect(authUrl);
-});
-
-app.get('/auth/callback', async (req, res) => {
-    const { code } = req.query;
-    console.log('Authorization code:', code); // Debug log
-
-    if (!code) {
-        return res.status(400).send('Authorization code is missing');
-    }
-
-    try {
-        // Exchange the authorization code for tokens
-        const { tokens } = await oAuth2Client.getToken(code);
-        console.log('Tokens:', tokens); // Debug log
-
-        if (!tokens.refresh_token) {
-            throw new Error('Refresh token is missing');
-        }
-
-        console.log('Refresh token:', tokens.refresh_token); // Debug log
-        res.send('Refresh token obtained. Check your logs.');
-    } catch (error) {
-        console.error('Error getting refresh token:', error);
-        res.status(500).send('Error getting refresh token');
-    }
-});
-
 
 app.get("/content/therapists", async (req, res) => {
     try {
@@ -1008,30 +945,16 @@ app.post("/add-grades", async (req, res) => {
 
   // Route to send an email
 app.post('/send-email', async (req, res) => {
-    const { to, subject, text } = req.body;
-    console.log('Sending email to:', to); // Debug log
-    console.log('Subject:', subject);    // Debug log
-    console.log('Text:', text);    
+    const { senderEmail, senderPassword, to, subject, text } = req.body;
 
     try {
-        await sendEmail(to, subject, text);
-        res.status(200).json({ message: 'Email sent successfully' }); // Use .json() instead of .send()
+        await sendEmail(senderEmail, senderPassword, to, subject, text);
+        res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
         console.error('Error sending email:', error);
-        res.status(500).json({ error: 'Error sending email' }); // Use .json() instead of .send()
+        res.status(500).json({ error: 'Error sending email' });
     }
 });
-
-app.get('/test-email', async (req, res) => {
-    try {
-        await sendEmail('recipient@example.com', 'Test Subject', 'This is a test email.');
-        res.send('Test email sent successfully');
-    } catch (error) {
-        console.error('Error sending test email:', error);
-        res.status(500).send('Error sending test email');
-    }
-});
-
 
 router.get("/therapisthome", (req, res) => {
     res.render("therapisthome", { firstName: req.user.firstName });

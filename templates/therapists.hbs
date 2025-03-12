@@ -227,23 +227,33 @@
   </div>
 </div>
 
-<!-- Hidden modal (or div) for sending email -->
+<!-- Email Modal -->
 <div id="emailModal" class="email-modal" style="display: none;">
   <div class="email-modal-content">
     <span class="close-btn" onclick="closeEmailModal()">&times;</span>
     <h3>Send Email</h3>
     <br>
-
-    <!-- Email Form Fields -->
-    <label for="recipientEmailInput">To:</label>
-    <input type="text" id="recipientEmailInput" disabled />
+    <!-- Sender's Gmail Address -->
+    <label for="senderEmailInput">Your Gmail Address:</label>
+    <input type="email" id="senderEmailInput" placeholder="Enter your Gmail address" />
     
+    <!-- Sender's Gmail Password -->
+    <label for="senderPasswordInput">Your Gmail Password:</label>
+    <input type="password" id="senderPasswordInput" placeholder="Enter your Gmail password" />
+    
+    <!-- Recipient's Email Address -->
+    <label for="recipientEmailInput">To:</label>
+    <input type="email" id="recipientEmailInput" placeholder="Enter recipient's email" />
+    
+    <!-- Email Subject -->
     <label for="emailSubject">Subject:</label>
     <input type="text" id="emailSubject" placeholder="Enter subject" />
     
+    <!-- Email Message -->
     <label for="emailMessage">Message:</label>
     <textarea id="emailMessage" rows="5" placeholder="Type your message"></textarea>
     
+    <!-- Send Button -->
     <button class="send-button" onclick="sendEmail()">Send</button>
   </div>
 </div>

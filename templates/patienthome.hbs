@@ -1521,7 +1521,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     document.getElementById('emailModal').style.display = 'none';
   }
 
-  function sendEmail() {
+ function sendEmail() {
     const senderEmail = document.getElementById('senderEmailInput').value;
     const senderPassword = document.getElementById('senderPasswordInput').value;
     const recipientEmail = document.getElementById('recipientEmailInput').value;
@@ -1534,16 +1534,21 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
         return;
     }
 
+    console.log('Sending email from:', senderEmail); // Debug log
+    console.log('Sending email to:', recipientEmail); // Debug log
+    console.log('Subject:', subject); // Debug log
+    console.log('Message:', message); // Debug log
+
     fetch('/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            senderEmail: senderEmail,
-            senderPassword: senderPassword,
-            to: recipientEmail,
+            from: senderEmail, // Sender's Gmail address
+            to: recipientEmail, // Recipient's email address
             subject: subject,
             text: message,
-        }),
+            password: senderPassword, // Sender's Gmail app password
+        })
     })
     .then(response => response.json())
     .then(data => {

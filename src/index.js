@@ -944,11 +944,35 @@ app.post("/add-grades", async (req, res) => {
   });
 
   // Route to send an email
-app.post('/send-email', async (req, res) => {
-    const { senderEmail, senderPassword, to, subject, text } = req.body;
+  app.post('/send-email', async (req, res) => {
+    const { from, to, subject, text, password } = req.body; // Add `from` and `password`
+    console.log('Sending email from:', from); // Debug log
+    console.log('Sending email to:', to);     // Debug log
+    console.log('Subject:', subject);         // Debug log
+    console.log('Text:', text);               // Debug log
 
     try {
-        await sendEmail(senderEmail, senderPassword, to, subject, text);
+        // Create a transporter object using the sender's credentials
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465, // Use 465 for SSL or 587 for TLS
+            secure: true, // true for 465, false for other ports
+            auth: {
+                user: from, // Sender's Gmail address
+                pass: password, // Sender's Gmail app password
+            },
+        });
+
+        const mailOptions = {
+            from: from, // Sender's Gmail address
+            to: to,     // Recipient's email address
+            subject: subject,
+            text: text,
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
         res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
         console.error('Error sending email:', error);

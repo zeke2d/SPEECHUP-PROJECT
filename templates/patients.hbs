@@ -97,6 +97,98 @@
     margin-top: 2px;
     border: 2px solid #2c3e50;
   }
+  .send-email-btn {
+    background-color: #df1645;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  .send-email-btn:hover {
+    background-color: #ff003c;
+  }
+
+   /* Modal overlay (full screen) */
+.email-modal {
+  display: none; /* hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* A semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5);
+  
+  /* Center children using flexbox */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  z-index: 9999; /* ensure it's above other elements */
+}
+
+/* Modal content container */
+.email-modal-content {
+  background-color: #fff; /* or a light color that fits your theme */
+  padding: 2rem;
+  border-radius: 8px;
+  width: 400px; /* adjust as needed */
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  font-family: "Arial", sans-serif; /* match your app’s font */
+}
+
+/* Close button (X) in the top-right corner */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.5rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.close-btn:hover {
+  color: #333;
+}
+
+/* Modal form labels and inputs */
+.email-modal-content label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.email-modal-content input,
+.email-modal-content textarea {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+/* Send button styling */
+.send-button {
+  background-color: #df1645; /* pick a color that fits your theme */
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 4px;
+  margin-left: 250px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+.send-button:hover {
+  background-color: #ff003c;
+}
 </style>
 
 <!-- patients.hbs -->
@@ -167,11 +259,40 @@
               <br>
               <button class="save-grades-btn" onclick="saveGrades('{{this.email}}')">Save Grades</button>
             </div>
+
+               <!-- Send Email Button -->
+            <button 
+              class="send-email-btn" 
+              onclick="openEmailModal('{{this.email}}')"
+            >
+              <i class="fa fa-envelope"></i> Send Email
+            </button>
           </div>
         </div>
       {{/each}}
     {{else}}
       <p>No approved patients found.</p>
     {{/if}}
+  </div>
+</div>
+
+<!-- Reuse the same email modal (can place it in a partial) -->
+<div id="emailModal" class="email-modal" style="display: none;">
+  <div class="email-modal-content">
+    <span class="close-btn" onclick="closeEmailModal()">&times;</span>
+    <h3>Send Email</h3>
+    <br>
+
+     <!-- Email Form Fields -->
+    <label for="recipientEmailInput">To:</label>
+    <input type="text" id="recipientEmailInput" disabled />
+    
+    <label for="emailSubject">Subject:</label>
+    <input type="text" id="emailSubject" placeholder="Enter subject" />
+    
+    <label for="emailMessage">Message:</label>
+    <textarea id="emailMessage" rows="5" placeholder="Type your message"></textarea>
+    
+    <button class="send-button" onclick="sendEmail()">Send</button>
   </div>
 </div>

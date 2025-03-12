@@ -1505,6 +1505,61 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
 
   }
 
+  let currentRecipientEmail = '';
+
+  function openEmailModal(recipientEmail) {
+
+    currentRecipientEmail = recipientEmail;
+
+    document.getElementById('recipientEmailInput').value = recipientEmail;
+    document.getElementById('emailSubject').value = '';
+    document.getElementById('emailMessage').value = '';
+    document.getElementById('emailModal').style.display = 'flex';
+  }
+
+  function closeEmailModal() {
+    document.getElementById('emailModal').style.display = 'none';
+  }
+
+  function sendEmail() {
+    const subject = document.getElementById('emailSubject').value;
+    const message = document.getElementById('emailMessage').value;
+
+      // Validate inputs
+  if (!subject || !message) {
+    alert('Please fill in both the subject and message fields.');
+    return;
+  }
+
+    console.log('Sending email to:', currentRecipientEmail); // Debug log
+    console.log('Subject:', subject); // Debug log
+    console.log('Message:', message); // Debug log
+
+    fetch('/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: currentRecipientEmail,
+        subject: subject,
+        text: message
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+        alert(data.message);
+      } else {
+        alert(data.error || 'Error sending email');
+      }
+      closeEmailModal();
+    })
+    .catch(err => {
+      console.error('Error:', err);
+      alert('Error sending email');
+      closeEmailModal();
+    });
+  }
+
     </script>
 
 </body>

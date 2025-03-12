@@ -25,9 +25,11 @@
             display: flex;
             flex-direction: column;
             gap: 30px;
-            width: 70%;
-            max-width: 500px;
+            width: 30%; /* Increased width */
+            max-width: 600px; /* Wider max width */
             margin-top: 15px;
+            margin-bottom: 15px;
+            margin-left: 50px;
         }
 
         .button-row {
@@ -36,37 +38,34 @@
             gap: 5px; /* Space between original and new buttons */
         }
 
-        .button-group button {
-            padding: 15px;
+        .button-group button:not(.info-button) {
+            padding: 20px; /* Increased padding for wider buttons */
             font-size: 18px;
             border: none;
-            border-radius: 8px;
+            border-radius: 15px;
             background-color: #FF7878;
             color: white;
             cursor: pointer;
             transition: background-color 0.3s ease;
             text-align: center;
             font-weight: bold;
+            width: 100%; /* Full width within the container */
         }
 
-        .button-group button:hover {
-            background-color: #FF4B4B;
-        }
-
-        .button-group button:hover {
+        .button-group button:not(.info-button):hover {
             background-color: #FF4B4B;
         }
 
         .info-button {
             background: none;
-            background-color: white;
             border: none;
             cursor: pointer;
         }
 
         .info-button img {
-            width: 32px;
-            height: 32px;
+            width: 75px; 
+            height: 75px;
+            background-color: transparent; /* Ensure transparency */
         }
     </style>
 

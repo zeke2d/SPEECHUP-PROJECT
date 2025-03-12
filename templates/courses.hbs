@@ -25,31 +25,33 @@
             display: flex;
             flex-direction: column;
             gap: 30px;
-            width: 30%; /* Increased width */
-            max-width: 600px; /* Wider max width */
+            width: 30%;
+            max-width: 600px;
             margin-top: 15px;
             margin-bottom: 15px;
-            margin-left: 50px;
+            margin-left: 60px;
         }
 
         .button-row {
             display: flex;
-            align-items: center; /* Align buttons horizontally */
-            gap: 5px; /* Space between original and new buttons */
+            align-items: center;
+            gap: 5px;
         }
 
         .button-group button:not(.info-button) {
-            padding: 20px; /* Increased padding for wider buttons */
+            padding: 20px;
             font-size: 18px;
             border: none;
-            border-radius: 15px;
+            border-radius: 20px;
             background-color: #FF7878;
             color: white;
             cursor: pointer;
             transition: background-color 0.3s ease;
             text-align: center;
             font-weight: bold;
-            width: 100%; /* Full width within the container */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .button-group button:not(.info-button):hover {
@@ -63,9 +65,16 @@
         }
 
         .info-button img {
-            width: 75px; 
-            height: 75px;
-            background-color: transparent; /* Ensure transparency */
+            width: 90px;
+            height: 90px;
+            background-color: transparent;
+        }
+
+        .subheading {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.75);
+            text-align: center;
+            margin-top: 5px;
         }
     </style>
 
@@ -75,19 +84,28 @@
 
     <div class="button-group">
         <div class="button-row">
-            <button onclick="loadPage('apraxiagameselection')">APRAXIA</button>
+            <button onclick="loadPage('apraxiagameselection')">
+                APRAXIA
+                <h6 class="subheading">Strengthen those Oral Muscles</h6>
+            </button>
             <button class="info-button" onclick="loadPage('apraxiaInfo')">
                 <img src="apraxiaInformation-button.png" alt="Apraxia Info">
             </button>
         </div>
         <div class="button-row">
-            <button onclick="loadPage('dysarthriagameselection')">DYSARTHRIA</button>
+            <button onclick="loadPage('dysarthriagameselection')">
+                DYSARTHRIA
+                <h6 class="subheading">Improve Word Recognition and Pronounciation</h6>
+            </button>
             <button class="info-button" onclick="loadPage('dysarthriaInfo')">
                 <img src="dysarthriaInformation-button.png" alt="Dysarthria Info">
             </button>
         </div>
         <div class="button-row">
-            <button onclick="loadPage('aphasiagameselection')">APHASIA</button>
+            <button onclick="loadPage('aphasiagameselection')">
+                APHASIA
+                <h6 class="subheading">Communicate with Confidence</h6>
+            </button>
             <button class="info-button" onclick="loadPage('aphasiaInfo')">
                 <img src="aphasiaInformation-button.png" alt="Aphasia Info">
             </button>

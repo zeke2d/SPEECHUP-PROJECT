@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
 const router = express.Router();
 const app = express() //starting ExpressJS
 require('dotenv').config();
@@ -39,20 +40,46 @@ const upload = multer({
     }
 });
 
-// Create a transporter object using Gmail service
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_USER, // your Gmail account
-      pass: process.env.GMAIL_PASS  // your Gmail app password
-    }
-  });
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
-  // Function to send an email
-const sendEmail = async (to, subject, text) => {
+// Create an OAuth2 client
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+// Function to generate an access token
+async function getAccessToken() {
     try {
+        const { token } = await oAuth2Client.getAccessToken();
+        if (!token) {
+            throw new Error('Access token is undefined');
+        }
+        return token;
+    } catch (error) {
+        console.error('Error generating access token:', error);
+        throw error;
+    }
+}
+
+// Function to send an email
+async function sendEmail(to, subject, text) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: process.env.GMAIL_USER, // Use environment variable
+                clientId: CLIENT_ID,
+                clientSecret: CLIENT_SECRET,
+                refreshToken: REFRESH_TOKEN,
+                accessToken: await getAccessToken(), // Call getAccessToken() here
+            },
+        });
+
         const mailOptions = {
-            from: process.env.GMAIL_USER,
+            from: process.env.GMAIL_USER, // Use environment variable
             to: to,
             subject: subject,
             text: text,
@@ -65,7 +92,7 @@ const sendEmail = async (to, subject, text) => {
         console.error('Error sending email:', error);
         throw error;
     }
-};
+}
 
 app.use("/uploads", express.static("public/uploads"));
 
@@ -142,6 +169,28 @@ app.get("/matchinggames", (req, res) => {
 app.get("/tonguetwisters", (req, res) => {
     res.render("tonguetwisters")
 })
+
+app.get('/auth', (req, res) => {
+    const authUrl = oAuth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: ['https://www.googleapis.com/auth/gmail.send'],
+    });
+    res.redirect(authUrl);
+});
+
+app.get('/auth/callback', async (req, res) => {
+    const { code } = req.query;
+
+    try {
+        const { tokens } = await oAuth2Client.getToken(code);
+        console.log('Refresh token:', tokens.refresh_token);
+        res.send('Refresh token obtained. Check your console.');
+    } catch (error) {
+        console.error('Error getting refresh token:', error);
+        res.status(500).send('Error getting refresh token');
+    }
+});
+
 
 app.get("/content/therapists", async (req, res) => {
     try {

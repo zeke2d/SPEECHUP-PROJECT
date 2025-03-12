@@ -1522,14 +1522,15 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
   }
 
   function sendEmail() {
+    const recipientEmail = document.getElementById('recipientEmailInput').value;
     const subject = document.getElementById('emailSubject').value;
     const message = document.getElementById('emailMessage').value;
 
-      // Validate inputs
-  if (!subject || !message) {
-    alert('Please fill in both the subject and message fields.');
-    return;
-  }
+     // Validate inputs
+    if (!recipientEmail || !subject || !message) {
+        alert('Please fill in all fields.');
+        return;
+    }
 
     console.log('Sending email to:', currentRecipientEmail); // Debug log
     console.log('Subject:', subject); // Debug log
@@ -1539,7 +1540,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        to: currentRecipientEmail,
+        to: recipientEmail,
         subject: subject,
         text: message
       })

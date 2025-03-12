@@ -6,8 +6,10 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const app = express() //starting ExpressJS
+require('dotenv').config();
 
 const {therapistUsersCollection, patientUsersCollection, appointmentCollection} = require("./mongodb.js"); 
 
@@ -36,6 +38,34 @@ const upload = multer({
         }
     }
 });
+
+// Create a transporter object using Gmail service
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER, // your Gmail account
+      pass: process.env.GMAIL_PASS  // your Gmail app password
+    }
+  });
+
+  // Function to send an email
+const sendEmail = async (to, subject, text) => {
+    try {
+        const mailOptions = {
+            from: process.env.GMAIL_USER,
+            to: to,
+            subject: subject,
+            text: text,
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+        return info;
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+    }
+};
 
 app.use("/uploads", express.static("public/uploads"));
 
@@ -915,6 +945,33 @@ app.post("/add-grades", async (req, res) => {
       res.json({ success: false, message: "Server error" });
     }
   });
+
+  // Route to send an email
+app.post('/send-email', async (req, res) => {
+    const { to, subject, text } = req.body;
+    console.log('Sending email to:', to); // Debug log
+    console.log('Subject:', subject);    // Debug log
+    console.log('Text:', text);    
+
+    try {
+        await sendEmail(to, subject, text);
+        res.status(200).json({ message: 'Email sent successfully' }); // Use .json() instead of .send()
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ error: 'Error sending email' }); // Use .json() instead of .send()
+    }
+});
+
+app.get('/test-email', async (req, res) => {
+    try {
+        await sendEmail('recipient@example.com', 'Test Subject', 'This is a test email.');
+        res.send('Test email sent successfully');
+    } catch (error) {
+        console.error('Error sending test email:', error);
+        res.status(500).send('Error sending test email');
+    }
+});
+  
 
 router.get("/therapisthome", (req, res) => {
     res.render("therapisthome", { firstName: req.user.firstName });

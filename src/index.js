@@ -180,11 +180,23 @@ app.get('/auth', (req, res) => {
 
 app.get('/auth/callback', async (req, res) => {
     const { code } = req.query;
+    console.log('Authorization code:', code); // Debug log
+
+    if (!code) {
+        return res.status(400).send('Authorization code is missing');
+    }
 
     try {
+        // Exchange the authorization code for tokens
         const { tokens } = await oAuth2Client.getToken(code);
-        console.log('Refresh token:', tokens.refresh_token);
-        res.send('Refresh token obtained. Check your console.');
+        console.log('Tokens:', tokens); // Debug log
+
+        if (!tokens.refresh_token) {
+            throw new Error('Refresh token is missing');
+        }
+
+        console.log('Refresh token:', tokens.refresh_token); // Debug log
+        res.send('Refresh token obtained. Check your logs.');
     } catch (error) {
         console.error('Error getting refresh token:', error);
         res.status(500).send('Error getting refresh token');

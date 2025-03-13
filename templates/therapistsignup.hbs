@@ -38,7 +38,7 @@
 
         .left-section {
             flex: 1;
-            background-color: #d1d8e0;
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -361,7 +361,7 @@ input[type="file"] {
         <div class="right-section">
             <h2>Welcome to Speech Up!</h2>
             <p>Please sign up to create your account and start the adventure</p>
-            <form id="therapistsignupForm" action="/therapistsignup" method="post">
+            <form id="therapistsignupForm" action="/therapistsignup" method="post" enctype="multipart/form-data">
                 <input type="text" name="firstName" placeholder="First Name" required>
                 <input type="text" name="lastName" placeholder="Last Name" required>
                 <input type="text" name="email" placeholder="Email" required>
@@ -382,7 +382,7 @@ input[type="file"] {
             
             <!-- Data Privacy Checkbox -->
         <label class="data-privacy-label">
-            <input type="checkbox" class="data-checkbox" name="dataPrivacy" required>
+            <input type="checkbox" class="data-checkbox" name="dataPrivacy" required style="opacity: 0; width: 0; height: 0; position: absolute;">
             <span class="checkmark"></span>
             I have read and agree to the <a href="#" id="data-privacy-link">Data Privacy Policy</a>
         </label>

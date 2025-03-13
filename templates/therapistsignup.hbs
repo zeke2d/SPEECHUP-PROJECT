@@ -387,6 +387,14 @@ input[type="file"] {
             I have read and agree to the <a href="#" id="data-privacy-link">Data Privacy Policy</a>
         </label>
 
+        <button type="submit" class="signup-btn">Sign Up</button>
+            </form>
+
+            <br>
+            <p class="login-link center-text">Already have an account? <a href="/therapistlogin">Click here!</a></p>
+        </div>
+    </div>
+    
         <!-- Modal for Data Privacy Policy -->
 <div id="data-privacy-modal" class="modal">
     <div class="modal-content">
@@ -573,13 +581,7 @@ input[type="file"] {
         </p>
     </div>
 </div>
-                <button type="submit" class="signup-btn">Sign Up</button>
-            </form>
 
-            <br>
-            <p class="login-link center-text">Already have an account? <a href="/therapistlogin">Click here!</a></p>
-        </div>
-    </div>
 
     <script>
 
@@ -609,7 +611,7 @@ window.addEventListener("click", (e) => {
         document.getElementById("prcLicense").addEventListener("change", function () {
         const fileName = this.files[0] ? this.files[0].name : "No file chosen";
         document.getElementById("file-name").textContent = fileName;
-
+        });
 
         function togglePassword() {
             var passwordField = document.getElementById("passwordField");
@@ -628,8 +630,6 @@ window.addEventListener("click", (e) => {
             window.location.href = "/"; 
         }
 
-        
-        
     </script>
 </body>
 

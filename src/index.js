@@ -19,7 +19,7 @@ const templatePath = path.join(__dirname, "../templates") //preparing our templa
 const storage = multer.diskStorage({
     destination: "./public/uploads/",
     filename: (req, file, cb) => {
-        cb(null, req.session.user.email + path.extname(file.originalname)); // Save as userId.extension
+        cb(null, req.body.email + path.extname(file.originalname)); // Save as userId.extension
     }
 });
 
@@ -38,34 +38,6 @@ const upload = multer({
         }
     }
 });
-
-// Create a transporter object using Gmail service
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_USER, // your Gmail account
-      pass: process.env.GMAIL_PASS  // your Gmail app password
-    }
-  });
-
-  // Function to send an email
-const sendEmail = async (to, subject, text) => {
-    try {
-        const mailOptions = {
-            from: process.env.GMAIL_USER,
-            to: to,
-            subject: subject,
-            text: text,
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-        return info;
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw error;
-    }
-};
 
 app.use("/uploads", express.static("public/uploads"));
 
@@ -212,7 +184,8 @@ app.get("/content/therapistprofile", async (req, res) => {
                 email: user.email,
                 profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
                 bio: user.bio,
-                workingHours: user.workingHours
+                workingHours: user.workingHours,
+                licenseUnderReview: user.licenseUnderReview
             });
         } else {
             res.redirect("/therapistlogin"); // Redirect if user not found
@@ -348,19 +321,28 @@ app.post("/therapistlogin", async (req, res) => {
     }
 });
 
-app.post("/therapistsignup", async (req, res) => {
+app.post("/therapistsignup", upload.single("prcLicense"), async (req, res) => {
 
     try {
-        // Hash password before storing
+        console.log("Request Body:", req.body); // Log the form data
+        console.log("Uploaded File:", req.file); // Log the uploaded file
+
+        if (!req.file) {
+            console.error("No file uploaded.");
+            return res.status(400).send("PRC license file is required.");
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        var newUser = {
+        const newUser = {
 
             firstName : req.body.firstName,
             lastName : req.body.lastName,    
             email : req.body.email,
             password : hashedPassword,
-            workingHours: req.body.workingHours
+            workingHours: req.body.workingHours,
+            prcLicensePath: "/uploads/" + req.file.filename,
+            licenseUnderReview: true
 
         }; 
 
@@ -947,18 +929,39 @@ app.post("/add-grades", async (req, res) => {
   });
 
   // Route to send an email
-app.post('/send-email', async (req, res) => {
-    const { to, subject, text } = req.body;
-    console.log('Sending email to:', to); // Debug log
-    console.log('Subject:', subject);    // Debug log
-    console.log('Text:', text);    
+  app.post('/send-email', async (req, res) => {
+    const { from, to, subject, text, password } = req.body; // Add `from` and `password`
+    console.log('Sending email from:', from); // Debug log
+    console.log('Sending email to:', to);     // Debug log
+    console.log('Subject:', subject);         // Debug log
+    console.log('Text:', text);               // Debug log
 
     try {
-        await sendEmail(to, subject, text);
-        res.status(200).json({ message: 'Email sent successfully' }); // Use .json() instead of .send()
+        // Create a transporter object using the sender's credentials
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465, // Use 465 for SSL or 587 for TLS
+            secure: true, // true for 465, false for other ports
+            auth: {
+                user: from, // Sender's Gmail address
+                pass: password, // Sender's Gmail app password
+            },
+        });
+
+        const mailOptions = {
+            from: from, // Sender's Gmail address
+            to: to,     // Recipient's email address
+            subject: subject,
+            text: text,
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+        res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
         console.error('Error sending email:', error);
-        res.status(500).json({ error: 'Error sending email' }); // Use .json() instead of .send()
+        res.status(500).json({ error: 'Error sending email' });
     }
 });
 

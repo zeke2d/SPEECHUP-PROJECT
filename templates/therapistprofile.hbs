@@ -162,6 +162,10 @@
             <h2>{{firstName}} {{lastName}}</h2>
             <br>
             <p>{{bio}}</p>
+             <!-- Verification Message -->
+        {{#if licenseUnderReview}}
+            <p class="verification-message">*License under review by PRC waiting for verification</p>
+        {{/if}}
         </div>
         
         <div class="profile-details">

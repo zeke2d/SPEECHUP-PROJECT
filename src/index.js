@@ -210,7 +210,8 @@ app.get("/content/therapistprofile", async (req, res) => {
                 email: user.email,
                 profileImage: user.profileImage || "/default-profile.png", // ✅ Ensure a fallback image
                 bio: user.bio,
-                workingHours: user.workingHours
+                workingHours: user.workingHours,
+                licenseUnderReview: user.licenseUnderReview
             });
         } else {
             res.redirect("/therapistlogin"); // Redirect if user not found
@@ -346,19 +347,28 @@ app.post("/therapistlogin", async (req, res) => {
     }
 });
 
-app.post("/therapistsignup", async (req, res) => {
+app.post("/therapistsignup", upload.single("prcLicense"), async (req, res) => {
 
     try {
-        // Hash password before storing
+        console.log("Request Body:", req.body); // Log the form data
+        console.log("Uploaded File:", req.file); // Log the uploaded file
+
+        if (!req.file) {
+            console.error("No file uploaded.");
+            return res.status(400).send("PRC license file is required.");
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        var newUser = {
+        const newUser = {
 
             firstName : req.body.firstName,
             lastName : req.body.lastName,    
             email : req.body.email,
             password : hashedPassword,
-            workingHours: req.body.workingHours
+            workingHours: req.body.workingHours,
+            prcLicensePath: "/uploads/" + req.file.filename,
+            licenseUnderReview: true
 
         }; 
 

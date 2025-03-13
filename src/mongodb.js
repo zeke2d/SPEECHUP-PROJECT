@@ -41,6 +41,14 @@ const therapistUsersSchema = new mongoose.Schema({
     workingHours: {             // <-- New field added
       type: String,
       required: true
+    },
+    prcLicensePath: {
+      type: String, // Store the file path of the PRC license
+      default: "", // Initialize empty by default
+    },
+    licenseUnderReview: {
+      type: Boolean,
+      default: true, // Set to true by default
     }
 });
 

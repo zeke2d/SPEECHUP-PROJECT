@@ -19,7 +19,7 @@ const templatePath = path.join(__dirname, "../templates") //preparing our templa
 const storage = multer.diskStorage({
     destination: "./public/uploads/",
     filename: (req, file, cb) => {
-        cb(null, req.session.user.email + path.extname(file.originalname)); // Save as userId.extension
+        cb(null, req.body.email + path.extname(file.originalname)); // Save as userId.extension
     }
 });
 

@@ -1238,7 +1238,7 @@ function addForumEventListeners() {
     
       // Validate inputs
       if (!therapistEmail || !selectedDate || !selectedTime || !patientEmail) {
-        alert("Please fill in all fields before requesting an appointment.");
+        showModal("Try again!", "Please fill in all fields before requesting an appointment.");
         return;
       }
     
@@ -1256,7 +1256,7 @@ function addForumEventListeners() {
         .then(res => res.json())
         .then(data => {
           if (data.success) {
-            alert("Appointment request sent! Waiting for therapist approval.");
+            showModal("Appointment request sent!", "Waiting for therapist approval.");
             location.reload();
           } else {
             alert("Error submitting appointment: " + data.error);

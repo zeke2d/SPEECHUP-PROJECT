@@ -1,5 +1,3 @@
-{{!-- templates/animalsounds.hbs --}}
-
 <style>
   /* Back Button */
   .back-btn {
@@ -26,27 +24,111 @@
     font-size: 18px;
   }
 
-  /* Header Section */
-  .header-container {
-    background-color: #ff7878;
-    padding: 20px;
-    border-radius: 20px;
-    width: fit-content;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 330px;
-  }
-  .header-container h1 {
-    color: white;
-    margin: 0;
-  }
-  .header-container h6 {
-    color: white;
-    font-style: italic;
-    opacity: 0.75;
-    margin: 5px 0 0;
-  }
+  /* Adjust header container to align items */
+.header-container {
+  background-color: #FF7878;
+  text-align: center;
+  padding: 20px;
+  border-radius: 20px;
+  width: 80%;
+  max-width: 600px;
+  margin: 25px auto 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wrap h6 and button together */
+.header-text {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Space between h6 and button */
+}
+
+/* Ensure the button is aligned properly */
+#info-button {
+  background: none;
+  border: none;
+  width: 20px;  /* Adjust size */
+  height: 20px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+/* Resize the button image */
+#info-button img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Modal Styling */
+/* Ensure modal is hidden by default */
+.modal {
+  display: none; /* Hide modal initially */
+  position: fixed; /* Stay in place */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FF7878; /* Set modal background color */
+  color: white; /* White text */
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px; /* Set modal width */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+/* Close button styling */
+.modal .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-content {
+  background-color: #FF7878;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%; /* Ensure it takes full width inside modal */
+  max-width: 400px; /* Limit max width */
+  text-align: center;
+  position: relative;
+  box-sizing: border-box; /* Prevents padding from affecting width */
+}
+
+/* Close button */
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+}
+
+.modal-content .close:hover {
+  color: #fff2f2;
+}
+
+h1 {
+  color: white;
+  margin: 0;
+}
+
+h6 {
+  color: white;
+  font-style: italic;
+  opacity: 0.75;
+  margin: 5px 0 0;
+}
 
   /* Game Container */
   .game-container {
@@ -77,7 +159,7 @@
   button.play-sound,
   button.record-sound,
   button.play-recording {
-    background-color: #2c3e50;
+    background-color: #ffffff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -97,6 +179,57 @@
     background-color: #e0e0e0;
   }
 
+  .custom-modal-overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      z-index: 999; /* on top of everything */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6); /* semi-transparent dark overlay */
+  }
+  .custom-modal {
+      background-color: #fff;
+      width: 300px; /* adjust as needed */
+      margin: 15% auto; /* center vertically */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+  }
+  .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+  }
+  .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+  }
+  .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  .modal-ok-button:hover {
+      background-color: #ff003c;
+  }
+
 </style>
 
 <!-- Partial content only (no <html>, <head>, <body>) -->
@@ -105,9 +238,14 @@
 </button>
 
 <div class="header-container">
-  <h1>Apraxia Unit - Animal Sounds</h1>
-  <h6>Boost Speech Clarity with Fun Animal Sounds</h6>
-</div>
+    <h1>Apraxia Unit - Animal Sounds</h1>
+    <div class="header-text">
+      <h6>Boost Speech Clarity with Fun Animal Sounds</h6>
+      <button id="info-button">
+        <img src="information-button.png" alt="Info">
+      </button>
+    </div>
+  </div> 
 
 <div class="game-container">
   <!-- CAT -->
@@ -195,7 +333,45 @@
   </div>
 </div>
 
+    <!-- Custom Modal (for styled alerts) -->
+<div id="customModalOverlay" class="custom-modal-overlay">
+  <div class="custom-modal">
+    <button class="close-button" onclick="closeModal()">&times;</button>
+    <h2 id="modalTitle">Modal Title</h2>
+    <br>
+    <p id="modalMessage">Modal message goes here.</p>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+ <!-- Info Modal -->
+    <div id="info-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p><em>
+          This Animal Sounds game helps with Apraxia by practicing motor planning for speech. 
+          Imitating Animal Sounds helps focus on specific mouth movements and sound formations. 
+          It's a fun way to strengthen the muscles and coordination needed for clear speech!
+        </em></p>
+        <h6>
+          Click the speaker to hear Animal Sounds<br>
+          Click the microphone to imitate your chosen Animal Sounds<br>
+          Click the playback to hear <strong>your</strong> Animal Sounds
+        </h6>
+      </div>
+    </div>
+
 <script>
+
+    // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
   
   function startGameAnimalSounds(){
 
@@ -245,7 +421,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       };
 
       mediaRecorder.start();
-      alert(`Recording started for ${animal}. Click OK to stop.`);
+      showModal(`Recording started for ${animal}.`, "You can now speak to record your voice!");
 
       setTimeout(() => {
         mediaRecorder.stop();
@@ -262,12 +438,34 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     if (recordings.has(animal)) {
       const audio = new Audio(recordings.get(animal));
       audio.play();
-      console.log(`Playing recording for ${animal}.`);
     } else {
-      alert(`No recording available for ${animal}.`);
+      showModal(`No recording available for ${animal}.`, "Please record first!");
     }
   });
 });
+
+// Modal Functionality
+// Ensure modal only opens when clicked
+  const modal = document.getElementById("info-modal");
+  const btn = document.getElementById("info-button");
+  const close = document.querySelector(".modal .close");
+
+  // Make sure modal is hidden initially
+  modal.style.display = "none";
+
+  btn.addEventListener("click", () => {
+    modal.style.display = "block"; // Show modal when button is clicked
+  });
+
+  close.addEventListener("click", () => {
+    modal.style.display = "none"; // Close modal when X is clicked
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none"; // Close modal if user clicks outside of it
+    }
+  });
   
 }
 </script>

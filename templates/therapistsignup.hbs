@@ -383,7 +383,7 @@ input[type="file"] {
             
             <!-- Data Privacy Checkbox -->
         <label class="data-privacy-label">
-            <input type="checkbox" class="data-checkbox" name="dataPrivacy" required style="opacity: 0; width: 0; height: 0; position: absolute;">
+            <input type="checkbox" class="data-checkbox" name="dataPrivacy" id="therapistDataPrivacy" style="opacity: 0; width: 0; height: 0; position: absolute;">
             <span class="checkmark"></span>
             I have read and agree to the <a href="#" id="data-privacy-link">Data Privacy Policy</a>
         </label>
@@ -630,25 +630,27 @@ window.addEventListener("click", (e) => {
             }
         }
 
-        document.getElementById("therapistsignupForm").addEventListener("submit", function(e) {
+  document.getElementById("therapistSignupForm").addEventListener("submit", function(e) {
+  const errorContainer = document.getElementById("therapistErrorMessage");
+  errorContainer.innerHTML = ""; // Clear previous errors
+
+  const fileInput = document.getElementById("prcLicense");
+  const dataPrivacy = document.getElementById("therapistDataPrivacy");
   let errorMessage = "";
 
-  // Validate that a file is uploaded for the PRC license
-  const fileInput = document.getElementById("prcLicense");
+  // Check if a file was chosen
   if (fileInput.files.length === 0) {
-    errorMessage += "Please upload an image for your PRC license.<br>";
+    errorMessage += "Please upload your PRC license image.<br>";
   }
 
-  // Validate that the data privacy checkbox is checked
-  const privacyCheckbox = document.getElementById("dataPrivacy");
-  if (!privacyCheckbox.checked) {
+  // Check if data privacy is agreed
+  if (!dataPrivacy.checked) {
     errorMessage += "You must agree to the data privacy policy.<br>";
   }
 
-  // If there are errors, prevent form submission and show errors
   if (errorMessage) {
-    e.preventDefault();
-    document.getElementById("therapistErrorMessage").innerHTML = errorMessage;
+    e.preventDefault(); // Stop form submission
+    errorContainer.innerHTML = errorMessage;
   }
 });
 

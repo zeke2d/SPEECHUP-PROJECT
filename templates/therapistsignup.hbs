@@ -361,6 +361,8 @@ input[type="file"] {
         <div class="right-section">
             <h2>Welcome to Speech Up!</h2>
             <p>Please sign up to create your account and start the adventure</p>
+
+            <div id="therapistErrorMessage" class="error-message" style="color: red;"></div>
             
             <form id="therapistsignupForm" action="/therapistsignup" method="post" enctype="multipart/form-data">
                 <input type="text" name="firstName" placeholder="First Name" required>
@@ -387,9 +389,6 @@ input[type="file"] {
             <span class="checkmark"></span>
             I have read and agree to the <a href="#" id="data-privacy-link">Data Privacy Policy</a>
         </label>
-
-          <!-- This div will display error messages if validations fail -->
-  <div id="therapistErrorMessage" class="error-message" style="color: red;"></div>
 
         <button type="submit" class="signup-btn">Sign Up</button>
             </form>
@@ -630,7 +629,7 @@ window.addEventListener("click", (e) => {
             }
         }
 
-  document.getElementById("therapistSignupForm").addEventListener("submit", function(e) {
+  document.getElementById("therapistsignupForm").addEventListener("submit", function(e) {
   const errorContainer = document.getElementById("therapistErrorMessage");
   errorContainer.innerHTML = ""; // Clear previous errors
 

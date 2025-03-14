@@ -1507,11 +1507,11 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
 
   let currentRecipientEmail = '';
 
-  function openEmailModal(recipientEmail) {
+  function openEmailModal(to) {
 
-    currentRecipientEmail = recipientEmail;
+    currentRecipientEmail = to;
 
-    document.getElementById('recipientEmailInput').value = recipientEmail;
+    document.getElementById('recipientEmailInput').value = to;
     document.getElementById('emailSubject').value = '';
     document.getElementById('emailMessage').value = '';
     document.getElementById('emailModal').style.display = 'flex';
@@ -1539,7 +1539,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            to: to, // Recipient's email address
+            to: to,
             subject: subject,
             text: message,
         })

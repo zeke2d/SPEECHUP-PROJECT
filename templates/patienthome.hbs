@@ -1547,7 +1547,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            showModal(data.message);
+            showModal('Success', 'Email has been sent!');
         } else {
             alert(data.error || 'Error sending email');
         }

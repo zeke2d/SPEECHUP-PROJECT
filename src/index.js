@@ -988,7 +988,7 @@ app.post("/add-grades", async (req, res) => {
 
     try {
         await sendEmail(to, subject, text);
-        res.status(200).json({ message: 'Success', message: 'Email sent successfully!' }); // Use .json() instead of .send()
+        res.status(200).json({ message: 'Email sent successfully!' }); // Use .json() instead of .send()
     } catch (error) {
         console.error('Error sending email:', error);
         res.status(500).json({ error: 'Error sending email' }); // Use .json() instead of .send()

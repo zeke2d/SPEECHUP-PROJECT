@@ -1,9 +1,5 @@
-{{!-- matchinggames.hbs --}}
-
 <style>
-  /****************************************
-   * BACK BUTTON (same style as animalsounds.hbs)
-   ****************************************/
+  
   .back-btn {
     display: flex;
     align-items: center;
@@ -28,30 +24,76 @@
     font-size: 18px;
   }
 
-  /****************************************
-   * HEADER CONTAINER (same style as animalsounds.hbs)
-   ****************************************/
   .header-container {
     background-color: #FF7878;
+    text-align: center;
     padding: 20px;
     border-radius: 20px;
-    width: fit-content;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 330px; /* Adjust or remove if you don't need this offset */
-  }
-  .header-container h1 {
+    width: 80%;
+    max-width: 600px;
+    margin: 25px auto 25px;
+}
+
+/* Header Title */
+.header-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Header Text */
+.header-container h1 {
+    font-weight: bold;
     color: white;
     margin: 0;
-  }
-  .header-container h6 {
-    color: white;
-    font-style: italic;
-    opacity: 0.75;
-    margin-top: 5px;
-  }
+}
 
+h6 {
+    font-style: italic;
+    color: white;
+    opacity: 0.75;
+    margin: 5px 0 0 0;
+}
+
+/* Info Button */
+.info-button {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+/* Modal Styles */
+.info-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #FF7878;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    width: 350px;
+    z-index: 1000; /* Ensures it appears above other elements */
+}
+
+.info-modal-content {
+    position: relative;
+    padding-top: 25px; /* Ensures space for the close button */
+}
+
+/* Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: white;
+} 
   /****************************************
    * GAME CONTAINER (similar to animalsounds.hbs)
    ****************************************/
@@ -155,9 +197,10 @@
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 7px;
   }
   button:hover {
-    background: #d65c5c;
+    background: #FF4B4B;
   }
 
    /* ------------------ Custom Modal for Alerts ------------------ */
@@ -192,7 +235,7 @@
     .close-button {
       background: none;
       border: none;
-      color: #333;
+      color: #ffffff;
       font-size: 24px;
       position: absolute;
       right: 15px;
@@ -245,7 +288,7 @@
     .confirm-close-button {
       background: none;
       border: none;
-      color: #333;
+      color: #ffffff;
       font-size: 24px;
       position: absolute;
       right: 15px;
@@ -288,10 +331,25 @@
 </button>
 
 <!-- Header Section -->
-<div class="header-container">
-  <h1>Aphasia Unit - Matching Games</h1>
-  <h6>Boost Memory, Boost Speech. Let's Match!</h6>
-</div>
+    <div class="header-container">
+        <h1>Aphasia Unit - Matching Games</h1>
+        <div class="header-title">
+            <h6>Find the Words, Find the Voice</h6>
+            <img id="infoButton" src="information-button.png" alt="Info" class="info-button">
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="info-modal">
+        <div class="info-modal-content">
+            <span class="close-button">&times;</span>
+            <p><i>Brain exercise is as important as physical exercise for everyone, 
+                and even more imperative for a condition such as Aphasia, which can hinder not only movement and communication skills but the overall mental capacity of memory and thinking. 
+                That’s why it’s important to keep our brains active daily! 
+                Similar to the act of exercise, which thrives on repetition, Matching Games is all about learning and relearning.</i></p>
+            <h6>Memorize and match each paired card</h6>
+        </div>
+    </div>
 
 <!-- Main Container for the Game -->
 <div class="game-container">
@@ -305,6 +363,9 @@
 
   <!-- Game Board -->
   <div id="gameBoard" class="board"></div>
+  <audio id="correctSound" src="sfx-correctAnswer.mp3"></audio>
+    <audio id="incorrectSound" src="sfx-incorrectAnswer.mp3"></audio>
+
 </div>
 
 <!-- Custom Alert Modal -->
@@ -377,6 +438,10 @@
     "blueberry.jpg", "grape.jpg", "dragonfruit.jpg", "peach.jpg"
   ];
 
+  // Get the audio elements
+const correctSound = document.getElementById("correctSound");
+const incorrectSound = document.getElementById("incorrectSound");
+
   let cards = [...images, ...images]; // Duplicate to make pairs
   let flippedCards = [];
   let matchedPairs = 0;
@@ -430,26 +495,87 @@
     }
   }
 
-  function checkMatch() {
-    const [card1, card2] = flippedCards;
-    if (card1.querySelector("img").src === card2.querySelector("img").src) {
-      card1.classList.add("matched");
-      card2.classList.add("matched");
-      matchedPairs++;
-      if (matchedPairs === images.length) {
-        setTimeout(() => showModal("🎉 Congratulations!", "You matched all pairs!"), 300);
-      }
-    } else {
-      setTimeout(() => {
-        card1.querySelector("img").classList.remove("visible");
-        card1.querySelector("img").classList.add("hidden");
-        card2.querySelector("img").classList.remove("visible");
-        card2.querySelector("img").classList.add("hidden");
-      }, 800);
+  //debugging, locating audio elements
+function playSound(sound, callback) {
+    if (!sound) {
+        console.error("Audio element not found! Check if the script runs after the HTML loads.");
+        return;
     }
-    flippedCards = [];
-    canFlip = true;
-  }
+
+    if (!sound.src) {
+        console.error("Audio source is missing! Check the file path.");
+        return;
+    }
+
+    canFlip = false; // Prevent further clicks while sound is playing
+
+    sound.play().then(() => {
+        sound.onended = () => {
+            canFlip = true; // Re-enable clicking after sound ends
+            if (callback) callback(); // Execute any follow-up logic
+        };
+    }).catch(error => {
+        console.error("Error playing audio:", error);
+        canFlip = true; // Ensure game is not stuck if sound fails
+    });
+}
+
+  // Check if two flipped cards match
+function checkMatch() {
+    if (flippedCards.length < 2) {
+        console.error("checkMatch called with less than 2 cards!", flippedCards);
+        return;
+    }
+
+    const [card1, card2] = flippedCards;
+
+    if (!card1 || !card2) {
+        console.error("Undefined card detected!", card1, card2);
+        flippedCards = [];
+        canFlip = true;
+        return;
+    }
+
+    const img1 = card1.querySelector("img");
+    const img2 = card2.querySelector("img");
+
+    if (!img1 || !img2) {
+        console.error("Image element not found!", img1, img2);
+        flippedCards = [];
+        canFlip = true;
+        return;
+    }
+
+    if (img1.src === img2.src) {
+        // ✅ Highlight matched cards immediately
+        card1.classList.add("matched");
+        card2.classList.add("matched");
+
+        // ✅ Play sound in parallel with highlighting
+        playSound(correctSound, () => {
+            matchedPairs++;
+
+            if (matchedPairs === images.length) {
+                setTimeout(() => showModal("🎉 Congratulations!", " You matched all pairs!"), 300);
+            }
+
+            flippedCards = [];
+            canFlip = true;
+        });
+
+    } else {
+        playSound(incorrectSound, () => {
+            img1.classList.remove("visible");
+            img1.classList.add("hidden");
+
+            img2.classList.remove("visible");
+            img2.classList.add("hidden");
+
+            flippedCards = [];
+            canFlip = true;
+        });
+    }
+}
 
   // Start Game button inside the modal
   document.getElementById("startGame").addEventListener("click", () => {
@@ -460,4 +586,25 @@
 
   // Show modal initially
   document.getElementById("modal").style.display = "flex";
+
+    const infoButton = document.getElementById("infoButton");
+    const infoModal = document.getElementById("infoModal");
+    const closeButton = document.querySelector(".close-button");
+
+    // Show modal when clicking the info button
+    infoButton.addEventListener("click", () => {
+        infoModal.style.display = "block";
+    });
+
+    // Close modal when clicking the close button
+    closeButton.addEventListener("click", () => {
+        infoModal.style.display = "none";
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener("click", (event) => {
+        if (event.target === infoModal) {
+            infoModal.style.display = "none";
+        }
+    });
 </script>

@@ -964,20 +964,16 @@ let currentRecipientEmail = '';
   }
 
   function sendEmail() {
-    const senderEmail = document.getElementById('senderEmailInput').value;
-    const senderPassword = document.getElementById('senderPasswordInput').value;
-    const recipientEmail = document.getElementById('recipientEmailInput').value;
     const subject = document.getElementById('emailSubject').value;
     const message = document.getElementById('emailMessage').value;
 
     // Validate inputs
-    if (!senderEmail || !senderPassword || !recipientEmail || !subject || !message) {
-        alert('Please fill in all fields.');
+    if (!subject || !message) {
+        alert('Please fill in both the subject and message fields.');
         return;
     }
 
-    console.log('Sending email from:', senderEmail); // Debug log
-    console.log('Sending email to:', recipientEmail); // Debug log
+    console.log('Sending email to:', currentRecipientEmail); // Debug log
     console.log('Subject:', subject); // Debug log
     console.log('Message:', message); // Debug log
 
@@ -985,28 +981,26 @@ let currentRecipientEmail = '';
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            from: senderEmail, // Sender's Gmail address
-            to: recipientEmail, // Recipient's email address
+            to: currentRecipientEmail,
             subject: subject,
-            text: message,
-            password: senderPassword, // Sender's Gmail app password
-      })
+            text: message
+        })
     })
     .then(response => response.json())
     .then(data => {
-      if (data.message) {
-        alert(data.message);
-      } else {
-        alert(data.error || 'Error sending email');
-      }
-      closeEmailModal();
+        if (data.message) {
+            alert(data.message);
+        } else {
+            alert(data.error || 'Error sending email');
+        }
+        closeEmailModal();
     })
     .catch(err => {
-      console.error('Error:', err);
-      alert('Error sending email');
-      closeEmailModal();
+        console.error('Error:', err);
+        alert('Error sending email');
+        closeEmailModal();
     });
-  }
+}
   
   </script>
 

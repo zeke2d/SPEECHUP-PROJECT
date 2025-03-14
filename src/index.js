@@ -39,18 +39,20 @@ const upload = multer({
     }
 });
 
-async function sendEmail(senderEmail, senderPassword, to, subject, text) {
-    try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: senderEmail, // User's Gmail address
-                pass: senderPassword, // User's Gmail password
-            },
-        });
+// Create a transporter object using Gmail service
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER, // your Gmail account
+        pass: process.env.GMAIL_PASS  // your Gmail app password
+    }
+});
 
+// Function to send an email
+const sendEmail = async (to, subject, text) => {
+    try {
         const mailOptions = {
-            from: senderEmail, // User's Gmail address
+            from: process.env.GMAIL_USER,
             to: to,
             subject: subject,
             text: text,
@@ -63,7 +65,8 @@ async function sendEmail(senderEmail, senderPassword, to, subject, text) {
         console.error('Error sending email:', error);
         throw error;
     }
-}
+};
+
 
 app.use("/uploads", express.static("public/uploads"));
 
@@ -955,38 +958,17 @@ app.post("/add-grades", async (req, res) => {
 
   // Route to send an email
   app.post('/send-email', async (req, res) => {
-    const { from, to, subject, text, password } = req.body; // Add `from` and `password`
-    console.log('Sending email from:', from); // Debug log
-    console.log('Sending email to:', to);     // Debug log
-    console.log('Subject:', subject);         // Debug log
-    console.log('Text:', text);               // Debug log
+    const { to, subject, text } = req.body;
+    console.log('Sending email to:', to); // Debug log
+    console.log('Subject:', subject);    // Debug log
+    console.log('Text:', text);          // Debug log
 
     try {
-        // Create a transporter object using the sender's credentials
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            host: 'smtp.gmail.com',
-            port: 465, // Use 465 for SSL or 587 for TLS
-            secure: true, // true for 465, false for other ports
-            auth: {
-                user: from, // Sender's Gmail address
-                pass: password, // Sender's Gmail app password
-            },
-        });
-
-        const mailOptions = {
-            from: from, // Sender's Gmail address
-            to: to,     // Recipient's email address
-            subject: subject,
-            text: text,
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-        res.status(200).json({ message: 'Email sent successfully' });
+        await sendEmail(to, subject, text);
+        res.status(200).json({ message: 'Email sent successfully' }); // Use .json() instead of .send()
     } catch (error) {
         console.error('Error sending email:', error);
-        res.status(500).json({ error: 'Error sending email' });
+        res.status(500).json({ error: 'Error sending email' }); // Use .json() instead of .send()
     }
 });
 

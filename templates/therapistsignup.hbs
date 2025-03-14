@@ -223,7 +223,7 @@
     font-size: 14px;
   }
 
-        }
+}
 
    /* Hide the default file input */
 input[type="file"] {
@@ -361,6 +361,11 @@ input[type="file"] {
         <div class="right-section">
             <h2>Welcome to Speech Up!</h2>
             <p>Please sign up to create your account and start the adventure</p>
+
+            {{#if error}}
+               <p style="color: red; text-align: center;">{{error}}</p>
+            {{/if}}
+            
             <form id="therapistsignupForm" action="/therapistsignup" method="post" enctype="multipart/form-data">
                 <input type="text" name="firstName" placeholder="First Name" required>
                 <input type="text" name="lastName" placeholder="Last Name" required>

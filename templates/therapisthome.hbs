@@ -1274,11 +1274,11 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
 
   let currentRecipientEmail = '';
 
-  function openEmailModal(to) {
+  function openEmailModal(recipientEmail) {
 
-    currentRecipientEmail = to;
+    currentRecipientEmail = recipientEmail;
 
-    document.getElementById('recipientEmailInput').value = to;
+    document.getElementById('recipientEmailInput').value = recipientEmail;
     document.getElementById('emailSubject').value = '';
     document.getElementById('emailMessage').value = '';
     document.getElementById('emailModal').style.display = 'flex';
@@ -1298,7 +1298,7 @@ function sendEmail() {
         return;
     }
 
-    console.log('Sending email to:', to); // Debug log
+    console.log('Sending email to:', currentRecipientEmail); // Debug log
     console.log('Subject:', subject); // Debug log
     console.log('Message:', message); // Debug log
 
@@ -1306,7 +1306,7 @@ function sendEmail() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            to: to,
+            to: currentRecipientEmail,
             subject: subject,
             text: message,
         })

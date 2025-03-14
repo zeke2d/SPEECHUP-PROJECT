@@ -1527,11 +1527,11 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
 
     // Validate inputs
     if (!subject || !message) {
-        showModal('Please fill in all fields.');
+        showModal('Try Again!', 'Please fill in all fields');
         return;
     }
 
-    console.log('Sending email to:', recipientEmail); // Debug log
+    console.log('Sending email to:', to); // Debug log
     console.log('Subject:', subject); // Debug log
     console.log('Message:', message); // Debug log
 
@@ -1539,7 +1539,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            to: recipientEmail, // Recipient's email address
+            to: to, // Recipient's email address
             subject: subject,
             text: message,
         })

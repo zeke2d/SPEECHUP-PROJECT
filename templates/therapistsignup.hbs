@@ -361,10 +361,6 @@ input[type="file"] {
         <div class="right-section">
             <h2>Welcome to Speech Up!</h2>
             <p>Please sign up to create your account and start the adventure</p>
-
-            {{#if error}}
-               <p style="color: red; text-align: center;">{{error}}</p>
-            {{/if}}
             
             <form id="therapistsignupForm" action="/therapistsignup" method="post" enctype="multipart/form-data">
                 <input type="text" name="firstName" placeholder="First Name" required>
@@ -391,6 +387,9 @@ input[type="file"] {
             <span class="checkmark"></span>
             I have read and agree to the <a href="#" id="data-privacy-link">Data Privacy Policy</a>
         </label>
+
+          <!-- This div will display error messages if validations fail -->
+  <div id="therapistErrorMessage" class="error-message" style="color: red;"></div>
 
         <button type="submit" class="signup-btn">Sign Up</button>
             </form>
@@ -630,6 +629,28 @@ window.addEventListener("click", (e) => {
                 toggleButton.innerText = "🙈";
             }
         }
+
+        document.getElementById("therapistsignupForm").addEventListener("submit", function(e) {
+  let errorMessage = "";
+
+  // Validate that a file is uploaded for the PRC license
+  const fileInput = document.getElementById("prcLicense");
+  if (fileInput.files.length === 0) {
+    errorMessage += "Please upload an image for your PRC license.<br>";
+  }
+
+  // Validate that the data privacy checkbox is checked
+  const privacyCheckbox = document.getElementById("dataPrivacy");
+  if (!privacyCheckbox.checked) {
+    errorMessage += "You must agree to the data privacy policy.<br>";
+  }
+
+  // If there are errors, prevent form submission and show errors
+  if (errorMessage) {
+    e.preventDefault();
+    document.getElementById("therapistErrorMessage").innerHTML = errorMessage;
+  }
+});
 
         function goBack() {
             window.location.href = "/"; 

@@ -690,6 +690,29 @@ app.post("/upload-patient-profile", upload.single("profileImage"), async (req, r
     }
 });
 
+app.post("/setappointment", async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+  
+    const { patientEmail, therapistEmail, appointmentDate, appointmentTime } = req.body;
+  
+    try {
+      // Replace this with your actual database call
+      await Appointment.create({
+        patientEmail,
+        therapistEmail,
+        appointmentDate,
+        appointmentTime,
+      });
+      res.json({ success: true, message: "Appointment set successfully" });
+    } catch (error) {
+      console.error("Error setting appointment:", error);
+      res.status(500).json({ success: false, message: "Error setting appointment" });
+    }
+  });
+  
+
 // Render the appointment setting page
 app.get("/setappointment", (req, res) => {
     if (!req.session.user) {

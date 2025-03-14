@@ -351,6 +351,8 @@
             I have read and agree to the <a href="#" id="data-privacy-link">Data Privacy Policy</a>
         </label>
 
+        <div id="patientErrorMessage" class="error-message" style="color: red;"></div>
+
         <button type="submit" class="signup-btn">Sign Up</button>
             </form>
             <br>
@@ -583,6 +585,22 @@ window.addEventListener("click", (e) => {
                 toggleButton.innerText = "🙈";
             }
         }
+
+        document.getElementById("patientsignupForm").addEventListener("submit", function(e) {
+  let errorMessage = "";
+
+  // Validate that the data privacy checkbox is checked
+  const privacyCheckbox = document.getElementById("dataPrivacy");
+  if (!privacyCheckbox.checked) {
+    errorMessage += "You must agree to the data privacy policy.<br>";
+  }
+
+  // If there are errors, prevent form submission and show errors
+  if (errorMessage) {
+    e.preventDefault();
+    document.getElementById("patientErrorMessage").innerHTML = errorMessage;
+  }
+});
 
         function goBack() {
             window.location.href = "/"; 

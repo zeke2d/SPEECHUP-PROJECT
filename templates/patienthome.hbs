@@ -1114,6 +1114,26 @@ let currentRecipientEmail = '';
     });
   }
 
+  //courses.hbs | modal for the 3 units
+  function openModal(type, event) {
+      event.stopPropagation(); // Prevents the click from triggering parent elements
+      const modal = document.getElementById("modal");
+      const modalContent = document.getElementById("modal-content");
+
+      const messages = {
+          "apraxia": "About Apraxia text",
+          "dysarthria": "About Dysarthria text",
+          "aphasia": "About Aphasia text"
+      };
+
+      modalContent.innerHTML = `<h4>${messages[type]}</h4>`;
+      modal.style.display = "block";
+  }
+
+  function closeModal() {
+      document.getElementById("modal").style.display = "none";
+  }
+
     </script>
 
 </body>

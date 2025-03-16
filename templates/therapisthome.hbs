@@ -1326,6 +1326,100 @@ function sendEmail() {
         closeEmailModal();
     });
 }
+
+//courses.hbs (therapist view) | modal for the 3 units
+function openModal(type, event) {
+    event.stopPropagation(); // Prevents parent button click
+    console.log("Opening modal for:", type); // Debugging log
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
+
+    const messages = {
+        "apraxia": `
+            <h4>About Apraxia</h4>
+            <p>Apraxia is a neurological disorder that affects your ability to perform purposeful movements,
+             even though you have the muscle strength and understanding to do them. It's like your brain has trouble sending the right signals to your body.
+            </p>
+            <br>
+            <h5>Signs & Symptoms:</h5>
+            <ul>
+                <em>
+                <li>Difficulty with learned motor skills (e.g., brushing teeth, waving).</li>
+                <li>Trouble sequencing movements.</li>
+                <li>Speech apraxia affects speaking; difficulty forming words.</li>
+                <li>Clumsiness or poor coordination.</li>
+                <li>Inconsistent errors; sometimes you can do it, sometimes not.</li>
+                </em>
+            </ul>
+            <br>
+            <h5>Tips for You:</h5>
+            <ul>
+                <li>Break down tasks into smaller steps.</li>
+                <li>Practice regularly, even small amounts.</li>
+                <li>Use visual cues or demonstrations.</li>
+                <li>Be patient with yourself; progress takes time.</li>
+            </ul>
+        `,
+        "dysarthria": `
+            <h4>About Dysarthria</h4>
+            <p>Dysarthria is a motor speech disorder. It occurs when the muscles you use for speech are weakened or you have difficulty controlling them. 
+            This can affect how clearly you speak.
+            </p>
+            <br>
+            <h5>Signs & Symptoms:</h5>
+            <ul>
+                <em>
+                <li>Slurred or mumbled speech.</li>
+                <li>Slow rate of speech.</li>
+                <li>Rapid rate of speech with a mumbled quality.</li>
+                <li>Soft or quiet speech.</li>
+                <li>Difficulty moving your tongue or facial muscles.</li>
+                <li>Changes in voice quality (hoarse, breathy, nasal).</li>
+                </em>
+            </ul>
+            <br>
+            <h5>Tips for You:</h5>
+            <ul>
+                <li>Speak slowly and deliberately.</li>
+                <li>Take deep breaths before speaking.</li>
+                <li>Use shorter phrases.</li>
+                <li>Focus on exaggerating your articulation.</li>
+                <li>Work with a speech therapist.</li>
+            </ul>
+        `,
+        "aphasia": `
+            <h4>About Aphasia</h4>
+            <p>Aphasia is a language disorder that affects your ability to communicate. It's caused by damage to the parts of the brain that control language.</p>
+            <br>
+            <h5>Signs & Symptoms:</h5>
+            <ul>
+                <em>
+                <li>Difficulty speaking, finding words, or forming sentences.</li>
+                <li>Trouble understanding spoken language.</li>
+                <li>Problems with reading and writing.</li>
+                <li>Using incorrect words or made-up words.</li>
+                <li>Difficulty following conversations.</li>
+                </em>
+            </ul>
+            <br>
+            <h5>Tips for You:</h5>
+            <ul>
+                <li>Use visual aids like pictures or gestures.</li>
+                <li>Speak slowly and clearly.</li>
+                <li>Allow extra time for communication.</li>
+                <li>Repeat or rephrase if needed.</li>
+                <li>Work with a speech-language pathologist.</li>
+            </ul>
+        `
+    };
+
+    modalContent.innerHTML = messages[type];
+    modal.style.display = "block";
+}
+
+  function closeModal() {
+      document.getElementById("modal").style.display = "none";
+  }
   
   </script>
 

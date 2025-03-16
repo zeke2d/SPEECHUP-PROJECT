@@ -32,7 +32,7 @@
   border-radius: 20px;
   width: 80%;
   max-width: 600px;
-  margin: 25px auto 50px;
+  margin: 25px auto 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,7 +156,6 @@ h6 {
   }
 
   /* Buttons */
-  button.play-sound,
   button.record-sound,
   button.play-recording {
     background-color: #ffffff;
@@ -168,6 +167,18 @@ h6 {
     font-size: 14px;
     cursor: pointer;
   }
+
+  button.play-sound {
+    background-color: #ffffff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 15px; /*aligning with the two buttons*/
+}
 
   button.play-sound:hover {
     background-color: #e0e0e0;

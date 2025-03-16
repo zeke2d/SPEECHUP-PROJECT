@@ -1208,6 +1208,110 @@ function openModal(type, event) {
       document.getElementById("modal").style.display = "none";
   }
 
+
+//(ANIMAL SOUNDS script)
+ function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  
+  function startGameAnimalSounds(){
+
+  console.log("animalsounds-script.js loaded!");
+
+// Immediately attach event listeners
+document.querySelectorAll(".play-sound").forEach((button) => {
+  button.addEventListener("click", () => {
+    const soundPath = button.dataset.sound;
+    console.log(`Attempting to play: ${soundPath}`);
+    const sound = new Audio(soundPath);
+    sound
+      .play()
+      .then(() => {
+        console.log(`Playing sound: ${soundPath}`);
+      })
+      .catch((error) => {
+        console.error(`Error playing sound: ${soundPath}`, error);
+      });
+  });
+});
+
+const recordings = new Map();
+
+document.querySelectorAll(".animal").forEach((animalDiv) => {
+  const recordButton = animalDiv.querySelector(".record-sound");
+  const playButton = animalDiv.querySelector(".play-recording");
+  const animal = recordButton.dataset.animal;
+
+  recordButton.addEventListener("click", async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Microphone access is not supported in your browser.");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      const chunks = [];
+
+      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: "audio/wav" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        recordings.set(animal, audioUrl);
+        playButton.disabled = false;
+        console.log(`Recording saved for ${animal}.`);
+      };
+
+      mediaRecorder.start();
+      showModal(`Recording started for ${animal}.`, "You can now speak to record your voice!");
+
+      setTimeout(() => {
+        mediaRecorder.stop();
+        stream.getTracks().forEach((track) => track.stop());
+        console.log(`Recording stopped for ${animal}.`);
+      }, 3000);
+    } catch (error) {
+      console.error(`Error recording for ${animal}:`, error);
+      alert("Could not access your microphone. Please check permissions.");
+    }
+  });
+
+  playButton.addEventListener("click", () => {
+    if (recordings.has(animal)) {
+      const audio = new Audio(recordings.get(animal));
+      audio.play();
+    } else {
+      showModal(`No recording available for ${animal}.`, "Please record first!");
+    }
+  });
+});
+
+// Modal Functionality
+// Ensure modal only opens when clicked
+  const modal = document.getElementById("info-modal");
+  const btn = document.getElementById("info-button");
+  const close = document.querySelector(".modal .close");
+
+  // Make sure modal is hidden initially
+  modal.style.display = "none";
+
+  btn.addEventListener("click", () => {
+    modal.style.display = "block"; // Show modal when button is clicked
+  });
+
+  close.addEventListener("click", () => {
+    modal.style.display = "none"; // Close modal when X is clicked
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none"; // Close modal if user clicks outside of it
+    }
+  });
+  
+} // ANIMAL SOUNDS end script
+  
     </script>
 
 </body>

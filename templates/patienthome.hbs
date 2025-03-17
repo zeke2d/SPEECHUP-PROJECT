@@ -1310,7 +1310,11 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     }
   });
 
-// SpeechSynthesis API Integration
+// SpeechSynthesis API Integration with Pause/Resume Feature
+const synth = window.speechSynthesis;
+let utterance;   // Store current speech
+let isPaused = false;  // Track pause state
+
 document.getElementById("play-text-sound").addEventListener("click", () => {
     const modalContent = document.querySelector(".modal-content").innerText.trim();
 
@@ -1319,16 +1323,35 @@ document.getElementById("play-text-sound").addEventListener("click", () => {
         return;
     }
 
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(modalContent);
+    // Handle Pause/Resume
+    if (synth.speaking) {
+        if (isPaused) {
+            synth.resume();
+            isPaused = false;
+            console.log("Speech resumed.");
+        } else {
+            synth.pause();
+            isPaused = true;
+            console.log("Speech paused.");
+        }
+        return;
+    }
 
-    // Optional: Set voice properties for improved clarity
-    utterance.lang = 'en-US';        // Language setting
-    utterance.rate = 0.9;           // Speaking speed (1 is normal, lower is slower)
-    utterance.pitch = 1.2;          // Slightly higher pitch for better clarity
-    utterance.volume = 1.0;         // Maximum volume
+    // If no speech is active, start fresh
+    utterance = new SpeechSynthesisUtterance(modalContent);
 
-    synth.speak(utterance);  // Trigger speech
+    // Optional: Voice settings for clarity
+    utterance.lang = 'en-US'; // language setting 
+    utterance.rate = 0.9;     // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;    // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;   // max volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance);
 });
   
 } // ANIMAL SOUNDS end script

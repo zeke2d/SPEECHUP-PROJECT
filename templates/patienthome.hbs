@@ -1204,9 +1204,50 @@ function openModal(type, event) {
     modal.style.display = "block";
 }
 
-  function closeModal() {
-      document.getElementById("modal").style.display = "none";
-  }
+// SpeechSynthesis API Integration
+const synth = window.speechSynthesis;
+let utterance; // Store current speech
+let isPaused = false; // Track pause state
+
+// Play Text-to-Speech when the "Play" button is clicked
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Stop current speech if already playing
+    if (synth.speaking) {
+        synth.cancel(); // Cancels and resets speech
+    }
+
+    // Create a new utterance for reading the modal content
+    utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Voice settings for clarity
+    utterance.lang = 'en-US'; // Language setting 
+    utterance.rate = 0.9;     // Slightly slower for clarity
+    utterance.pitch = 1.1;    // Slightly higher pitch for better focus
+    utterance.volume = 1.0;   // Maximum volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance); // Start speaking
+});
+
+// Stop Speech when the Modal is Closed
+function closeModal() {
+    if (synth.speaking) {
+        synth.cancel(); // Ensures the speech stops and resets
+    }
+
+    document.getElementById("modal").style.display = "none";
+} //END Courses Script
 
 
 //(ANIMAL SOUNDS script)

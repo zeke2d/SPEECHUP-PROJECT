@@ -1309,6 +1309,27 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
       modal.style.display = "none"; // Close modal if user clicks outside of it
     }
   });
+
+// SpeechSynthesis API Integration
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    const synth = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Optional: Set voice properties for improved clarity
+    utterance.lang = 'en-US';        // Language setting
+    utterance.rate = 0.9;           // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;          // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;         // Maximum volume
+
+    synth.speak(utterance);  // Trigger speech
+});
   
 } // ANIMAL SOUNDS end script
   

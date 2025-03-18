@@ -394,6 +394,10 @@ h6 {
 
 <script>
 
+   // Make sure this is at the top, before other functions use the email
+  const patientEmail = "{{email}}";
+  console.log("Patient email in matchinggames.hbs:", patientEmail);
+
   /******** Custom Modal Functions with Callback ********/
     function showModal(title, message, callback) {
       document.getElementById("modalTitle").innerText = title;
@@ -556,8 +560,12 @@ function checkMatch() {
             matchedPairs++;
 
             if (matchedPairs === images.length) {
-                setTimeout(() => showModal("🎉 Congratulations!", " You matched all pairs!"), 300);
-            }
+                setTimeout(() => {
+                  showModal("🎉 Congratulations!", " You matched all pairs!");
+                // Automatically update the grade for matching games to 100
+              updateMatchingGameGrade();
+            }, 300);
+          }
 
             flippedCards = [];
             canFlip = true;
@@ -576,6 +584,34 @@ function checkMatch() {
         });
     }
 }
+
+// New function to update the matching game grade to 100
+    function updateMatchingGameGrade() {
+      
+      const data = {
+        email: patientEmail,
+        grades: { matchingGames: 100 }
+      };
+
+      fetch("/add-grades", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          console.log("Matching game grade updated to 100");
+        } else {
+          console.error("Failed to update matching game grade:", result.message);
+        }
+      })
+      .catch(error => {
+        console.error("Error updating grade:", error);
+      });
+    }
 
   // Start Game button inside the modal
   document.getElementById("startGame").addEventListener("click", () => {

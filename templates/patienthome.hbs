@@ -1114,7 +1114,7 @@ let currentRecipientEmail = '';
     });
   }
 
-  //courses.hbs | modal for the 3 units
+//courses.hbs | modal for the 3 units ********************************************************************
 function openModal(type, event) {
     event.stopPropagation(); // Prevents parent button click
     console.log("Opening modal for:", type); // Debugging log
@@ -1204,9 +1204,80 @@ function openModal(type, event) {
     modal.style.display = "block";
 }
 
-  function closeModal() {
-      document.getElementById("modal").style.display = "none";
-  }
+// SpeechSynthesis API Integration
+const synth = window.speechSynthesis;
+let utterance;  // Stores the current speech
+let isPaused = false;  // Tracks pause state
+let isSpeaking = false; // Tracks if speech is actively playing
+
+// Play/Pause/Resume Text-to-Speech
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // If speech is playing and NOT paused, PAUSE it
+    if (isSpeaking && !isPaused) {
+        synth.pause();
+        isPaused = true;
+        console.log("Speech paused.");
+        return;
+    }
+
+    // If speech is paused, RESUME it
+    if (isSpeaking && isPaused) {
+        synth.resume();
+        isPaused = false;
+        console.log("Speech resumed.");
+        return;
+    }
+
+    // If no speech is active, START a new utterance
+    startNewSpeech(modalContent);
+});
+
+// Function to start speech from the top
+function startNewSpeech(content) {
+    utterance = new SpeechSynthesisUtterance(content);
+
+    // Voice settings for clarity
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    utterance.volume = 1.0;
+
+    utterance.onstart = () => {
+        isSpeaking = true;
+        isPaused = false;
+    };
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isSpeaking = false;
+        isPaused = false; // Reset state when finished
+    };
+
+    synth.speak(utterance);
+}
+
+// Stop Speech and Reset State when the Modal is Closed
+function closeModal() {
+    console.log("Closing modal...");  // added console log for debugging
+
+    if (synth.speaking || isPaused) {
+        synth.cancel();  // Ensures speech stops and resets state
+        console.log("Speech stopped.");
+    }
+
+    isSpeaking = false;
+    isPaused = false;
+
+    document.getElementById("modal").style.display = "none";
+}
+//END Courses Script********************************************************************************
 
 
 //(ANIMAL SOUNDS script)

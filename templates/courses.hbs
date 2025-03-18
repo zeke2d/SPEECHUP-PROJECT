@@ -279,10 +279,11 @@ function openModal(type, event) {
 
 // SpeechSynthesis API Integration
 const synth = window.speechSynthesis;
-let utterance; // Store current speech
-let isPaused = false; // Track pause state
+let utterance;  // Stores the current speech
+let isPaused = false;  // Tracks pause state
+let isSpeaking = false; // Tracks if speech is actively playing
 
-// Play Text-to-Speech when the "Play" button is clicked
+// Play/Pause/Resume Text-to-Speech
 document.getElementById("play-text-sound").addEventListener("click", () => {
     const modalContent = document.querySelector(".modal-content").innerText.trim();
 
@@ -291,33 +292,61 @@ document.getElementById("play-text-sound").addEventListener("click", () => {
         return;
     }
 
-    // Stop current speech if already playing
-    if (synth.speaking) {
-        synth.cancel(); // Cancels and resets speech
+    // If speech is playing and NOT paused, PAUSE it
+    if (isSpeaking && !isPaused) {
+        synth.pause();
+        isPaused = true;
+        console.log("Speech paused.");
+        return;
     }
 
-    // Create a new utterance for reading the modal content
-    utterance = new SpeechSynthesisUtterance(modalContent);
+    // If speech is paused, RESUME it
+    if (isSpeaking && isPaused) {
+        synth.resume();
+        isPaused = false;
+        console.log("Speech resumed.");
+        return;
+    }
+
+    // If no speech is active, START a new utterance
+    startNewSpeech(modalContent);
+});
+
+// Function to start speech from the top
+function startNewSpeech(content) {
+    utterance = new SpeechSynthesisUtterance(content);
 
     // Voice settings for clarity
-    utterance.lang = 'en-US'; // Language setting 
-    utterance.rate = 0.9;     // Slightly slower for clarity
-    utterance.pitch = 1.1;    // Slightly higher pitch for better focus
-    utterance.volume = 1.0;   // Maximum volume
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    utterance.volume = 1.0;
+
+    utterance.onstart = () => {
+        isSpeaking = true;
+        isPaused = false;
+    };
 
     utterance.onend = () => {
         console.log("Speech finished.");
-        isPaused = false; // Reset pause state when finished
+        isSpeaking = false;
+        isPaused = false; // Reset state when finished
     };
 
-    synth.speak(utterance); // Start speaking
-});
+    synth.speak(utterance);
+}
 
-// Stop Speech when the Modal is Closed
+// Stop Speech and Reset State when the Modal is Closed
 function closeModal() {
-    if (synth.speaking) {
-        synth.cancel(); // Ensures the speech stops and resets
+    console.log("Closing modal...");  // added console log for debugging
+
+    if (synth.speaking || isPaused) {
+        synth.cancel();  // Ensures speech stops and resets state
+        console.log("Speech stopped.");
     }
+
+    isSpeaking = false;
+    isPaused = false;
 
     document.getElementById("modal").style.display = "none";
 }

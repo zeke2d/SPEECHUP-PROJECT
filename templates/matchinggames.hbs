@@ -393,6 +393,10 @@ h6 {
 
 <script>
 
+   // Make sure this is at the top, before other functions use the email
+  const patientEmail = "{{email}}";
+  console.log("Patient email in matchinggames.hbs:", patientEmail);
+
   /******** Custom Modal Functions with Callback ********/
     function showModal(title, message, callback) {
       document.getElementById("modalTitle").innerText = title;

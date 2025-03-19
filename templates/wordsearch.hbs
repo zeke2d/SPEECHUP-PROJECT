@@ -293,6 +293,11 @@
 </div> <!-- end .game-container -->
 
 <script>
+
+   // Make sure this is at the top, before other functions use the email
+  const patientEmail = "{{email}}";
+  console.log("Patient email in wordsearch.hbs:", patientEmail);
+  
   /***** WORD SEARCH GAME CODE *****/
   const words = [
     "Cognitivelinguistic", "Speechpathologist", "Thickenedliquids", "Speakingvalves", "Aspiration", 

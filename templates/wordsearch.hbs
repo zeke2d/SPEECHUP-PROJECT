@@ -293,6 +293,10 @@
 </div> <!-- end .game-container -->
 
 <script>
+
+  const patientEmail = "{{email}}";
+  console.log("Patient email in wordsearch.hbs:", patientEmail);
+
   /***** WORD SEARCH GAME CODE *****/
   const words = [
     "Cognitivelinguistic", "Speechpathologist", "Thickenedliquids", "Speakingvalves", "Aspiration", 
@@ -472,6 +476,8 @@
         hintButton.disabled = true;
         hintButton.style.opacity = "0.5";
         hintButton.style.cursor = "not-allowed";
+        // Automatically update the grade for the word search game to 100
+        updateWordSearchGrade();
       } else {
         message.textContent = "Correct! Keep going!";
         message.style.color = "";
@@ -492,6 +498,31 @@
           cell.style.backgroundColor = "";
         }
       });
+    });
+  }
+
+  // Function to update the grade for the word search game
+  function updateWordSearchGrade() {
+    const data = {
+      email: patientEmail,
+      grades: { wordSearch: 100 }
+    };
+
+    fetch("/add-grades", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        console.log("Word Search game grade updated to 100");
+      } else {
+        console.error("Failed to update word search game grade:", result.message);
+      }
+    })
+    .catch(error => {
+      console.error("Error updating word search game grade:", error);
     });
   }
 

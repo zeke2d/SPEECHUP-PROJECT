@@ -128,8 +128,13 @@ app.get("/bookreading", (req, res) => {
 })
 
 app.get("/wordsearch", (req, res) => {
-    res.render("wordsearch")
-})
+    if (!req.session.user) {
+        return res.redirect("/login");
+      } 
+
+      console.log("Session user email:", req.session.user.email);
+      res.render("wordsearch", { email : req.session.user.email});
+    });
 
 app.get("/wordflipbook", (req, res) => {
     res.render("wordflipbook")
@@ -147,6 +152,14 @@ app.get("/matchinggames", (req, res) => {
 app.get("/tonguetwisters", (req, res) => {
     res.render("tonguetwisters")
 })
+
+app.get("/content/wordsearch", (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).send("Unauthorized");
+    }
+    
+    res.render("wordsearch", { email: req.session.user.email });
+  });
 
 app.get("/content/matchinggames", (req, res) => {
     if (!req.session.user) {

@@ -144,7 +144,7 @@
 
     <!-- Modal Structure -->
     <div id="modal" class="modal">
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <button class="close-btn" onclick="closeCourseModal()">&times;</button>
         <div class="modal-content" id="modal-content"></div>
     </div>
 </div>
@@ -252,7 +252,7 @@ function openModal(type, event) {
     modal.style.display = "block";
 }
 
-function closeModal() {
+function closeCourseModal() {
     document.getElementById("modal").style.display = "none";
 }
 

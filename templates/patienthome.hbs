@@ -1219,28 +1219,17 @@ document.getElementById("play-text-sound").addEventListener("click", () => {
         return;
     }
 
-    // If speech is playing and NOT paused, PAUSE it
-    if (isSpeaking && !isPaused) {
-        synth.pause();
-        isPaused = true;
-        console.log("Speech paused.");
-        return;
-    }
-
-    // If speech is paused, RESUME it
-    if (isSpeaking && isPaused) {
-        synth.resume();
-        isPaused = false;
-        console.log("Speech resumed.");
-        return;
-    }
-
-    // If no speech is active, START a new utterance
-    startNewSpeech(modalContent);
+    // Always start fresh when the button is clicked
+    startNewSpeech(modalContent);  // ✅ Ensures new speech starts
 });
 
 // Function to start speech from the top
 function startNewSpeech(content) {
+    console.log("Starting new speech...");  // ✅ Debug log for clarity
+    if (synth.speaking || isPaused) {
+        synth.cancel();  // ✅ Stop any active speech before starting fresh
+    }
+
     utterance = new SpeechSynthesisUtterance(content);
 
     // Voice settings for clarity
@@ -1250,6 +1239,7 @@ function startNewSpeech(content) {
     utterance.volume = 1.0;
 
     utterance.onstart = () => {
+        console.log("Speech started...");
         isSpeaking = true;
         isPaused = false;
     };
@@ -1257,7 +1247,7 @@ function startNewSpeech(content) {
     utterance.onend = () => {
         console.log("Speech finished.");
         isSpeaking = false;
-        isPaused = false; // Reset state when finished
+        isPaused = false;
     };
 
     synth.speak(utterance);
@@ -1265,15 +1255,17 @@ function startNewSpeech(content) {
 
 // Stop Speech and Reset State when the Modal is Closed
 function closeModal() {
-    console.log("Closing modal...");  // added console log for debugging
+    console.log("Closing modal...");
 
     if (synth.speaking || isPaused) {
-        synth.cancel();  // Ensures speech stops and resets state
+        synth.cancel();  // ✅ Ensures speech is fully stopped
         console.log("Speech stopped.");
     }
 
+    // Reset state and speech object to ensure fresh playback next time
     isSpeaking = false;
     isPaused = false;
+    utterance = null;  // ✅ Fully reset utterance
 
     document.getElementById("modal").style.display = "none";
 }

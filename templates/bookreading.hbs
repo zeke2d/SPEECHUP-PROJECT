@@ -296,11 +296,11 @@
       <!-- Custom Modal (for styled alerts) -->
 <div id="customModalOverlay" class="custom-modal-overlay">
   <div class="custom-modal">
-    <button class="close-button" onclick="closeModal()">&times;</button>
+    <button class="close-button" onclick="closeBookReadingModal()">&times;</button>
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeBookReadingModal()">OK</button>
   </div>
 </div>
 
@@ -329,7 +329,7 @@
     document.getElementById("modalMessage").innerText = message;
     document.getElementById("customModalOverlay").style.display = "block";
   }
-  function closeModal() {
+  function closeBookReadingModal() {
     document.getElementById("customModalOverlay").style.display = "none";
   }
   

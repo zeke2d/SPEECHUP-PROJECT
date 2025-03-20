@@ -340,6 +340,12 @@
       </div>
 
 <script>
+let accuracyScores = {
+    "Love You Forever": null,
+    "Three Blind Mice": null
+};
+let bookReadingAverage = 0;  // Tracks the average score
+
    // ====== Show & Hide Custom Modal ======
   function showModal(title, message) {
     document.getElementById("modalTitle").innerText = title;
@@ -515,7 +521,7 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
 
     // Normalize text (convert to lowercase, remove punctuation)
     let cleanText = (text) => text.toLowerCase().replace(/[^\w\s]/g, '');
-    
+
     // Use regex to split on one or more whitespace characters and filter out empties
     let userWords = cleanText(userSpeech).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
     let referenceWords = cleanText(referenceText.replace(/<br>/g, " ")).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
@@ -530,16 +536,31 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
             let similarity = (maxLen - distance) / maxLen; // Similarity percentage
 
             if (similarity > 0.8) {
-                correctCount++; // High similarity counts as correct
+                correctCount++;
             } else if (similarity > 0.5) {
-                correctCount += 0.5; // Partial credit for close words
+                correctCount += 0.5;
             }
         }
     }
 
     let accuracy = (correctCount / totalWords) * 100;
+
+    // Store the score for the respective book
+    if (bookName.includes("Love You Forever")) {
+        accuracyScores["Love You Forever"] = accuracy;
+    } else if (bookName.includes("Three Blind Mice")) {
+        accuracyScores["Three Blind Mice"] = accuracy;
+    }
+
+    // Calculate the average score
+    let scores = Object.values(accuracyScores).filter(score => score !== null);
+    if (scores.length === 2) {
+        bookReadingAverage = (scores.reduce((sum, score) => sum + score, 0)) / 2;
+        console.log(`Updated Book Reading Average: ${bookReadingAverage.toFixed(2)}%`);
+    }
+
     console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
-    showModal(`Your accuracy:`, `${accuracy.toFixed(2)}%`);
+    showModal(`Your accuracy for "${bookName}":`, `${accuracy.toFixed(2)}%`);
 }
 
 // Modal Functionality

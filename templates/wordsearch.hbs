@@ -30,7 +30,7 @@
     border-radius: 20px;
     width: 80%;
     max-width: 600px;
-    margin: 25px auto 50px;
+    margin: 25px auto 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -76,7 +76,7 @@
     color: white; 
     padding: 20px;
     border-radius: 10px;
-    width: 350px; 
+    width: 395x; 
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); 
     z-index: 1000; 
   }
@@ -86,8 +86,9 @@
     position: absolute;
     top: 10px;
     right: 15px;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
+    z-index: 1000; 
   }
   
   .modal-content {
@@ -120,7 +121,7 @@
     margin: 0;
   }
   
-  h6 {
+  h6, p {
     color: white;
     font-style: italic;
     opacity: 0.75;
@@ -149,19 +150,22 @@
     justify-content: center;
     align-items: flex-start;
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 5px;
   }
 
   .word-list {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 50px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 110px;
   }
 
   .word-list span {
     color: #002769;
     font-weight: bold;
-    font-size: 14px; 
+    font-size: 16px; 
   }
 
   .grid {
@@ -171,9 +175,9 @@
   }
 
   .cell {
-    width: 20px;
-    height: 20px;
-    font-size: 12px; 
+    width: 30px;
+    height: 30px;
+    font-size: 14px; 
     line-height: 20px;  
     text-align: center;
     background-color: #f3f3f3;
@@ -222,6 +226,27 @@
     transform: translateX(-50%);
     white-space: nowrap;
   }
+
+  #play-text-sound {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    background: none;
+    border: none;
+    width: 23px;  /* Adjust size */
+    height: 23px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* put in front */
+}
+
+#play-text-sound img {
+    width: 100%;
+    height: 100%;
+}
+
 </style>
 
 <!-- Back Button -->
@@ -275,19 +300,22 @@
 
   <!-- Info Modal -->
   <div id="info-modal" class="modal">
+    <button id="play-text-sound">
+        <img src="playTextSound-button.png" alt="Play Sound">
+    </button>
+  <span class="close">&times;</span>
     <div class="modal-content">
-      <span class="close">&times;</span>
-      <p><em>
+      <h3><em>
         Word Search is a helpful tool to engage our cognitive functions. 
         Take your time and use this game as a relaxing opportunity to redirect focus and attention to words,
         which can be beneficial for cognitive functions and destressing -  
         All of which are common factors with a neurological condition such as Dysarthria.
-      </em></p>
-      <h6>
+      </em></h3>
+      <p>
         Find all the words from the word bank!<br>
         Highlight horizontally, diagonally, or even backwards<br>
         <strong>Need Help?</strong> Click the hint button below to reveal the words
-      </h6>
+      </p>
     </div>
   </div>
 </div> <!-- end .game-container -->

@@ -42,7 +42,7 @@
     border-radius: 20px;
     width: 80%;
     max-width: 600px;
-    margin: 25px auto 50px;
+    margin: 25px auto 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,7 +89,7 @@
     color: white; /* White text */
     padding: 20px;
     border-radius: 10px;
-    width: 370px; /* Set modal width */
+    width: 425px; /* Set modal width */
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
     z-index: 1000; /* Ensure it's above other content */
   }
@@ -97,10 +97,11 @@
   /* Close button styling */
   .modal .close {
     position: absolute;
-    top: 10px;
+    top: 9.5px;
     right: 15px;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
+    z-index: 999; /* put in front */
   }
   
   .modal-content {
@@ -115,16 +116,6 @@
     box-sizing: border-box; /* Prevents padding from affecting width */
   }
   
-  /* Close button */
-  .modal-content .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: white;
-  }
-  
   .modal-content .close:hover {
     color: #fff2f2;
   }
@@ -135,7 +126,7 @@
     margin: 0;
   }
   
-  h6 {
+  p, h6 {
     color: white;
     font-style: italic;
     opacity: 0.75;
@@ -233,6 +224,7 @@
       color: #333;
       margin-bottom: 20px;
   }
+
   .close-button {
       background: none;
       border: none;
@@ -242,7 +234,9 @@
       right: 15px;
       top: 15px;
       cursor: pointer;
+      z-index: 999; /* put in front */
   }
+
   .modal-ok-button {
       background-color: #df1645;
       color: #fff;
@@ -255,6 +249,26 @@
   .modal-ok-button:hover {
       background-color: #ff003c;
   }
+
+  #play-text-sound {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    background: none;
+    border: none;
+    width: 23px;  /* Adjust size */
+    height: 23px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* put in front */
+}
+
+#play-text-sound img {
+    width: 100%;
+    height: 100%;
+}
 
   </style>
 
@@ -306,19 +320,22 @@
 
 <!-- Info Modal -->
     <div id="info-modal" class="modal">
+    <button id="play-text-sound">
+        <img src="playTextSound-button.png" alt="Play Sound">
+    </button>
+    <span class="close">&times;</span>
         <div class="modal-content">
-          <span class="close">&times;</span>
-          <p><em>
+          <h3><em>
             Book Reading by itself is one of the most valuable tools for engaging learning and development. 
             As Apraxia is not a muscle problem but a motor coordination problem, Book Reading is great practice for Motor Planning. <br>
             These books are especially curated for their predictable patterns to help it's readers develop Phonemic Awareness with Repetitive Practice. 
             With all these benefits, one must also take into account that Book Reading is just plain ol' fun!            
-          </em></p>
-          <h6>
+          </em></h3>
+          <p>
             Select a Story using the dropdown menu <br>
             Click the microphone to record your Book Reading <br>
             Click the playback to play back <strong>your</strong> Book Reading recording            
-          </h6>
+          </p>
         </div>
       </div>
 

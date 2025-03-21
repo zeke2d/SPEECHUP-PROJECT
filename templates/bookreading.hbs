@@ -42,7 +42,7 @@
     border-radius: 20px;
     width: 80%;
     max-width: 600px;
-    margin: 25px auto 50px;
+    margin: 25px auto 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,7 +89,7 @@
     color: white; /* White text */
     padding: 20px;
     border-radius: 10px;
-    width: 370px; /* Set modal width */
+    width: 425px; /* Set modal width */
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
     z-index: 1000; /* Ensure it's above other content */
   }
@@ -97,10 +97,11 @@
   /* Close button styling */
   .modal .close {
     position: absolute;
-    top: 10px;
+    top: 9.5px;
     right: 15px;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
+    z-index: 999; /* put in front */
   }
   
   .modal-content {
@@ -115,16 +116,6 @@
     box-sizing: border-box; /* Prevents padding from affecting width */
   }
   
-  /* Close button */
-  .modal-content .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: white;
-  }
-  
   .modal-content .close:hover {
     color: #fff2f2;
   }
@@ -135,7 +126,7 @@
     margin: 0;
   }
   
-  h6 {
+  p, h6 {
     color: white;
     font-style: italic;
     opacity: 0.75;
@@ -233,6 +224,7 @@
       color: #333;
       margin-bottom: 20px;
   }
+
   .close-button {
       background: none;
       border: none;
@@ -242,7 +234,9 @@
       right: 15px;
       top: 15px;
       cursor: pointer;
+      z-index: 999; /* put in front */
   }
+
   .modal-ok-button {
       background-color: #df1645;
       color: #fff;
@@ -255,6 +249,26 @@
   .modal-ok-button:hover {
       background-color: #ff003c;
   }
+
+  #play-text-sound {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    background: none;
+    border: none;
+    width: 23px;  /* Adjust size */
+    height: 23px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* put in front */
+}
+
+#play-text-sound img {
+    width: 100%;
+    height: 100%;
+}
 
   </style>
 
@@ -296,40 +310,52 @@
       <!-- Custom Modal (for styled alerts) -->
 <div id="customModalOverlay" class="custom-modal-overlay">
   <div class="custom-modal">
-    <button class="close-button" onclick="closeModal()">&times;</button>
+    <button class="close-button" onclick="closeBookReadingModal()">&times;</button>
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeBookReadingModal()">OK</button>
   </div>
 </div>
 
 <!-- Info Modal -->
     <div id="info-modal" class="modal">
+    <button id="play-text-sound">
+        <img src="playTextSound-button.png" alt="Play Sound">
+    </button>
+    <span class="close">&times;</span>
         <div class="modal-content">
-          <span class="close">&times;</span>
-          <p><em>
+          <h3><em>
             Book Reading by itself is one of the most valuable tools for engaging learning and development. 
             As Apraxia is not a muscle problem but a motor coordination problem, Book Reading is great practice for Motor Planning. <br>
             These books are especially curated for their predictable patterns to help it's readers develop Phonemic Awareness with Repetitive Practice. 
             With all these benefits, one must also take into account that Book Reading is just plain ol' fun!            
-          </em></p>
-          <h6>
+          </em></h3>
+          <p>
             Select a Story using the dropdown menu <br>
             Click the microphone to record your Book Reading <br>
             Click the playback to play back <strong>your</strong> Book Reading recording            
-          </h6>
+          </p>
         </div>
       </div>
 
 <script>
+  const patientEmail = "{{email}}";
+  console.log("Patient email in bookreading.hbs:", patientEmail);
+
+let accuracyScores = {
+    "Love You Forever": null,
+    "Three Blind Mice": null
+};
+let bookReadingAverage = 0;  // Tracks the average score
+
    // ====== Show & Hide Custom Modal ======
   function showModal(title, message) {
     document.getElementById("modalTitle").innerText = title;
     document.getElementById("modalMessage").innerText = message;
     document.getElementById("customModalOverlay").style.display = "block";
   }
-  function closeModal() {
+  function closeBookReadingModal() {
     document.getElementById("customModalOverlay").style.display = "none";
   }
   
@@ -498,7 +524,7 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
 
     // Normalize text (convert to lowercase, remove punctuation)
     let cleanText = (text) => text.toLowerCase().replace(/[^\w\s]/g, '');
-    
+
     // Use regex to split on one or more whitespace characters and filter out empties
     let userWords = cleanText(userSpeech).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
     let referenceWords = cleanText(referenceText.replace(/<br>/g, " ")).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
@@ -513,38 +539,136 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
             let similarity = (maxLen - distance) / maxLen; // Similarity percentage
 
             if (similarity > 0.8) {
-                correctCount++; // High similarity counts as correct
+                correctCount++;
             } else if (similarity > 0.5) {
-                correctCount += 0.5; // Partial credit for close words
+                correctCount += 0.5;
             }
         }
     }
 
     let accuracy = (correctCount / totalWords) * 100;
+
+    // Store the score for the respective book
+    if (bookName.includes("Love You Forever")) {
+        accuracyScores["Love You Forever"] = accuracy;
+    } else if (bookName.includes("Three Blind Mice")) {
+        accuracyScores["Three Blind Mice"] = accuracy;
+    }
+
+    // Calculate the average score
+    let scores = Object.values(accuracyScores).filter(score => score !== null);
+    if (scores.length === 2) {
+        bookReadingAverage = (scores.reduce((sum, score) => sum + score, 0)) / 2;
+        console.log(`Updated Book Reading Average: ${bookReadingAverage.toFixed(2)}%`);
+    }
+
     console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
-    showModal(`Your accuracy:`, `${accuracy.toFixed(2)}%`);
+    showModal(`Your accuracy for "${bookName}":`, `${accuracy.toFixed(2)}%`);
+    updateBookReadingGrade(bookReadingAverage.toFixed(2));
 }
 
-    const modal = document.getElementById("info-modal");
-    const btn = document.getElementById("info-button");
-    const close = document.querySelector(".modal .close");
-  
-    // Make sure modal is hidden initially
-    modal.style.display = "none";
-  
-    btn.addEventListener("click", () => {
-      modal.style.display = "block"; // Show modal when button is clicked
-    });
-  
-    close.addEventListener("click", () => {
+function updateBookReadingGrade(grade) {
+  const data = {
+    email: patientEmail,
+    grades: { bookReading: grade }
+  };
+
+  fetch("/add-grades", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
+      console.log(`Book Reading game grade updated to ${grade}`);
+    } else {
+      console.error("Failed to update book reading grade:", result.message);
+    }
+  })
+  .catch(error => {
+    console.error("Error updating book reading grade:", error);
+  });
+}
+
+// Modal Functionality
+// Ensure modal only opens when clicked
+  const modal = document.getElementById("info-modal");
+  const btn = document.getElementById("info-button");
+  const close = document.querySelector(".modal .close");
+
+  // Make sure modal is hidden initially
+  modal.style.display = "none";
+
+  btn.addEventListener("click", () => {
+    modal.style.display = "block"; // Show modal when button is clicked
+  });
+
+  close.addEventListener("click", () => {
       modal.style.display = "none"; // Close modal when X is clicked
-    });
-  
-    window.addEventListener("click", (event) => {
-      if (event.target === modal) {
-        modal.style.display = "none"; // Close modal if user clicks outside of it
+      
+      // Stop and reset audio
+      if (synth.speaking || isPaused) {
+          synth.cancel(); // Cancels and resets the speech synthesis
+          isPaused = false; // Reset pause state
       }
-    });
+  });
+
+  window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+          modal.style.display = "none"; // Close modal if user clicks outside of it
+          
+          // Stop and reset audio
+          if (synth.speaking || isPaused) {
+              synth.cancel();
+              isPaused = false;
+          }
+      }
+  });
+
+// SpeechSynthesis API Integration with Pause/Resume Feature
+const synth = window.speechSynthesis;
+let utterance;   // Store current speech
+let isPaused = false;  // Track pause state
+
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Handle Pause/Resume
+    if (synth.speaking) {
+        if (isPaused) {
+            synth.resume();
+            isPaused = false;
+            console.log("Speech resumed.");
+        } else {
+            synth.pause();
+            isPaused = true;
+            console.log("Speech paused.");
+        }
+        return;
+    }
+
+    // If no speech is active, start fresh
+    utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Optional: Voice settings for clarity
+    utterance.lang = 'en-US'; // language setting 
+    utterance.rate = 0.9;     // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;    // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;   // max volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance);
+});
 
 </script>
     

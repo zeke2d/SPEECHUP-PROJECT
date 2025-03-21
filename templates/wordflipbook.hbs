@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Word Flipbook</title>
-  <style>
+ <style>
     /* Basic resets */
     body {
       margin: 0;
@@ -37,25 +32,118 @@
       font-size: 18px;
     }
 
-    /* Header */
-    .page-header {
-      background-color: #FF7878;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      border-radius: 25px;
-      width: fit-content;
-      margin: 0 auto;
-    }
-    .page-header h1 {
-      margin: 0;
-      font-weight: bold;
-    }
-    .page-header h6 {
-      margin: 5px 0 0;
-      font-style: italic;
-      opacity: 0.75;
-    }
+    .header-container {
+    background-color: #FF7878;
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+    width: 80%;
+    max-width: 600px;
+    margin: 25px auto 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Wrap h6 and button together */
+  .header-text {
+    display: flex;
+    align-items: center;
+    gap: 2px; /* Space between h6 and button */
+  }
+  
+  /* Ensure the button is aligned properly */
+  #info-button {
+    background: none;
+    border: none;
+    width: 20px;  /* Adjust size */
+    height: 20px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Resize the button image */
+  #info-button img {
+    width: 100%;
+    height: 100%;
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+  
+  /* Modal Styling */
+  /* Ensure modal is hidden by default */
+  .modal {
+    display: none; /* Hide modal initially */
+    position: fixed; /* Stay in place */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FF7878; /* Set modal background color */
+    color: white; /* White text */
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px; /* Set modal width */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+    z-index: 1000; /* Ensure it's above other content */
+  }
+  
+  /* Close button styling */
+  .modal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .modal-content {
+    background-color: #FF7878;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%; /* Ensure it takes full width inside modal */
+    max-width: 400px; /* Limit max width */
+    text-align: center;
+    position: relative;
+    box-sizing: border-box; /* Prevents padding from affecting width */
+  }
+  
+  /* Close button */
+  .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .modal-content .close:hover {
+    color: #fff2f2;
+  }
+
+.header-container h1 {
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.header-container h6 {
+    font-style: italic;
+    opacity: 0.75;
+    margin: 5px 0 0;
+    color: white;
+}
+
+.modal-content h6 {
+  color: white;
+  font-style: italic;
+  opacity: 0.75;
+}
 
     /* Main container */
     .flipbook-container {
@@ -67,10 +155,10 @@
 
     /* Each "page" is wrapped in .flipbook-page so we can toggle them */
     .flipbook-page {
-      display: none; /* hidden by default; we'll show the first page via JS or inline style */
+      display: none; /* hidden by default */
     }
     .flipbook-page.active {
-      display: block; /* or 'flex' if preferred, but block is usually enough since .word-row is flex */
+      display: block;
     }
 
     /* The row that shows the open-book background */
@@ -104,37 +192,108 @@
     .play-recording {
       cursor: pointer;
       margin: 0 5px;
+      border-radius: 5px;
+      padding: 5px;
+      background-color: #ffffff;
+    }
+
+    .play-sound:hover {
+      background-color: #e0e0e0;
+    }
+    .record-sound:hover {
+      background-color: #e0e0e0;
+    }
+    .play-recording:hover {
+      background-color: #e0e0e0;
     }
 
     .right-arrow {
-    position: relative;
-    display: block;
-    margin-top: 25px;
-    margin-left: auto;
-    margin-right: auto;
-}
+      display: block;
+      margin-top: 25px;
+      margin-left: auto;
+      margin-right: auto;
+      cursor: pointer;
+    }
 
-.left-arrow {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
+    .left-arrow {
+      display: block;
+      margin-top: 25px;
+      margin-left: auto;
+      margin-right: auto;
+      cursor: pointer;
+    }
 
-.left-arrow-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .left-arrow-container{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .custom-modal-overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      z-index: 999; /* on top of everything */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6); /* semi-transparent dark overlay */
+  }
+  .custom-modal {
+      background-color: #fff;
+      width: 300px; /* adjust as needed */
+      margin: 15% auto; /* center vertically */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+  }
+  .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+  }
+  .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+  }
+  .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  .modal-ok-button:hover {
+      background-color: #ff003c;
+  }
+
   </style>
 
   <!-- Back Button -->
   <button onclick="loadPage('dysarthriagameselection')" class="back-btn">Back to Dysarthria Unit</button>
 
-  <!-- Page Header -->
-  <div class="page-header">
+  <div class="header-container">
     <h1>Dysarthria Unit - Word Flipbook</h1>
-    <h6><i>Practice Sound Daily!</i></h6>
-  </div>
+    <div class="header-text">
+        <h6><i>Practice Sound Daily!</i></h6>
+        <button id="info-button">
+            <img src="information-button.png" alt="Info">
+        </button>
+    </div>
+</div>
 
   <!-- Flipbook Container -->
   <div class="flipbook-container">
@@ -174,7 +333,7 @@
           </div>
           <h4 class="phonetics" id="nee-phonetics" title="Phonetics">/niː/</h4>
           <!-- Right arrow to go to the next page -->
-          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow">
+          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" id="right-arrow-page1">
         </div>
       </div>
     </div>
@@ -192,7 +351,7 @@
           </div>
           <h4 class="phonetics" id="bye-phonetics" title="Phonetics">/baɪ/</h4>
           <!-- Left arrow to go back to Page 1 -->
-          <img src="leftArrow-button.png" alt="Left Arrow" class="left-arrow">
+          <img src="leftArrow-button.png" alt="Left Arrow" class="left-arrow" id="left-arrow-page2">
         </div>
 
         <!-- Column 2 -->
@@ -215,138 +374,212 @@
             <img src="playrecording-button.png" alt="Play Recording" class="play-recording" data-word="key">
           </div>
           <h4 class="phonetics" id="key-phonetics" title="Phonetics">/kiː/</h4>
-          
-          <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" onclick="goToPage(3)">
+          <!-- Right arrow (if you want a page 3, uncomment the goToPage(3) line, etc.) -->
+          <!-- <img src="rightArrow-button.png" alt="Right Arrow" class="right-arrow" onclick="goToPage(3)"> -->
         </div>
       </div>
     </div>
     
   </div>
 
+      <!-- Custom Modal (for styled alerts) -->
+<div id="customModalOverlay" class="custom-modal-overlay">
+  <div class="custom-modal">
+    <button class="close-button" onclick="closeWordFlipBookModal()">&times;</button>
+    <h2 id="modalTitle">Modal Title</h2>
+    <br>
+    <p id="modalMessage">Modal message goes here.</p>
+    <button class="modal-ok-button" onclick="closeWordFlipBookModal()">OK</button>
+  </div>
+</div>
 
-<script>
+<!-- Info Modal -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p><em>
+            Listen closely to your own speech as you turn the pages in this Word Flibook, 
+            say each word carefully and try to improve your clarity with each repetition. 
+            Self-monitoring and articulation are helpful for a debilitating condition such as Dysarthria.
+          </em></p>
+          <h6>
+            Click the speaker to hear how each word is pronounced<br>
+            Click the microphone to practice each chosen word<br>
+            Click the playback to play back <strong>your</strong> spoken word
+          </h6>
+        </div>
+      </div>
 
+
+
+  <script>
+      // ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeWordFlipBookModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
+
+    // --------------------------------
+    // 1. AUDIO PLAY/RECORD FUNCTIONALITY
+    // --------------------------------
     const playSounds = document.querySelectorAll('.play-sound');
-const recordSounds = document.querySelectorAll('.record-sound');
-const playRecordings = document.querySelectorAll('.play-recording');
-const rightArrow = document.querySelector('.right-arrow');
-const leftArrow = document.querySelector('.left-arrow');
-const wordRow1 = document.getElementById('word-row-1');
-const wordRow2 = document.getElementById('word-row-2');
+    const recordSounds = document.querySelectorAll('.record-sound');
+    const playRecordings = document.querySelectorAll('.play-recording');
 
-let mediaRecorder;
-let audioChunks = [];
-let audioURLs = {};
-let recordingTimeout;
-let isRecording = false;
-let currentWordRow = 1;  // 1 for Ma/Pa/Nee, 2 for Bye/Toe/Key
+    let mediaRecorder;
+    let audioChunks = [];
+    let audioURLs = {};
+    let recordingTimeout;
+    let isRecording = false;
 
-playSounds.forEach(button => {
-    button.addEventListener('click', () => {
+    playSounds.forEach(button => {
+      button.addEventListener('click', () => {
         const word = button.dataset.word;
         let audioSrc = '';
 
         if (word === 'ma') {
-            audioSrc = 'ma-wordFlipbookSound.mp3';
+          audioSrc = 'ma-wordflipbookSound.mp3';
         } else if (word === 'pa') {
-            audioSrc = 'pa-wordFlipbookSound.mp3';
+          audioSrc = 'pa-wordflipbookSound.mp3';
         } else if (word === 'nee') {
-            audioSrc = 'nee-wordFlipbookSound.mp3';
+          audioSrc = 'nee-wordflipbookSound.mp3';
         } else if (word === 'bye') {
-            audioSrc = 'bye-wordFlipbookSound.mp3';
+          audioSrc = 'bye-wordflipbookSound.mp3';
         } else if (word === 'toe') {
-            audioSrc = 'toe-wordFlipbookSound.mp3';
+          audioSrc = 'toe-wordflipbookSound.mp3';
         } else if (word === 'key') {
-            audioSrc = 'key-wordFlipbookSound.mp3';
+          audioSrc = 'key-wordflipbookSound.mp3';
         }
 
         if (audioSrc) {
-            console.log(`Playing sound: ${word}`);
-            const audio = new Audio(audioSrc);
-            audio.play();
+          console.log(`Playing sound: ${word}`);
+          const audio = new Audio(audioSrc);
+          audio.play();
         } else {
-            console.error(`Audio source not found for ${word}`);
+          console.error(`Audio source not found for ${word}`);
         }
+      });
     });
-});
 
-recordSounds.forEach(button => {
-    button.addEventListener('click', async () => {
+    recordSounds.forEach(button => {
+      button.addEventListener('click', async () => {
         const word = button.dataset.word;
 
+        // If currently recording, stop it:
         if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.stop();
-            isRecording = false;
-            return;
+          mediaRecorder.stop();
+          isRecording = false;
+          return;
         }
 
-        console.log(`Start Recording for: ${word}`);
+        showModal(`Start Recording for: ${word}`, "You can now speak to record your voice!");
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
 
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
+          mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+          };
 
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioURLs[word] = audioUrl;
-                console.log(`Finish Recording for: ${word}`);
-                clearTimeout(recordingTimeout);
-                isRecording = false;
-            };
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioURLs[word] = audioUrl;
+            console.log(`Finish Recording for: ${word}`);
+            clearTimeout(recordingTimeout);
+            isRecording = false;
+          };
 
-            mediaRecorder.start();
-            isRecording = true;
+          mediaRecorder.start();
+          isRecording = true;
 
-            recordingTimeout = setTimeout(() => {
-                if (mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                }
-            }, 3000);
+          // Auto-stop after 3 seconds
+          recordingTimeout = setTimeout(() => {
+            if (mediaRecorder.state === "recording") {
+              mediaRecorder.stop();
+            }
+          }, 3000);
 
         } catch (error) {
-            console.error('Error accessing microphone:', error);
-            isRecording = false;
+          console.error('Error accessing microphone:', error);
+          isRecording = false;
         }
+      });
     });
-});
 
-playRecordings.forEach(button => {
-    button.addEventListener('click', () => {
+    playRecordings.forEach(button => {
+      button.addEventListener('click', () => {
         const word = button.dataset.word;
         const audioUrl = audioURLs[word];
 
         if (audioUrl) {
-            console.log(`Playing recording for: ${word}`);
-            const audio = new Audio(audioUrl);
-            audio.play();
+          console.log(`Playing recording for: ${word}`);
+          const audio = new Audio(audioUrl);
+          audio.play();
         } else {
-            console.error(`No recording found for ${word}`);
+          showModal(`No recording found for ${word}`, "Please record first!");
         }
+      });
     });
-});
 
-rightArrow.addEventListener('click', () => {
-    if (currentWordRow === 1) {
-        wordRow1.style.display = 'none';
-        wordRow2.style.display = 'flex';
-        currentWordRow = 2;
-    } else {
-        wordRow1.style.display = 'flex';
-        wordRow2.style.display = 'none';
-        currentWordRow = 1;
+    // --------------------------------
+    // 2. PAGE FLIP FUNCTIONALITY
+    // --------------------------------
+
+    // Helper function to show a specific page by ID
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.flipbook-page').forEach(page => {
+        page.classList.remove('active');
+      });
+      // Show the desired page
+      const target = document.getElementById(pageId);
+      if (target) target.classList.add('active');
     }
-});
 
-leftArrow.addEventListener('click', () => {
-    wordRow1.style.display = 'flex';
-    wordRow2.style.display = 'none';
-    currentWordRow = 1;
-});
+    // Arrow on Page 1 (go to Page 2)
+    const rightArrowPage1 = document.getElementById('right-arrow-page1');
+    rightArrowPage1.addEventListener('click', () => {
+      showPage('page-2');
+    });
 
-</script>
+    // Arrow on Page 2 (go back to Page 1)
+    const leftArrowPage2 = document.getElementById('left-arrow-page2');
+    leftArrowPage2.addEventListener('click', () => {
+      showPage('page-1');
+    });
+
+    // For your "Back to Dysarthria Unit" button:
+    function loadPage(pageName) {
+      // Insert your own routing logic here (window.location, or any other method)
+      window.location.href = pageName + '.html';
+    }
+
+    const modal = document.getElementById("info-modal");
+    const btn = document.getElementById("info-button");
+    const close = document.querySelector(".modal .close");
+  
+    // Make sure modal is hidden initially
+    modal.style.display = "none";
+  
+    btn.addEventListener("click", () => {
+      modal.style.display = "block"; // Show modal when button is clicked
+    });
+  
+    close.addEventListener("click", () => {
+      modal.style.display = "none"; // Close modal when X is clicked
+    });
+  
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none"; // Close modal if user clicks outside of it
+      }
+    });
+
+  </script>

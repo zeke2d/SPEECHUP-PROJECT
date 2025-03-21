@@ -124,8 +124,14 @@ app.get("/animalsounds", (req, res) => {
 })
 
 app.get("/bookreading", (req, res) => {
-    res.render("bookreading")
-})
+    if (!req.session.user) {
+        return res.redirect("/login");
+      } 
+
+      console.log("Session user email:", req.session.user.email);
+      res.render("bookreading", { email : req.session.user.email});
+    });
+
 
 app.get("/wordsearch", (req, res) => {
     if (!req.session.user) {
@@ -152,6 +158,14 @@ app.get("/matchinggames", (req, res) => {
 app.get("/tonguetwisters", (req, res) => {
     res.render("tonguetwisters")
 })
+
+app.get("/content/bookreading", (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).send("Unauthorized");
+    }
+    
+    res.render("bookreading", { email: req.session.user.email });
+  });
 
 app.get("/content/wordsearch", (req, res) => {
     if (!req.session.user) {

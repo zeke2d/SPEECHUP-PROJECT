@@ -340,6 +340,9 @@
       </div>
 
 <script>
+  const patientEmail = "{{email}}";
+  console.log("Patient email in bookreading.hbs:", patientEmail);
+
 let accuracyScores = {
     "Love You Forever": null,
     "Three Blind Mice": null
@@ -561,6 +564,31 @@ function analyzeAccuracy(userSpeech, referenceText, bookName) {
 
     console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
     showModal(`Your accuracy for "${bookName}":`, `${accuracy.toFixed(2)}%`);
+    updateBookReadingGrade(bookReadingAverage.toFixed(2));
+}
+
+function updateBookReadingGrade(grade) {
+  const data = {
+    email: patientEmail,
+    grades: { bookReading: grade }
+  };
+
+  fetch("/add-grades", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
+      console.log(`Book Reading game grade updated to ${grade}`);
+    } else {
+      console.error("Failed to update book reading grade:", result.message);
+    }
+  })
+  .catch(error => {
+    console.error("Error updating book reading grade:", error);
+  });
 }
 
 // Modal Functionality

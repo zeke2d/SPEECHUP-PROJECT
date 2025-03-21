@@ -115,6 +115,16 @@
     position: relative;
     box-sizing: border-box; /* Prevents padding from affecting width */
   }
+
+    /* Close button */
+  .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+  }
   
   .modal-content .close:hover {
     color: #fff2f2;
@@ -310,11 +320,11 @@
       <!-- Custom Modal (for styled alerts) -->
 <div id="customModalOverlay" class="custom-modal-overlay">
   <div class="custom-modal">
-    <button class="close-button" onclick="closeBookReadingModal()">&times;</button>
+    <button class="close-button" onclick="closeModal()">&times;</button>
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeBookReadingModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeModal()">OK</button>
   </div>
 </div>
 
@@ -355,7 +365,7 @@ let bookReadingAverage = 0;  // Tracks the average score
     document.getElementById("modalMessage").innerText = message;
     document.getElementById("customModalOverlay").style.display = "block";
   }
-  function closeBookReadingModal() {
+  function closeModal() {
     document.getElementById("customModalOverlay").style.display = "none";
   }
   

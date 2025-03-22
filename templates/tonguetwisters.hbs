@@ -1,189 +1,303 @@
 <style>
-  /****************************************
-   * BACK BUTTON
-   ****************************************/
-  .back-btn {
-    display: flex;
-    align-items: center;
-    background-color: #f8f9fa;
-    color: #333;
-    border: none;
-    padding: 8px 8px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  .back-btn:hover {
-    background-color: #e0e0e0;
-    transform: translateX(-3px);
-  }
-  .back-btn::before {
-    content: "⮐";
-    margin-right: 8px;
-    font-size: 18px;
-  }
-
-  /****************************************
-   * HEADER CONTAINER
-   ****************************************/
-  .header-container {
-    background-color: #FF7878;
-    padding: 20px;
-    border-radius: 20px;
-    width: fit-content;
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 330px; /* adjust or remove if not needed */
-  }
-  .header-container h1 {
-    color: white;
-    margin: 0;
-  }
-  .header-container h6 {
-    color: white;
-    font-style: italic;
-    opacity: 0.75;
-    margin-top: 5px;
-  }
-
-  /****************************************
-   * MAIN (GAME) CONTAINER
-   ****************************************/
-  .game-container {
-    position: relative;
-    /* Increase max-width if you want more space */
-    max-width: 900px;
-    width: 100%;
-    padding: 20px;
-    margin: 0 auto;
-    background: white;
-    /* Switch to a row layout so the avatar is on the left and content on the right */
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    border-radius: 8px;
-  }
-  /* Left side area with the avatar and quote */
-  .left-side {
-    width: 300px; /* adjust as needed */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 20px;
-  }
-  .avatar {
-    width: 250px;
-    height: auto;
-  }
-  .twist-quote {
-    color: #002769;
-    font-style: italic;
-    font-size: 15px;
-    text-align: center;
-    margin-top: 5px;
-  }
-
-  /* The right side where the tongue twisters themselves go */
-  .twister-content {
-    flex: 1;
-  }
-
-  /****************************************
-   * TONGUE TWISTER CARDS
-   ****************************************/
-  .twister {
-    margin: 15px 0;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #fff;
-  }
-  .twister-text {
-    color: #002769;
-    font-style: italic;
-    font-size: large;
-  }
-
-  .button-container {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  /****************************************
-   * DISTINCT BUTTON CLASSES
-   ****************************************/
-  /* Record button: a deeper, vibrant red */
-  .record-btn {
-    background-color: #2c3e50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    margin: 5px;
-    padding: 10px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .record-btn:hover {
-    background-color: #e0e0e0; /* darker on hover */
-  }
-
-  /* Play button: a lighter pinkish red */
-  .play-btn {
-    background-color: #2c3e50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    margin: 5px;
-    padding: 10px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .play-btn:hover {
-    background-color: #e0e0e0; /* darker on hover */
-  }
-</style>
-
-<!-- Back Button -->
-<button onclick="loadPage('aphasiagameselection')" class="back-btn">
-  Back to Aphasia Unit
-</button>
-
-<!-- Header Section -->
-<div class="header-container">
-  <h1>Tongue Twisters Game</h1>
-  <h6>Sharpen your Tongue</h6>
-</div>
-
-<!-- Main Container for the Tongue Twisters -->
-<div class="game-container">
-  <!-- Left Side with Avatar -->
-  <div class="left-side">
-    <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
-    <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
-  </div>
-
-  <!-- Right Side: Actual Twister Content -->
-  <div class="twister-content">
-    <div id="twisters-container"></div>
-  </div>
-</div>
-
-<script>
-  (function() {
-    // Check for SpeechRecognition API support
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error("Speech recognition API not supported in this browser. Please use a supported browser like Chrome.");
+    /* 1) BACK BUTTON */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      background-color: #f8f9fa;
+      color: #333;
+      border: none;
+      padding: 8px 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
-    
-    // Data for the tongue twisters
+    .back-btn:hover {
+      background-color: #e0e0e0;
+      transform: translateX(-3px);
+    }
+    .back-btn::before {
+      content: "⮐";
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    /* 2) CONTAINER - For overall page width and centering */
+    .container {
+      max-width: 1100px;  /* You can adjust this max-width as you prefer */
+      margin: 0 auto;     /* Centers the container */
+      padding: 0 15px;    /* Adds a bit of horizontal padding inside */
+    }
+
+    /* 3) TITLE BOX - The pink header bar */
+    .title-box {
+      background-color: #FF7878;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 20px auto; /* Center the title box with some top/bottom spacing */
+    }
+
+    /* 3.1) Title Container - holds subheading + info button */
+    .title-container {
+      display: flex;
+      align-items: center; 
+      justify-content: center; 
+      gap: 8px; 
+      margin-top: 5px;
+    }
+
+    h1 {
+      color: white;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    h5 {
+      margin: 0; 
+      color: white;
+      font-style: italic;
+      opacity: 0.75;
+    }
+
+    /* Info Button */
+    .info-button {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        margin-top: 2px;
+    }
+
+    /* 4) INFO MODAL STYLES */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #ffcccc;
+    }
+    .modal-content {
+      background: #FF7878;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      color: white;
+      width: 320px;
+      position: relative; 
+    }
+
+    /* 5) GAME CONTAINER - main area with avatar + twisters */
+    .game-container {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+
+      background: white;
+      border-radius: 8px;
+      margin: 20px auto; /* push it below the title box */
+      padding: 20px;
+
+      /* Let it fit the same max width as .container */
+      max-width: 1100px;
+    }
+
+    /* 5.1) LEFT-SIDE: avatar area */
+    .left-side {
+      flex: 0 0 260px; /* fixed width for the avatar side */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 20px;
+    }
+    .avatar {
+      width: 220px;
+      height: auto;
+    }
+    .twist-quote {
+      color: #002769;
+      font-style: italic;
+      font-size: 15px;
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    /* 5.2) RIGHT-SIDE: the actual twisters area */
+    .twister-content {
+      flex: 1; /* fill the remaining space */
+    }
+
+    /* 6) INDIVIDUAL TONGUE TWISTER CARDS */
+    .twister {
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .twister-text {
+      color: #002769;
+      font-style: italic;
+      font-size: large;
+      margin: 0;
+    }
+
+    .button-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* 7) BUTTONS */
+    .record-btn,
+    .play-btn {
+      background-color: #ffffff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .record-btn:hover,
+    .play-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* 8) CUSTOM MODAL OVERLAY (for your custom alert) */
+    .custom-modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .custom-modal {
+      background-color: #fff;
+      width: 300px;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .custom-modal h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .custom-modal p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .close-button {
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 24px;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+    }
+    .modal-ok-button {
+      background-color: #df1645;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .modal-ok-button:hover {
+      background-color: #ff003c;
+    }
+  </style>
+
+  <!-- Back Button -->
+  <button onclick="loadPage('aphasiagameselection')" class="back-btn">Back to Aphasia Unit</button>
+
+  <!-- Title / Header Section -->
+  <div class="container">
+    <div class="title-box">
+      <h1>Aphasia Unit - Tongue Twisters</h1>
+      <div class="title-container">
+        <h5>Sharpen your Tongue</h5>
+        <img src="information-button.png" alt="Info" id="info-button" class="info-button">
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container for the Tongue Twisters -->
+  <div class="game-container">
+    <!-- Left Side with Avatar -->
+    <div class="left-side">
+      <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
+      <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
+    </div>
+
+    <!-- Right Side: Actual Twister Content -->
+    <div class="twister-content">
+      <!-- Only ONE twisters-container -->
+      <div id="twisters-container"></div>
+    </div>
+  </div>
+
+  <!-- Custom Modal (for styled alerts) -->
+  <div id="customModalOverlay" class="custom-modal-overlay">
+    <div class="custom-modal">
+      <button class="close-button" onclick="closeModal()">&times;</button>
+      <h2 id="modalTitle">Modal Title</h2>
+      <br>
+      <p id="modalMessage">Modal message goes here.</p>
+      <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <!-- Info Modal -->
+  <div id="info-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p><em>
+        Articulation exercises such as Tongue Twisters can help improve the clarity of speech hindered by Aphasia.
+        Practicing these various Tongue Twisters will help build muscle memory for speech production!
+      </em></p>
+      <h6><i>
+        Click the microphone and give a tongue twister a go! <br>
+        Click the playback to play back your tongue twister <br>
+        Practice is key ;
+      </i></h6>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // -------------------------
+    // 1. TONGUE TWISTERS DATA
+    // -------------------------
     const tongueTwisters = [
       "She sells sea shells by the seashore.",
       "How can a clam cram in a clean cream can?",
@@ -192,6 +306,9 @@
       "A tutor who tooted the flute tried to tutor two tooters to toot."
     ];
 
+    // -------------------------
+    // 2. GLOBAL VARIABLES
+    // -------------------------
     const twistersContainer = document.getElementById("twisters-container");
     const recordings = {};
     let mediaRecorder;
@@ -200,23 +317,40 @@
     let recognition;
     let audioStream; // Store the audio stream to prevent multiple permission prompts
 
-    // Initialize the game and add tongue twister cards
+    // -------------------------
+    // 3. INIT GAME
+    // -------------------------
     function initGame() {
       tongueTwisters.forEach((twister, index) => {
+        // Create a div for each twister
         const div = document.createElement("div");
         div.classList.add("twister");
+        div.id = `twister-${index}`;
+
+        // Build the card’s innerHTML (no inline onclick)
         div.innerHTML = `
           <p class="twister-text">"${twister}"</p>
           <div class="button-container">
-            <button class="record-btn" onclick="analyzeSpeech(${index})" id="record-btn-${index}">
+            <button id="record-btn-${index}">
               <img src="recordsound-button.png" alt="Record" width="30">
             </button>
-            <button class="play-btn" onclick="playSpeech(${index})">
+            <button id="play-btn-${index}">
               <img src="playrecording-button.png" alt="Play" width="30">
             </button>
           </div>
         `;
+
+        // Append to the container
         twistersContainer.appendChild(div);
+
+        // Attach event listeners in JS
+        const recordButton = div.querySelector(`#record-btn-${index}`);
+        const playButton   = div.querySelector(`#play-btn-${index}`);
+
+        recordButton.addEventListener("click", () => analyzeSpeech(index));
+        playButton.addEventListener("click",   () => playSpeech(index));
+
+        // Initialize recording state
         isRecording[index] = false;
       });
 
@@ -228,48 +362,48 @@
         .catch(error => console.error("Error accessing microphone:", error));
     }
 
-    // Function to analyze speech and record the user's attempt
-    window.analyzeSpeech = function(index) {
+    initGame();
+
+    // -------------------------
+    // 4. ANALYZE SPEECH
+    // -------------------------
+    function analyzeSpeech(index) {
       if (isRecording[index]) {
-        // If already recording, stop both media recorder and recognition
+        // Already recording, so stop
         mediaRecorder.stop();
         if (recognition) {
           recognition.stop();
         }
         return;
       }
-
+      
       if (!audioStream) {
         console.error("Microphone access not granted.");
-        return;
-      }
-      
-      // Initialize SpeechRecognition if available
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.continuous = false;
-      } else {
-        console.error("Speech recognition not supported in this browser.");
         return;
       }
       
       mediaRecorder = new MediaRecorder(audioStream);
       audioChunks[index] = [];
       isRecording[index] = true;
-
+      
+      // Setup speech recognition
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.continuous = false;
+      
       let userSpeech = "";
-
+      
       recognition.onresult = event => {
         userSpeech = event.results[0][0].transcript.toLowerCase();
         console.log(`User said: "${userSpeech}"`);
       };
-
+      
       recognition.onerror = event => {
         console.error("Speech recognition error:", event.error);
       };
-
+      
+      // MediaRecorder events
       mediaRecorder.ondataavailable = event => {
         audioChunks[index].push(event.data);
       };
@@ -277,30 +411,34 @@
       mediaRecorder.onstop = () => {
         saveRecording(index);
         isRecording[index] = false;
-        if (recognition) {
-          recognition.stop();
-        }
+        recognition.stop();
         processSpeech(index, userSpeech);
       };
-
-      // Start both recording and recognition
+      
+      // Start recording & recognition
       mediaRecorder.start();
       recognition.start();
       console.log(`Recording started for: ${tongueTwisters[index]}`);
-
-      // Automatically stop recording after 10 seconds
+      
+      // Automatically stop after 10 seconds
       setTimeout(() => {
         if (isRecording[index]) {
           mediaRecorder.stop();
-          if (recognition) {
-            recognition.stop();
-          }
+          recognition.stop();
         }
       }, 10000);
-    };
+    }
 
-    // Function to play back the recorded audio
-    window.playSpeech = function(index) {
+    // -------------------------
+    // 5. SAVE & PLAY RECORDING
+    // -------------------------
+    function saveRecording(index) {
+      const audioBlob = new Blob(audioChunks[index], { type: 'audio/wav' });
+      recordings[index] = URL.createObjectURL(audioBlob);
+      console.log(`Finished recording for: ${tongueTwisters[index]}`);
+    }
+
+    function playSpeech(index) {
       if (!recordings[index]) {
         console.log("No recording found.");
         return;
@@ -308,50 +446,85 @@
       console.log(`Playing recorded speech for: ${tongueTwisters[index]}`);
       const audio = new Audio(recordings[index]);
       audio.play();
-    };
-
-    // Save the audio recording for playback
-    function saveRecording(index) {
-      const audioBlob = new Blob(audioChunks[index], { type: 'audio/wav' });
-      recordings[index] = URL.createObjectURL(audioBlob);
-      console.log(`Finished recording for: ${tongueTwisters[index]}`);
     }
 
-    // Process the recognized speech against the original tongue twister
+    // -------------------------
+    // 6. PROCESS SPEECH (Accuracy)
+    // -------------------------
     function processSpeech(index, userSpeech) {
       const originalTwister = tongueTwisters[index].toLowerCase();
       const accuracy = compareSpeech(userSpeech, originalTwister);
+
+      // Update the twist-quote with the analysis result
       const twistQuote = document.querySelector(".twist-quote");
+
+      // Choose message based on accuracy
       const message = accuracy < 50 ? "Keep going!" : "Nicely done!";
 
+      // Show the result in the quote area
       twistQuote.innerHTML = `
-        <span style="color: #FF4B4B; font-weight: bold;">
-          ${message}
-        </span><br>
-        '${tongueTwisters[index]}'<br>
-        is ${accuracy}% accurate.
+        <span style="color: #FF4B4B; font-weight: bold;">${message}</span><br>
+        '${tongueTwisters[index]}'<br>is ${accuracy}% accurate.
       `;
+
       console.log(`Analysis complete: Accuracy score for '${tongueTwisters[index]}' is ${accuracy}%`);
     }
 
-    // Compare user's spoken words with the original text
+    // -------------------------
+    // 7. COMPARE SPEECH (Levenshtein)
+    // -------------------------
     function compareSpeech(userSpeech, originalTwister) {
-      const userWords = userSpeech.split(" ");
-      const originalWords = originalTwister.split(" ");
-      let matchCount = 0;
-      userWords.forEach((word, i) => {
-        if (originalWords[i] && word === originalWords[i]) {
-          matchCount++;
+      function levenshteinDistance(s1, s2) {
+        const dp = Array(s1.length + 1).fill(null).map(() => Array(s2.length + 1).fill(0));
+        for (let i = 0; i <= s1.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= s2.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= s1.length; i++) {
+          for (let j = 1; j <= s2.length; j++) {
+            if (s1[i - 1] === s2[j - 1]) {
+              dp[i][j] = dp[i - 1][j - 1];
+            } else {
+              dp[i][j] = Math.min(
+                dp[i - 1][j] + 1,    // Deletion
+                dp[i][j - 1] + 1,    // Insertion
+                dp[i - 1][j - 1] + 1 // Substitution
+              );
+            }
+          }
         }
-      });
-      return Math.round((matchCount / originalWords.length) * 100);
+        return dp[s1.length][s2.length];
+      }
+
+      const distance = levenshteinDistance(userSpeech, originalTwister);
+      const maxLen = Math.max(userSpeech.length, originalTwister.length);
+      const similarity = ((maxLen - distance) / maxLen) * 100;
+      
+      return Math.round(similarity);
     }
 
-    // Initialize the game once the page loads
-    initGame();
+    // -------------------------
+    // 8. INFO MODAL
+    // -------------------------
+    document.getElementById("info-button").addEventListener("click", function () {
+      document.getElementById("info-modal").style.display = "flex";
+    });
 
-    // Expose functions to the global scope for inline onclick attributes
-    window.analyzeSpeech = analyzeSpeech;
-    window.playSpeech = playSpeech;
-  })();
-</script>
+    document.querySelector(".close").addEventListener("click", function () {
+      document.getElementById("info-modal").style.display = "none";
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener("click", function (event) {
+      const modal = document.getElementById("info-modal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    // -------------------------
+    // 9. (Optional) CUSTOM MODAL Example
+    // -------------------------
+    function closeModal() {
+      document.getElementById("customModalOverlay").style.display = "none";
+    }
+  </script>

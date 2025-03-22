@@ -517,13 +517,30 @@
       document.getElementById("info-modal").style.display = "none";
     });
 
-    // Close modal when clicking outside of it
-    window.addEventListener("click", function (event) {
-      const modal = document.getElementById("info-modal");
-      if (event.target === modal) {
-        modal.style.display = "none";
+    const close = document.querySelector(".modal .close");
+    const modal = document.getElementById("info-modal");
+
+  close.addEventListener("click", () => {
+      modal.style.display = "none"; // Close modal when X is clicked
+      
+      // Stop and reset audio
+      if (synth.speaking || isPaused) {
+          synth.cancel(); // Cancels and resets the speech synthesis
+          isPaused = false; // Reset pause state
       }
-    });
+  });
+
+  window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+          modal.style.display = "none"; // Close modal if user clicks outside of it
+          
+          // Stop and reset audio
+          if (synth.speaking || isPaused) {
+              synth.cancel();
+              isPaused = false;
+          }
+      }
+  });
 
     // -------------------------
     // 9. (Optional) CUSTOM MODAL Example
@@ -531,4 +548,49 @@
     function closeModal() {
       document.getElementById("customModalOverlay").style.display = "none";
     }
+
+// SpeechSynthesis API Integration with Pause/Resume Feature
+const synth = window.speechSynthesis;
+let utterance;   // Store current speech
+let isPaused = false;  // Track pause state
+
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Handle Pause/Resume
+    if (synth.speaking) {
+        if (isPaused) {
+            synth.resume();
+            isPaused = false;
+            console.log("Speech resumed.");
+        } else {
+            synth.pause();
+            isPaused = true;
+            console.log("Speech paused.");
+        }
+        return;
+    }
+
+    // If no speech is active, start fresh
+    utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Optional: Voice settings for clarity
+    utterance.lang = 'en-US'; // language setting 
+    utterance.rate = 0.9;     // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;    // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;   // max volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance);
+});
+
   </script>

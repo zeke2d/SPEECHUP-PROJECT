@@ -78,7 +78,7 @@
   color: white; /* White text */
   padding: 15px;
   border-radius: 10px;
-  width: 380px; /* Set modal width */
+  width: 490x; /* Set modal width */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
   z-index: 1000; /* Ensure it's above other content */
 }
@@ -100,7 +100,7 @@
   padding: 20px;
   border-radius: 10px;
   width: 100%; /* Ensure it takes full width inside modal */
-  max-width: 400px; /* Limit max width */
+  max-width: 490px; /* Limit max width */
   text-align: center;
   position: relative;
   box-sizing: border-box; /* Prevents padding from affecting width */
@@ -274,6 +274,20 @@ p {
     height: 100%;
 }
 
+    /* Difficulty Selector */
+    .custom-select {
+      display: flex;
+      justify-content: center;
+    }
+
+    #difficultySelector {
+      width: 40%;
+      max-width: 310px;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
 </style>
 
 <!-- Partial content only (no <html>, <head>, <body>) -->
@@ -405,6 +419,13 @@ p {
           Click the microphone to imitate your chosen Animal Sounds<br>
           Click the playback to hear <strong>your</strong> Animal Sounds
         </p>
+      </div>
+      <div class="custom-select">
+        <select id="difficultySelector" aria-label="Select Difficulty">
+          <option value="" disabled selected hidden>Select Difficulty</option>
+          <option value="easyMode">Easy</option>
+          <option value="normalMode">Normal</option>
+        </select>
       </div>
     </div>
 

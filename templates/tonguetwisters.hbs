@@ -119,12 +119,11 @@
 
     /* 5.1) LEFT-SIDE: avatar area */
     .left-side {
+      flex: 0 0 260px; /* fixed width for the avatar side */
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: absolute;
-      bottom: 400px;
-      margin-left: 12px;
+      margin-right: 20px;
     }
 
     .avatar {
@@ -253,6 +252,12 @@
     </div>
   </div>
 
+    <!-- Left Side with Avatar -->
+    <div class="left-side">
+      <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
+      <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
+    </div>
+
   <!-- Main Container for the Tongue Twisters -->
   <div class="game-container">
     <!-- Right Side: Actual Twister Content -->
@@ -261,12 +266,6 @@
       <div id="twisters-container"></div>
     </div>
   </div>
-
-    <!-- Left Side with Avatar -->
-    <div class="left-side">
-      <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
-      <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
-    </div>
 
   <!-- Custom Modal (for styled alerts) -->
   <div id="customModalOverlay" class="custom-modal-overlay">
@@ -335,10 +334,10 @@
         div.innerHTML = `
           <p class="twister-text">"${twister}"</p>
           <div class="button-container">
-            <button id="record-btn-${index}" style="background-color: white; border: none;">
+            <button id="record-btn-${index}" style="background-color: white; border: none; cursor: pointer;">
               <img src="recordsound-button.png" alt="Record" width="30">
             </button>
-            <button id="play-btn-${index}" style="background-color: white; border: none;">
+            <button id="play-btn-${index}" style="background-color: white; border: none; cursor: pointer;">
               <img src="playrecording-button.png" alt="Play" width="30">
             </button>
           </div>

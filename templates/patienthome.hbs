@@ -1560,7 +1560,7 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
     });
 }
 
-//modal for courses.hbs
+//courses.hbs | modal for the 3 units ********************************************************************
 function openModal(type, event) {
     event.stopPropagation(); // Prevents parent button click
     console.log("Opening modal for:", type); // Debugging log
@@ -1650,9 +1650,73 @@ function openModal(type, event) {
     modal.style.display = "block";
 }
 
-function closeCourseModal() {
+// SpeechSynthesis API Integration
+const synth = window.speechSynthesis;
+let utterance;  // Stores the current speech
+let isPaused = false;  // Tracks pause state
+let isSpeaking = false; // Tracks if speech is actively playing
+
+// Play/Pause/Resume Text-to-Speech
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Always start fresh when the button is clicked
+    startNewSpeech(modalContent);  // ✅ Ensures new speech starts
+});
+
+// Function to start speech from the top
+function startNewSpeech(content) {
+    console.log("Starting new speech...");  // ✅ Debug log for clarity
+    if (synth.speaking || isPaused) {
+        synth.cancel();  // ✅ Stop any active speech before starting fresh
+    }
+
+    utterance = new SpeechSynthesisUtterance(content);
+
+    // Voice settings for clarity
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    utterance.volume = 1.0;
+
+    utterance.onstart = () => {
+        console.log("Speech started...");
+        isSpeaking = true;
+        isPaused = false;
+    };
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isSpeaking = false;
+        isPaused = false;
+    };
+
+    synth.speak(utterance);
+}
+
+// Stop Speech and Reset State when the Modal is Closed
+function closeCoursesModal() {
+    console.log("Closing modal...");
+
+    if (synth.speaking || isPaused) {
+        synth.cancel();  // ✅ Ensures speech is fully stopped
+        console.log("Speech stopped.");
+    }
+
+    // Reset state and speech object to ensure fresh playback next time
+    isSpeaking = false;
+    isPaused = false;
+    utterance = null;  // ✅ Fully reset utterance
+
     document.getElementById("modal").style.display = "none";
 }
+//END Courses Script********************************************************************************
+
 
 
     </script>

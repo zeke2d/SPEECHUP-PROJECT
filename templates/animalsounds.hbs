@@ -440,8 +440,8 @@ p {
         <div class="difficulty-selector">
           <h3>Select Difficulty</h3>
           <div class="difficulty-buttons">
-            <button id="easyMode">Easy</button>
-            <button id="normalMode">Normal</button>
+            <button id="easyMode">Assisted</button>
+            <button id="normalMode">Standard</button>
           </div>
         </div>
     </div>
@@ -609,4 +609,16 @@ document.getElementById("play-text-sound").addEventListener("click", () => {
 });
   
 }
+//difficulty selector
+  document.getElementById("easyMode").addEventListener("click", function() {
+    document.getElementById("elephant").style.display = "none";
+    document.getElementById("horse").style.display = "none";
+    document.getElementById("duck").style.display = "none";
+  });
+
+  document.getElementById("normalMode").addEventListener("click", function() {
+    document.getElementById("elephant").style.display = "flex"; 
+    document.getElementById("horse").style.display = "flex"; 
+    document.getElementById("duck").style.display = "flex"; 
+  });
 </script>

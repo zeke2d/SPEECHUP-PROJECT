@@ -26,7 +26,7 @@
 
     /* 2) CONTAINER - For overall page width and centering */
     .container {
-      max-width: 1100px;  /* You can adjust this max-width as you prefer */
+      max-width: 600px;  /* You can adjust this max-width as you prefer */
       margin: 0 auto;     /* Centers the container */
       padding: 0 15px;    /* Adds a bit of horizontal padding inside */
     }
@@ -37,7 +37,7 @@
       padding: 15px;
       border-radius: 10px;
       text-align: center;
-      margin: 20px auto; /* Center the title box with some top/bottom spacing */
+      margin: 5px auto; /* Center the title box with some top/bottom spacing */
     }
 
     /* 3.1) Title Container - holds subheading + info button */
@@ -55,7 +55,7 @@
       margin: 0;
     }
 
-    h5 {
+    h5, p {
       margin: 0; 
       color: white;
       font-style: italic;
@@ -100,7 +100,7 @@
       border-radius: 10px;
       text-align: center;
       color: white;
-      width: 320px;
+      width: 440px;
       position: relative; 
     }
 
@@ -110,24 +110,23 @@
       flex-direction: row;
       align-items: flex-start;
       justify-content: center;
-
       background: white;
       border-radius: 8px;
-      margin: 20px auto; /* push it below the title box */
-      padding: 20px;
-
+      margin: 10px auto; /* push it below the title box */
       /* Let it fit the same max width as .container */
-      max-width: 1100px;
+      max-width: 600px;
     }
 
     /* 5.1) LEFT-SIDE: avatar area */
     .left-side {
-      flex: 0 0 260px; /* fixed width for the avatar side */
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-right: 20px;
+      position: absolute;
+      bottom: 400px;
+      margin-left: 12px;
     }
+
     .avatar {
       width: 220px;
       height: auto;
@@ -135,14 +134,13 @@
     .twist-quote {
       color: #002769;
       font-style: italic;
-      font-size: 15px;
+      font-size: 11.7px;
       text-align: center;
-      margin-top: 5px;
     }
 
     /* 5.2) RIGHT-SIDE: the actual twisters area */
     .twister-content {
-      flex: 1; /* fill the remaining space */
+      display: center;
     }
 
     /* 6) INDIVIDUAL TONGUE TWISTER CARDS */
@@ -152,6 +150,7 @@
       border: 1px solid #ddd;
       border-radius: 5px;
       background: #fff;
+      text-align: center;
     }
     .twister-text {
       color: #002769;
@@ -165,23 +164,6 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-    }
-
-    /* 7) BUTTONS */
-    .record-btn,
-    .play-btn {
-      background-color: #ffffff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      margin: 5px;
-      padding: 10px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .record-btn:hover,
-    .play-btn:hover {
-      background-color: #e0e0e0;
     }
 
     /* 8) CUSTOM MODAL OVERLAY (for your custom alert) */
@@ -235,6 +217,26 @@
     .modal-ok-button:hover {
       background-color: #ff003c;
     }
+
+#play-text-sound {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    background: none;
+    border: none;
+    width: 23px;  /* Adjust size */
+    height: 23px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* put in front */
+}
+
+#play-text-sound img {
+    width: 100%;
+    height: 100%;
+}
   </style>
 
   <!-- Back Button -->
@@ -253,18 +255,18 @@
 
   <!-- Main Container for the Tongue Twisters -->
   <div class="game-container">
-    <!-- Left Side with Avatar -->
-    <div class="left-side">
-      <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
-      <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
-    </div>
-
     <!-- Right Side: Actual Twister Content -->
     <div class="twister-content">
       <!-- Only ONE twisters-container -->
       <div id="twisters-container"></div>
     </div>
   </div>
+
+    <!-- Left Side with Avatar -->
+    <div class="left-side">
+      <img src="avatar-tonguetwisters.png" alt="Avatar" class="avatar">
+      <h6 class="twist-quote">"To twist is to sharpen. Do the twist!"</h6>
+    </div>
 
   <!-- Custom Modal (for styled alerts) -->
   <div id="customModalOverlay" class="custom-modal-overlay">
@@ -280,16 +282,18 @@
   <!-- Info Modal -->
   <div id="info-modal" class="modal">
     <div class="modal-content">
+    <button id="play-text-sound">
+        <img src="playTextSound-button.png" alt="Play Sound">
+    </button>
       <span class="close">&times;</span>
-      <p><em>
+      <h3><em>
         Articulation exercises such as Tongue Twisters can help improve the clarity of speech hindered by Aphasia.
         Practicing these various Tongue Twisters will help build muscle memory for speech production!
-      </em></p>
-      <h6><i>
+      </em></h3> <br>
+      <p><i>
         Click the microphone and give a tongue twister a go! <br>
         Click the playback to play back your tongue twister <br>
-        Practice is key ;
-      </i></h6>
+      </i></p>
     </div>
   </div>
 
@@ -331,10 +335,10 @@
         div.innerHTML = `
           <p class="twister-text">"${twister}"</p>
           <div class="button-container">
-            <button id="record-btn-${index}">
+            <button id="record-btn-${index}" style="background-color: white; border: none;">
               <img src="recordsound-button.png" alt="Record" width="30">
             </button>
-            <button id="play-btn-${index}">
+            <button id="play-btn-${index}" style="background-color: white; border: none;">
               <img src="playrecording-button.png" alt="Play" width="30">
             </button>
           </div>
@@ -513,13 +517,30 @@
       document.getElementById("info-modal").style.display = "none";
     });
 
-    // Close modal when clicking outside of it
-    window.addEventListener("click", function (event) {
-      const modal = document.getElementById("info-modal");
-      if (event.target === modal) {
-        modal.style.display = "none";
+    const close = document.querySelector(".modal .close");
+    const modal = document.getElementById("info-modal");
+
+  close.addEventListener("click", () => {
+      modal.style.display = "none"; // Close modal when X is clicked
+      
+      // Stop and reset audio
+      if (synth.speaking || isPaused) {
+          synth.cancel(); // Cancels and resets the speech synthesis
+          isPaused = false; // Reset pause state
       }
-    });
+  });
+
+  window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+          modal.style.display = "none"; // Close modal if user clicks outside of it
+          
+          // Stop and reset audio
+          if (synth.speaking || isPaused) {
+              synth.cancel();
+              isPaused = false;
+          }
+      }
+  });
 
     // -------------------------
     // 9. (Optional) CUSTOM MODAL Example
@@ -527,4 +548,49 @@
     function closeModal() {
       document.getElementById("customModalOverlay").style.display = "none";
     }
+
+// SpeechSynthesis API Integration with Pause/Resume Feature
+const synth = window.speechSynthesis;
+let utterance;   // Store current speech
+let isPaused = false;  // Track pause state
+
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Handle Pause/Resume
+    if (synth.speaking) {
+        if (isPaused) {
+            synth.resume();
+            isPaused = false;
+            console.log("Speech resumed.");
+        } else {
+            synth.pause();
+            isPaused = true;
+            console.log("Speech paused.");
+        }
+        return;
+    }
+
+    // If no speech is active, start fresh
+    utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Optional: Voice settings for clarity
+    utterance.lang = 'en-US'; // language setting 
+    utterance.rate = 0.9;     // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;    // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;   // max volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance);
+});
+
   </script>

@@ -89,7 +89,7 @@
     color: white; /* White text */
     padding: 20px;
     border-radius: 10px;
-    width: 425px; /* Set modal width */
+    width: 550px; /* Set modal width */
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
     z-index: 1000; /* Ensure it's above other content */
   }
@@ -110,20 +110,10 @@
     padding: 20px;
     border-radius: 10px;
     width: 100%; /* Ensure it takes full width inside modal */
-    max-width: 400px; /* Limit max width */
+    max-width: 550px; /* Limit max width */
     text-align: center;
     position: relative;
     box-sizing: border-box; /* Prevents padding from affecting width */
-  }
-
-    /* Close button */
-  .modal-content .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: white;
   }
   
   .modal-content .close:hover {
@@ -320,11 +310,11 @@
       <!-- Custom Modal (for styled alerts) -->
 <div id="customModalOverlay" class="custom-modal-overlay">
   <div class="custom-modal">
-    <button class="close-button" onclick="closeModal()">&times;</button>
+    <button class="close-button" onclick="closeBookReadingModal()">&times;</button>
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeBookReadingModal()">OK</button>
   </div>
 </div>
 
@@ -340,7 +330,7 @@
             As Apraxia is not a muscle problem but a motor coordination problem, Book Reading is great practice for Motor Planning. <br>
             These books are especially curated for their predictable patterns to help it's readers develop Phonemic Awareness with Repetitive Practice. 
             With all these benefits, one must also take into account that Book Reading is just plain ol' fun!            
-          </em></h3>
+          </em></h3> <br>
           <p>
             Select a Story using the dropdown menu <br>
             Click the microphone to record your Book Reading <br>
@@ -365,7 +355,7 @@ let bookReadingAverage = 0;  // Tracks the average score
     document.getElementById("modalMessage").innerText = message;
     document.getElementById("customModalOverlay").style.display = "block";
   }
-  function closeModal() {
+  function closeBookReadingModal() {
     document.getElementById("customModalOverlay").style.display = "none";
   }
   

@@ -1648,6 +1648,249 @@ document.getElementById("play-text-sound").addEventListener("click", () => {
 });
   
 } // ANIMAL SOUNDS end script********************************************************************************
+
+//BOOK READING start********************************************************************************
+let accuracyScores = {
+    "Love You Forever": null,
+    "Three Blind Mice": null
+};
+let bookReadingAverage = 0;  // Tracks the average score
+
+// ====== Show & Hide Custom Modal ======
+  function showModal(title, message) {
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = message;
+    document.getElementById("customModalOverlay").style.display = "block";
+  }
+  function closeBookReadingModal() {
+    document.getElementById("customModalOverlay").style.display = "none";
+  }
+  
+let bookSelector = document.getElementById("bookSelector");
+let bookImage = document.getElementById("bookImage");
+let bookText = document.getElementById("bookText");
+let audioButtons = document.getElementById("audioButtons");
+let recordButton = document.querySelector(".audio-buttons img[alt='Record Sound']");
+let playButton = document.querySelector(".audio-buttons img[alt='Play Recording']");
+
+let mediaRecorder;
+let audioChunks = [];
+let recordings = {}; // Store recordings per book
+let isRecording = false;
+let transcript = "";
+
+// Ignore stop words
+const stopWords = new Set(["the", "and", "is", "as", "a", "an", "for", "of", "to", "in", "on", "at", "with"]);
+
+// Speech Recognition
+let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.continuous = false;
+recognition.lang = "en-US";
+recognition.interimResults = false;
+recognition.maxAlternatives = 1;
+
+// Request microphone access on page load
+navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    mediaRecorder = new MediaRecorder(stream);
+    console.log("Microphone access granted.");
+}).catch((error) => {
+    console.error("Microphone access denied: ", error);
+});
+
+bookSelector.addEventListener("change", function() {
+    if (bookSelector.value === "loveyouforever") {
+        bookImage.src = "book-loveyouforever.png";
+        bookText.innerText = `I'll love you forever, 
+                              I'll like you for always, 
+                              As long as I'm living 
+                              my baby you'll be.`;
+        audioButtons.style.display = "flex";
+    } else if (bookSelector.value === "threeblindmice") {
+        bookImage.src = "book-threeblindmice.png";
+        bookText.innerText = `“ Three Blind Mice
+                                Three Blind Mice
+                                See how they run
+                                See how they run
+                                They all ran after the farmer’s wife
+                                She cut off their tails with a carving knife
+                                Did you ever see such a sight in your life
+                                as THREE BLIND MICE. ”`;
+        audioButtons.style.display = "flex";
+    } else {
+        audioButtons.style.display = "none";
+    }
+});
+
+// Recording Audio & Speech Recognition Together
+recordButton.addEventListener("click", () => {
+    if (!mediaRecorder) {
+        console.error("Microphone access not available.");
+        return;
+    }
+    let bookName = bookSelector.options[bookSelector.selectedIndex].text;
+    
+    if (isRecording) {
+        mediaRecorder.stop();
+        recognition.stop();
+        return;
+    }
+    
+    console.log(`Recording started for: ${bookName}`);
+    audioChunks = [];
+    isRecording = true;
+    transcript = "";
+
+    // Create a promise that resolves when recording stops
+    let recordingPromise = new Promise(resolve => {
+        mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+        };
+        mediaRecorder.onstop = () => {
+            let audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            let audioUrl = URL.createObjectURL(audioBlob);
+            recordings[bookName] = audioUrl; // Store recording by book name
+            isRecording = false;
+            console.log(`Finished recording for: ${bookName}`);
+            resolve();
+        };
+    });
+    
+    // Create a promise that resolves when recognition ends
+    let recognitionPromise = new Promise(resolve => {
+        recognition.onresult = (event) => {
+            transcript = event.results[0][0].transcript.trim().toLowerCase();
+        };
+        recognition.onend = () => {
+            resolve();
+        };
+    });
+
+    mediaRecorder.start();
+    recognition.start();
+
+    // Stop both after 25 seconds if not already stopped
+    setTimeout(() => {
+        if (isRecording) {
+            mediaRecorder.stop();
+            recognition.stop();
+        }
+    }, 25000);
+
+    // When both promises resolve, run the analysis
+    Promise.all([recordingPromise, recognitionPromise]).then(() => {
+        console.log(`User said: ${transcript}`);
+        analyzeAccuracy(transcript, bookText.innerText, bookName);
+    });
+});
+
+// Playing back the recorded audio
+playButton.addEventListener("click", () => {
+    let bookName = bookSelector.options[bookSelector.selectedIndex].text;
+    if (isRecording) {
+        mediaRecorder.stop();
+        recognition.stop();
+    }
+    if (recordings[bookName]) {
+        let recordedAudio = new Audio(recordings[bookName]);
+        recordedAudio.play();
+    } else {
+        showModal("No recording available for this book. Please record first.");
+    }
+});
+
+function levenshteinDistance(a, b) {
+    let matrix = [];
+    for (let i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+    }
+    for (let j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+    }
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1, // Substitution
+                    matrix[i][j - 1] + 1,     // Insertion
+                    matrix[i - 1][j] + 1      // Deletion
+                );
+            }
+        }
+    }
+    return matrix[b.length][a.length];
+}
+
+// Analyzing speech accuracy
+function analyzeAccuracy(userSpeech, referenceText, bookName) {
+    if (!userSpeech) {
+        console.log(`Analysis skipped: No speech detected for ${bookName}`);
+        return;
+    }
+
+    let cleanText = (text) => text.toLowerCase().replace(/[^\w\s]/g, '');
+    let userWords = cleanText(userSpeech).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
+    let referenceWords = cleanText(referenceText.replace(/<br>/g, " ")).split(/\s+/).filter(word => word.length > 0 && !stopWords.has(word));
+
+    let correctCount = 0;
+    let totalWords = referenceWords.length;
+
+    for (let i = 0; i < totalWords; i++) {
+        if (i < userWords.length) {
+            let distance = levenshteinDistance(userWords[i], referenceWords[i]);
+            let maxLen = Math.max(userWords[i].length, referenceWords[i].length);
+            let similarity = (maxLen - distance) / maxLen;
+
+            if (similarity > 0.8) {
+                correctCount++;
+            } else if (similarity > 0.5) {
+                correctCount += 0.5;
+            }
+        }
+    }
+
+    let accuracy = (correctCount / totalWords) * 100;
+
+    // Store the score for the respective book
+    if (bookName.includes("Love You Forever")) {
+        accuracyScores["Love You Forever"] = accuracy;
+    } else if (bookName.includes("Three Blind Mice")) {
+        accuracyScores["Three Blind Mice"] = accuracy;
+    }
+
+    // Calculate the average score
+    let scores = Object.values(accuracyScores).filter(score => score !== null);
+    if (scores.length === 2) {
+        bookReadingAverage = (scores.reduce((sum, score) => sum + score, 0)) / 2;
+        console.log(`Updated Book Reading Average: ${bookReadingAverage.toFixed(2)}%`);
+    }
+
+    console.log(`Analysis complete: Accuracy score for ${bookName} is ${accuracy.toFixed(2)}%`);
+    showModal(`Your accuracy for "${bookName}":`, `${accuracy.toFixed(2)}%`);
+}
+
+    const modal = document.getElementById("info-modal");
+    const btn = document.getElementById("info-button");
+    const close = document.querySelector(".modal .close");
+  
+    // Make sure modal is hidden initially
+    modal.style.display = "none";
+  
+    btn.addEventListener("click", () => {
+      modal.style.display = "block"; // Show modal when button is clicked
+    });
+  
+    close.addEventListener("click", () => {
+      modal.style.display = "none"; // Close modal when X is clicked
+    });
+  
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none"; // Close modal if user clicks outside of it
+      }
+    });
+  //END Book Reading********************************************************************************
   
   </script>
 

@@ -32,7 +32,7 @@
   border-radius: 20px;
   width: 80%;
   max-width: 600px;
-  margin: 25px auto 50px;
+  margin: 25px auto 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,9 +76,9 @@
   transform: translate(-50%, -50%);
   background-color: #FF7878; /* Set modal background color */
   color: white; /* White text */
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
-  width: 350px; /* Set modal width */
+  width: 490x; /* Set modal width */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
   z-index: 1000; /* Ensure it's above other content */
 }
@@ -90,6 +90,8 @@
   right: 15px;
   font-size: 20px;
   cursor: pointer;
+  margin-bottom: 10px;
+  z-index: 999
 }
 
 .modal-content {
@@ -98,7 +100,7 @@
   padding: 20px;
   border-radius: 10px;
   width: 100%; /* Ensure it takes full width inside modal */
-  max-width: 400px; /* Limit max width */
+  max-width: 490px; /* Limit max width */
   text-align: center;
   position: relative;
   box-sizing: border-box; /* Prevents padding from affecting width */
@@ -123,7 +125,18 @@ h1 {
   margin: 0;
 }
 
+h3 {
+  color: white;
+}
+
 h6 {
+  color: white;
+  font-style: italic;
+  opacity: 0.75;
+  margin: 5px 0 0;
+}
+
+p {
   color: white;
   font-style: italic;
   opacity: 0.75;
@@ -156,7 +169,6 @@ h6 {
   }
 
   /* Buttons */
-  button.play-sound,
   button.record-sound,
   button.play-recording {
     background-color: #ffffff;
@@ -168,6 +180,18 @@ h6 {
     font-size: 14px;
     cursor: pointer;
   }
+
+  button.play-sound {
+    background-color: #ffffff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 15px; /*aligning with the two buttons*/
+}
 
   button.play-sound:hover {
     background-color: #e0e0e0;
@@ -205,7 +229,7 @@ h6 {
   }
   .custom-modal p {
       color: #333;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
   }
   .close-button {
       background: none;
@@ -214,7 +238,7 @@ h6 {
       font-size: 24px;
       position: absolute;
       right: 15px;
-      top: 15px;
+      top: 5px;
       cursor: pointer;
   }
   .modal-ok-button {
@@ -230,6 +254,60 @@ h6 {
       background-color: #ff003c;
   }
 
+#play-text-sound {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    background: none;
+    border: none;
+    width: 23px;  /* Adjust size */
+    height: 23px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* put in front */
+}
+
+#play-text-sound img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Difficulty Selector */
+  .difficulty-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .difficulty-buttons {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+  }
+
+  #easyMode, #normalMode {
+    background-color: #ff7878;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #easyMode:hover, #normalMode:hover {
+    background-color: #FF4B4B;
+  }
+
+#easyMode:focus, #normalMode:focus {
+  background-color: #FF4B4B;
+}
 </style>
 
 <!-- Partial content only (no <html>, <head>, <body>) -->
@@ -336,29 +414,39 @@ h6 {
     <!-- Custom Modal (for styled alerts) -->
 <div id="customModalOverlay" class="custom-modal-overlay">
   <div class="custom-modal">
-    <button class="close-button" onclick="closeModal()">&times;</button>
+    <button class="close-button" onclick="closeAnimalSoundsModal()">&times;</button>
     <h2 id="modalTitle">Modal Title</h2>
     <br>
     <p id="modalMessage">Modal message goes here.</p>
-    <button class="modal-ok-button" onclick="closeModal()">OK</button>
+    <button class="modal-ok-button" onclick="closeAnimalSoundsModal()">OK</button>
   </div>
 </div>
 
  <!-- Info Modal -->
     <div id="info-modal" class="modal">
+    <button id="play-text-sound">
+        <img src="playTextSound-button.png" alt="Play Sound">
+    </button>
+      <span class="close">&times;</span>
       <div class="modal-content">
-        <span class="close">&times;</span>
-        <p><em>
+        <h3><em>
           This Animal Sounds game helps with Apraxia by practicing motor planning for speech. 
           Imitating Animal Sounds helps focus on specific mouth movements and sound formations. 
           It's a fun way to strengthen the muscles and coordination needed for clear speech!
-        </em></p>
-        <h6>
+        </em></h3> <br>
+        <p>
           Click the speaker to hear Animal Sounds<br>
           Click the microphone to imitate your chosen Animal Sounds<br>
           Click the playback to hear <strong>your</strong> Animal Sounds
-        </h6>
+        </p>
       </div>
+        <div class="difficulty-selector">
+          <h3>Select Difficulty</h3>
+          <div class="difficulty-buttons">
+            <button id="easyMode">Assisted</button>
+            <button id="normalMode">Standard</button>
+          </div>
+        </div>
     </div>
 
 <script>
@@ -369,7 +457,7 @@ h6 {
     document.getElementById("modalMessage").innerText = message;
     document.getElementById("customModalOverlay").style.display = "block";
   }
-  function closeModal() {
+  function closeAnimalSoundsModal() {
     document.getElementById("customModalOverlay").style.display = "none";
   }
   
@@ -458,14 +546,82 @@ document.querySelectorAll(".animal").forEach((animalDiv) => {
   });
 
   close.addEventListener("click", () => {
-    modal.style.display = "none"; // Close modal when X is clicked
+      modal.style.display = "none"; // Close modal when X is clicked
+      
+      // Stop and reset audio
+      if (synth.speaking || isPaused) {
+          synth.cancel(); // Cancels and resets the speech synthesis
+          isPaused = false; // Reset pause state
+      }
   });
 
   window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none"; // Close modal if user clicks outside of it
-    }
+      if (event.target === modal) {
+          modal.style.display = "none"; // Close modal if user clicks outside of it
+          
+          // Stop and reset audio
+          if (synth.speaking || isPaused) {
+              synth.cancel();
+              isPaused = false;
+          }
+      }
   });
+
+// SpeechSynthesis API Integration with Pause/Resume Feature
+const synth = window.speechSynthesis;
+let utterance;   // Store current speech
+let isPaused = false;  // Track pause state
+
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Handle Pause/Resume
+    if (synth.speaking) {
+        if (isPaused) {
+            synth.resume();
+            isPaused = false;
+            console.log("Speech resumed.");
+        } else {
+            synth.pause();
+            isPaused = true;
+            console.log("Speech paused.");
+        }
+        return;
+    }
+
+    // If no speech is active, start fresh
+    utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Optional: Voice settings for clarity
+    utterance.lang = 'en-US'; // language setting 
+    utterance.rate = 0.9;     // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;    // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;   // max volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance);
+});
   
 }
+//difficulty selector
+  document.getElementById("easyMode").addEventListener("click", function() {
+    document.getElementById("elephant").style.display = "none";
+    document.getElementById("horse").style.display = "none";
+    document.getElementById("duck").style.display = "none";
+  });
+
+  document.getElementById("normalMode").addEventListener("click", function() {
+    document.getElementById("elephant").style.display = "flex"; 
+    document.getElementById("horse").style.display = "flex"; 
+    document.getElementById("duck").style.display = "flex"; 
+  });
 </script>

@@ -31,7 +31,7 @@
     border-radius: 20px;
     width: 80%;
     max-width: 600px;
-    margin: 25px auto 50px;
+    margin: 25px auto 20px;
 }
 
 /* Header Title */
@@ -49,7 +49,7 @@
     margin: 0;
 }
 
-h6 {
+h6, p {
     font-style: italic;
     color: white;
     opacity: 0.75;
@@ -76,22 +76,22 @@ h6 {
     border-radius: 10px;
     text-align: center;
     color: white;
-    width: 350px;
+    width: 400px;
     z-index: 1000; /* Ensures it appears above other elements */
 }
 
 .info-modal-content {
     position: relative;
-    padding-top: 25px; /* Ensures space for the close button */
+    margin-top: 15px;
 }
 
 /* Close Button */
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 11px;
+    right: 15px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 30px;
     color: white;
 } 
   /****************************************
@@ -192,21 +192,22 @@ h6 {
   button {
     padding: 10px 20px;
     font-size: 16px;
-    background: #df1645;
+    background: #FF7878;
     border: none;
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 7px;
   }
   button:hover {
-    background: #ff003c;
+    background: #FF4B4B;
   }
 
    /* ------------------ Custom Modal for Alerts ------------------ */
     .custom-modal-overlay {
       display: none;
       position: fixed;
-      z-index: 9999;
+      z-index: 999;
       left: 0;
       top: 0;
       width: 100%;
@@ -231,16 +232,7 @@ h6 {
       color: #333;
       margin-bottom: 20px;
     }
-    .close-button {
-      background: none;
-      border: none;
-      color: #ffffff;
-      font-size: 24px;
-      position: absolute;
-      right: 15px;
-      top: 15px;
-      cursor: pointer;
-    }
+
     .modal-ok-button {
       background-color: #df1645;
       color: #fff;
@@ -259,7 +251,7 @@ h6 {
     .custom-confirm-overlay {
       display: none;
       position: fixed;
-      z-index: 9999;
+      z-index: 999;
       left: 0;
       top: 0;
       width: 100%;
@@ -322,6 +314,28 @@ h6 {
       background-color: #666;
     }
 
+#play-text-sound {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    background: none;
+    border: none;
+    width: 65px;  /* Adjust size */
+    height: 45px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* put in front */
+}
+
+#play-text-sound img {
+    width: 100%;
+    height: 100%;
+    z-index: 2000; /* put in front */
+
+}
+
 </style>
 
 <!-- Back Button -->
@@ -340,13 +354,16 @@ h6 {
 
     <!-- Info Modal -->
     <div id="infoModal" class="info-modal">
+    <button id="play-text-sound">
+        <img src="playTextSound-button.png" alt="Play Sound">
+    </button>
+    <span class="close-button">&times;</span>
         <div class="info-modal-content">
-            <span class="close-button">&times;</span>
-            <p><i>Brain exercise is as important as physical exercise for everyone, 
-                and even more imperative for a condition such as Aphasia, which can hinder not only movement and communication skills but the overall mental capacity of memory and thinking. 
+            <h3><i>Brain exercise is as important as physical exercise for everyone, 
+                and even more imperative for a condition such as Aphasia, which can hinder not only movement and communication skills but the overall mental capacity of memory and thinking. <br>
                 That’s why it’s important to keep our brains active daily! 
-                Similar to the act of exercise, which thrives on repetition, Matching Games is all about learning and relearning.</i></p>
-            <h6>Memorize and match each paired card</h6>
+                Similar to the act of exercise, which thrives on repetition, Matching Games is all about learning and relearning.</i></h3> <br>
+            <p>Memorize and match each paired card</p>
         </div>
     </div>
 
@@ -560,8 +577,9 @@ function checkMatch() {
 
             if (matchedPairs === images.length) {
                 setTimeout(() => {
-                showModal("🎉 Congratulations!", " You matched all pairs!");
-                updateMatchingGameGrade();
+                  showModal("🎉 Congratulations!", " You matched all pairs!");
+                // Automatically update the grade for matching games to 100
+              updateMatchingGameGrade();
             }, 300);
           }
 
@@ -630,15 +648,69 @@ function checkMatch() {
         infoModal.style.display = "block";
     });
 
-    // Close modal when clicking the close button
-    closeButton.addEventListener("click", () => {
-        infoModal.style.display = "none";
-    });
+  closeButton.addEventListener("click", () => {
+      infoModal.style.display = "none"; // Close modal when X is clicked
+      
+      // Stop and reset audio
+      if (synth.speaking || isPaused) {
+          synth.cancel(); // Cancels and resets the speech synthesis
+          isPaused = false; // Reset pause state
+      }
+  });
 
-    // Close modal when clicking outside of it
-    window.addEventListener("click", (event) => {
-        if (event.target === infoModal) {
-            infoModal.style.display = "none";
+  window.addEventListener("click", (event) => {
+      if (event.target === infoModal) {
+          infoModal.style.display = "none"; // Close modal if user clicks outside of it
+          
+          // Stop and reset audio
+          if (synth.speaking || isPaused) {
+              synth.cancel();
+              isPaused = false;
+          }
+      }
+  });
+
+    // SpeechSynthesis API Integration with Pause/Resume Feature
+const synth = window.speechSynthesis;
+let utterance;   // Store current speech
+let isPaused = false;  // Track pause state
+
+document.getElementById("play-text-sound").addEventListener("click", () => {
+    const modalContent = document.querySelector(".info-modal-content").innerText.trim();
+
+    if (!modalContent) {
+        console.warn("Modal content is empty.");
+        return;
+    }
+
+    // Handle Pause/Resume
+    if (synth.speaking) {
+        if (isPaused) {
+            synth.resume();
+            isPaused = false;
+            console.log("Speech resumed.");
+        } else {
+            synth.pause();
+            isPaused = true;
+            console.log("Speech paused.");
         }
-    });
+        return;
+    }
+
+    // If no speech is active, start fresh
+    utterance = new SpeechSynthesisUtterance(modalContent);
+
+    // Optional: Voice settings for clarity
+    utterance.lang = 'en-US'; // language setting 
+    utterance.rate = 0.9;     // Speaking speed (1 is normal, lower is slower)
+    utterance.pitch = 1.2;    // Slightly higher pitch for better clarity
+    utterance.volume = 1.0;   // max volume
+
+    utterance.onend = () => {
+        console.log("Speech finished.");
+        isPaused = false; // Reset pause state when finished
+    };
+
+    synth.speak(utterance);
+});
 </script>
